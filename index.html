@@ -605,6 +605,14 @@ function clearError() {
 
 
 
+function parseHoursToNumber(text) {
+  const t = String(text || "");
+  const h = Number((t.match(/(\d+)h/) || [0,0])[1] || 0);
+  const m = Number((t.match(/(\d+)m/) || [0,0])[1] || 0);
+  const s = Number((t.match(/(\d+)s/) || [0,0])[1] || 0);
+  return h + (m/60) + (s/3600);
+}
+
 function getLevelData(hoursText) {
   const hours = parseHoursToNumber(hoursText);
   if (hours >= 100) {
@@ -706,6 +714,14 @@ function renderTopHoras() {
   });
 }
 
+function normalizeExternalLink(url) {
+  const raw = String(url || "").trim();
+  if (!raw || raw === "#") return "#";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^www\./i.test(raw)) return "https://" + raw;
+  return "https://" + raw;
+}
+
 function renderDesenvolvimento() {
   const itens = appData.desenvolvimento || [];
   const fallback = [
@@ -716,16 +732,19 @@ function renderDesenvolvimento() {
   const cards = itens.length ? itens : fallback;
   const icons = { ingles:"🇬🇧", treinamento:"🎓", workshop:"🧠", mentoria:"🧠", relatorio:"📊" };
   if (!devGrid) return;
-  devGrid.innerHTML = cards.map(item => `
-    <div class="dev-card">
-      <div class="icon">${icons[String(item.tipo || "").toLowerCase()] || "🚀"}</div>
-      <h5>${item.titulo || "-"}</h5>
-      <p>${item.descricao || ""}</p>
-      <div class="pill">${item.data || "Conteúdo disponível"}${item.horario ? " • " + item.horario : ""}</div>
-      <a class="btn btn-secondary" href="${item.link || "#"}"
-         target="_blank" rel="noopener">ABRIR LINK</a>
-    </div>
-  `).join("");
+  devGrid.innerHTML = cards.map(item => {
+    const href = normalizeExternalLink(item.link);
+    const disabled = href === "#";
+    return `
+      <div class="dev-card">
+        <div class="icon">${icons[String(item.tipo || "").toLowerCase()] || "🚀"}</div>
+        <h5>${item.titulo || "-"}</h5>
+        <p>${item.descricao || ""}</p>
+        <div class="pill">${item.data || "Conteúdo disponível"}${item.horario ? " • " + item.horario : ""}</div>
+        <a class="btn btn-secondary" href="${href}" ${disabled ? "" : 'target="_blank" rel="noopener"'} ${disabled ? 'aria-disabled="true"' : ""}>ABRIR LINK</a>
+      </div>
+    `;
+  }).join("");
 }
 
 function renderLevel(user) {
