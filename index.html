@@ -261,6 +261,13 @@
     display:flex;
     flex-direction:column;
   }
+  .drawer-footer{
+    margin-top:auto;
+    padding-top:18px;
+    position:sticky;
+    bottom:0;
+    background:linear-gradient(180deg, rgba(8,17,31,0) 0%, rgba(8,17,31,.96) 28%);
+  }
   .drawer{ left:-100%; border-radius:0 26px 26px 0; }
   .drawer.open{ left:0; }
   .notif-panel{ right:-100%; border-radius:26px 0 0 26px; }
@@ -799,7 +806,7 @@ function fillUser(user) {
   accessStatus.textContent = `Acesso liberado • @${user.arroba || user.display || "seu_arroba"}`;
   openDrawer.classList.remove("hidden");
   openNotif.classList.remove("hidden");
-  if (drawerLogoutBtn) drawerLogoutBtn.classList.remove("hidden");
+  if (drawerLogoutBtn) { drawerLogoutBtn.classList.remove("hidden"); drawerLogoutBtn.style.display = "inline-flex"; }
   const preLoginHero = document.getElementById("preLoginHero");
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
   if (preLoginHero) preLoginHero.style.display = "none";
@@ -905,7 +912,7 @@ function handleLogout() {
   userMetaTop.textContent = "ID final: 000000 • Período: --/-- a --/--";
   openDrawer.classList.add("hidden");
   openNotif.classList.add("hidden");
-  if (drawerLogoutBtn) drawerLogoutBtn.classList.add("hidden");
+  if (drawerLogoutBtn) { drawerLogoutBtn.classList.add("hidden"); drawerLogoutBtn.style.display = ""; }
   const preLoginHero = document.getElementById("preLoginHero");
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
   if (preLoginHero) preLoginHero.style.display = "";
