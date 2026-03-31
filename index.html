@@ -715,7 +715,7 @@ function renderNotificacoes() {
       <div class="notify-item">
         <strong>${item.titulo || "-"}</strong>
         <p>${item.descricao || ""}</p>
-        <div class="notify-meta">${item.data || ""}${item.horario ? " • " + item.horario : ""}</div>
+        <div class="notify-meta">${formatUpdatedAgo(item.data)}</div>
       </div>
     `).join("")
     : `<div class="notify-item"><strong>Nenhuma notificação</strong><p>Não há avisos ativos no momento.</p></div>`;
@@ -753,21 +753,25 @@ function renderDesenvolvimento() {
   const fallback = [
     {tipo:"ingles", titulo:"Curso de inglês", descricao:"Área para divulgar turma atual, cronograma, orientações e link principal de acesso.", data:"", horario:"", link:"#"},
     {tipo:"treinamento", titulo:"Treinamento inicial", descricao:"Espaço para onboarding, diretrizes, vídeos, PDFs e conteúdos base.", data:"", horario:"", link:"#"},
-    {tipo:"workshop", titulo:"Mentoria / Workshop", descricao:"Workshop com a psicopedagoga toda quarta-feira às 19h30.", data:"", horario:"19:30", link:"#"}
+    {tipo:"workshop", titulo:"Workshop com psicopedagoga", descricao:"Workshop com a psicopedagoga toda quarta-feira às 19h30.", data:"", horario:"", link:"#"}
   ];
   const cards = itens.length ? itens : fallback;
   const icons = { ingles:"🇬🇧", treinamento:"🎓", workshop:"🧠", mentoria:"🧠", relatorio:"📊" };
   if (!devGrid) return;
+
   devGrid.innerHTML = cards.map(item => {
     const href = normalizeExternalLink(item.link);
+    const label = getDevelopmentButtonLabel(item.tipo);
     const disabled = href === "#";
+    const updateText = formatUpdatedAgo(item.data);
+
     return `
       <div class="dev-card">
         <div class="icon">${icons[String(item.tipo || "").toLowerCase()] || "🚀"}</div>
         <h5>${item.titulo || "-"}</h5>
         <p>${item.descricao || ""}</p>
-        <div class="pill">${item.data || "Conteúdo disponível"}${item.horario ? " • " + item.horario : ""}</div>
-        <a class="btn btn-secondary" href="${href}" ${disabled ? "" : 'target="_blank" rel="noopener"'} ${disabled ? 'aria-disabled="true"' : ""}>ABRIR LINK</a>
+        <div class="pill">${updateText}</div>
+        <a class="btn btn-secondary" href="${href}" ${disabled ? 'aria-disabled="true"' : 'target="_blank" rel="noopener noreferrer"'}>${label}</a>
       </div>
     `;
   }).join("");
