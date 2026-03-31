@@ -1000,7 +1000,7 @@
       </div>
     </section>
 
-    <div class="footer-note">Apex Connect Beta v0.02 - Todos direitos reservados à Assessoria Apex Agency LTDA.</div>
+    <div class="footer-note">Apex Connect Beta v0.03 - Todos direitos reservados à Assessoria Apex Agency LTDA.</div>
   </div>
 </div>
 
@@ -1287,8 +1287,8 @@ function fillUser(user) {
   renderLevel(user);
 
   batalhasValue.textContent = user.batalhas_total || user.batalhas || "0";
-  diamantesBatalhasValue.textContent = user.diamantes_batalhas || "0";
-  topHorasPosicao.textContent = user.top_horas_posicao ? `#${user.top_horas_posicao}` : (user.top_horas || "#0");
+  diamantesBatalhasValue.textContent = formatDiamondsK(user.diamantes_batalhas || "0");
+  topHorasPosicao.textContent = formatDiamondsK(user.top_horas_posicao ? `#${user.top_horas_posicao}` : (user.top_horas || "#0"));
 
   diamantesPassadoValue.textContent = formatDiamondsK(user.diamantes_mes_passado || "0");
   duracaoPassadoValue.textContent = user.duracao_mes_passado || "0";
