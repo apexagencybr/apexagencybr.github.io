@@ -257,6 +257,10 @@
     border:1px solid rgba(255,255,255,.08); z-index:90; padding:18px; overflow-y:auto;
     transition:.28s ease; box-shadow:var(--shadow);
   }
+  .drawer{
+    display:flex;
+    flex-direction:column;
+  }
   .drawer{ left:-100%; border-radius:0 26px 26px 0; }
   .drawer.open{ left:0; }
   .notif-panel{ right:-100%; border-radius:26px 0 0 26px; }
@@ -301,8 +305,8 @@
   </div>
 
   <div class="drawer-profile">
-    <h4 id="drawerUser">@seu_arroba</h4>
-    <p id="drawerMeta">Faça login com seu ID para liberar as áreas da Apex Connect.</p>
+    <h4 id="drawerUser">seu_usuario</h4>
+    <p id="drawerMeta">ID: 000000</p>
   </div>
 
   <div class="menu-list">
@@ -348,7 +352,7 @@
         <div class="pill" style="margin-bottom:14px;">Programa interno</div>
         <h2>Entre com os <span>6 últimos dígitos</span> do seu ID</h2>
         <p>
-          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong> e <strong>Desenvolvimento</strong>, além do <strong>Apex Shop disponível em breve</strong>.
+          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong> e <strong>Desenvolvimento</strong>, além do <strong>Apex Connect disponível em breve</strong>.
         </p>
       </div>
 
@@ -792,8 +796,8 @@ function fillUser(user) {
   mainApp.style.display = "block";
   userName.textContent = user.arroba || user.display || "seu_arroba";
   userMetaTop.textContent = `ID final: ${user.id || user.login6 || "000000"} • Período: ${appData.periodo || user.periodo || "--/-- a --/--"}`;
-  drawerUser.textContent = `@${user.arroba || user.display || "seu_arroba"}`;
-  drawerMeta.textContent = `ID final: ${user.id || user.login6 || "000000"} • Navegue pelo menu lateral da Apex Connect.`;
+  drawerUser.textContent = `${user.arroba || user.display || "seu_usuario"}`;
+  drawerMeta.textContent = `ID: ${user.id || user.login6 || "000000"}`;
   accessStatus.textContent = `Acesso liberado • @${user.arroba || user.display || "seu_arroba"}`;
   openDrawer.classList.remove("hidden");
   openNotif.classList.remove("hidden");
@@ -802,6 +806,7 @@ function fillUser(user) {
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
   if (preLoginHero) preLoginHero.style.display = "none";
   if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
+  saveSession(user.id || user.login6 || "");
   saveSession(user.id || user.login6 || "");
 
   saldoValue.textContent = user.picos || "0 Ᵽ";
@@ -896,8 +901,8 @@ function handleLogout() {
   mainApp.style.display = "none";
   loginInput.value = "";
   accessStatus.textContent = "Acesso por ID • 6 últimos dígitos";
-  drawerUser.textContent = "@seu_arroba";
-  drawerMeta.textContent = "Faça login com seu ID para liberar as áreas da Apex Connect.";
+  drawerUser.textContent = "seu_usuario";
+  drawerMeta.textContent = "ID: 000000";
   userName.textContent = "seu_arroba";
   userMetaTop.textContent = "ID final: 000000 • Período: --/-- a --/--";
   openDrawer.classList.add("hidden");
