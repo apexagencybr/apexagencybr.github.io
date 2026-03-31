@@ -343,7 +343,7 @@
       </div>
     </div>
 
-    <section class="hero">
+    <section class="hero" id="preLoginHero">
       <div>
         <div class="pill" style="margin-bottom:14px;">Programa interno</div>
         <h2>Entre com os <span>6 últimos dígitos</span> do seu ID</h2>
@@ -352,7 +352,7 @@
         </p>
       </div>
 
-      <div class="login-card">
+      <div class="login-card" id="preLoginLoginCard">
         <h3>Entrar na Apex Connect</h3>
         <p>Digite apenas os 6 últimos dígitos do seu ID para acessar sua área individual.</p>
         <div class="field">
@@ -584,6 +584,7 @@ const openNotif = document.getElementById("openNotif");
 const closeNotif = document.getElementById("closeNotif");
 const drawerUser = document.getElementById("drawerUser");
 const drawerMeta = document.getElementById("drawerMeta");
+const drawerLogoutBtn = document.getElementById("drawerLogoutBtn");
 const notifBadge = document.getElementById("notifBadge");
 const notifList = document.getElementById("notifList");
 
@@ -650,6 +651,31 @@ function getLevelData(hoursText) {
 function avatarHTML(hoursText) {
   const d = getLevelData(hoursText);
   return `<img src="${d.avatar}" alt="${d.title}">`;
+}
+
+
+function saveSession(login6) {
+  try {
+    localStorage.setItem("apex_connect_login6", String(login6 || ""));
+  } catch (e) {
+    console.error("Não foi possível salvar a sessão.", e);
+  }
+}
+
+function clearSession() {
+  try {
+    localStorage.removeItem("apex_connect_login6");
+  } catch (e) {
+    console.error("Não foi possível limpar a sessão.", e);
+  }
+}
+
+function getSavedSession() {
+  try {
+    return localStorage.getItem("apex_connect_login6") || "";
+  } catch (e) {
+    return "";
+  }
 }
 
 function closePanels() {
@@ -767,6 +793,12 @@ function fillUser(user) {
   accessStatus.textContent = `Acesso liberado • @${user.arroba || user.display || "seu_arroba"}`;
   openDrawer.classList.remove("hidden");
   openNotif.classList.remove("hidden");
+  if (drawerLogoutBtn) drawerLogoutBtn.classList.remove("hidden");
+  const preLoginHero = document.getElementById("preLoginHero");
+  const preLoginLoginCard = document.getElementById("preLoginLoginCard");
+  if (preLoginHero) preLoginHero.style.display = "none";
+  if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
+  saveSession(user.id || user.login6 || "");
 
   saldoValue.textContent = user.picos || "0 Ᵽ";
   diamantesValue.textContent = user.diamantes || "0";
@@ -817,6 +849,26 @@ async function loadRemoteData() {
   renderDesenvolvimento();
 }
 
+
+async function restoreSessionIfPossible() {
+  const savedLogin = getSavedSession();
+  if (!savedLogin) return;
+  try {
+    if (!appData.criadores.length) {
+      await loadRemoteData();
+    }
+    const found = appData.criadores.find(u => String(u.id || u.login6 || "") === String(savedLogin));
+    if (found) {
+      fillUser(found);
+    } else {
+      clearSession();
+    }
+  } catch (error) {
+    console.error("Falha ao restaurar sessão:", error);
+  }
+}
+
+
 async function handleEnter() {
   try {
     clearError();
@@ -846,6 +898,12 @@ function handleLogout() {
   userMetaTop.textContent = "ID final: 000000 • Período: --/-- a --/--";
   openDrawer.classList.add("hidden");
   openNotif.classList.add("hidden");
+  if (drawerLogoutBtn) drawerLogoutBtn.classList.add("hidden");
+  const preLoginHero = document.getElementById("preLoginHero");
+  const preLoginLoginCard = document.getElementById("preLoginLoginCard");
+  if (preLoginHero) preLoginHero.style.display = "";
+  if (preLoginLoginCard) preLoginLoginCard.style.display = "";
+  clearSession();
   closePanels();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -855,6 +913,8 @@ loginInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") handleEnter();
 });
 logoutBtn.addEventListener("click", handleLogout);
+if (drawerLogoutBtn) drawerLogoutBtn.addEventListener("click", handleLogout);
+if (drawerLogoutBtn) drawerLogoutBtn.addEventListener("click", handleLogout);
 openDrawer.addEventListener("click", openDrawerPanel);
 closeDrawer.addEventListener("click", closePanels);
 openNotif.addEventListener("click", openNotifPanel);
@@ -873,6 +933,7 @@ document.querySelectorAll(".menu-item").forEach(item => {
 
 renderNotificacoes();
 renderDesenvolvimento();
+restoreSessionIfPossible();
 </script>
 </body>
 </html>
