@@ -1,162 +1,848 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Apex Connect</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Apex Connect - Teste</title>
 <link rel="apple-touch-icon" href="apple-touch-icon_clean.png">
 <link rel="manifest" href="manifest.json">
-
+<meta name="theme-color" content="#000000">
 <style>
-body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#050505;
-color:white;
-}
-
-header{
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:16px;
-background:#111;
-}
-
-#menuBtn{
-font-size:22px;
-cursor:pointer;
-}
-
-#drawer{
-position:fixed;
-top:0;
-left:-260px;
-width:260px;
-height:100%;
-background:#111;
-transition:0.3s;
-padding:20px;
-}
-
-#drawer.open{
-left:0;
-}
-
-.card{
-background:#171717;
-padding:16px;
-margin:12px;
-border-radius:12px;
-}
-
-footer{
-text-align:center;
-padding:20px;
-color:#aaa;
-font-size:14px;
-}
-
-input{
-padding:10px;
-width:180px;
-}
-
-button{
-padding:10px 16px;
-margin-left:10px;
-cursor:pointer;
-}
-
+  :root {
+    --bg:#050505;
+    --panel:#111111;
+    --panel2:#171717;
+    --line:rgba(255,255,255,.09);
+    --text:#f7f7f7;
+    --muted:#bdbdbd;
+    --soft:#8b8b8b;
+    --accent:#ffffff;
+    --danger:#ff7b7b;
+    --success:#7fe2a0;
+    --warn:#ffd36f;
+    --shadow:0 20px 50px rgba(0,0,0,.35);
+    --radius:24px;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:transparent; font-family: Inter, Arial, sans-serif; color:var(--text); }
+  a { color:inherit; }
+  #apex-shop-app {
+    width:100%;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at top right, rgba(80,140,255,.10), transparent 18%),
+      radial-gradient(circle at left center, rgba(60,110,220,.08), transparent 24%),
+      linear-gradient(180deg,#000000 0%, #000000 150px, #08111f 280px, #0c1c36 58%, #050505 100%);
+    border-radius:32px;
+    border:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+    position:relative;
+  }
+  #apex-shop-app::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:.11;
+    background-image:
+      radial-gradient(ellipse at 12% 9%, rgba(255,255,255,.16) 0 8%, transparent 9%),
+      radial-gradient(ellipse at 27% 16%, rgba(255,255,255,.13) 0 7%, transparent 8%),
+      radial-gradient(ellipse at 76% 11%, rgba(255,255,255,.14) 0 8%, transparent 9%),
+      radial-gradient(ellipse at 62% 22%, rgba(255,255,255,.10) 0 7%, transparent 8%),
+      radial-gradient(ellipse at 16% 36%, rgba(255,255,255,.12) 0 8%, transparent 9%),
+      radial-gradient(ellipse at 82% 40%, rgba(255,255,255,.10) 0 8%, transparent 9%),
+      radial-gradient(ellipse at 25% 60%, rgba(255,255,255,.11) 0 8%, transparent 9%),
+      radial-gradient(ellipse at 74% 72%, rgba(255,255,255,.10) 0 7%, transparent 8%);
+  }
+  #apex-shop-app::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:.14;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'><defs><linearGradient id='g1' x1='0' x2='0' y1='0' y2='1'><stop stop-color='white' stop-opacity='.16' offset='0'/><stop stop-color='white' stop-opacity='.04' offset='1'/></linearGradient></defs><path fill='url(%23g1)' d='M0 280L120 210L240 250L360 150L480 245L620 110L760 235L900 135L1040 255L1180 170L1320 250L1440 225V320H0Z'/></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'><defs><linearGradient id='g2' x1='0' x2='0' y1='0' y2='1'><stop stop-color='white' stop-opacity='.13' offset='0'/><stop stop-color='white' stop-opacity='.03' offset='1'/></linearGradient></defs><path fill='url(%23g2)' d='M0 290L100 230L220 270L340 175L460 260L600 125L740 275L900 150L1050 265L1190 190L1320 260L1440 235V320H0Z'/></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'><defs><linearGradient id='g3' x1='0' x2='0' y1='0' y2='1'><stop stop-color='white' stop-opacity='.18' offset='0'/><stop stop-color='white' stop-opacity='.05' offset='1'/></linearGradient></defs><path fill='url(%23g3)' d='M0 288L96 224L192 256L288 160L384 256L480 192L576 64L672 224L768 128L864 256L960 96L1056 224L1152 128L1248 288L1344 224L1440 256V320H0Z'/></svg>");
+    background-repeat:no-repeat,no-repeat,no-repeat;
+    background-position:center 26%, center 56%, center bottom;
+    background-size:100% auto, 100% auto, 100% auto;
+  }
+  .wrap { max-width:1220px; margin:0 auto; padding:28px; position:relative; z-index:2; }
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:14px 16px 22px;
+    margin:-8px -8px 10px;
+    background:linear-gradient(180deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.76) 62%, rgba(0,0,0,0) 100%);
+    border-radius:28px;
+  }
+  .top-left{display:flex;align-items:center;gap:12px;min-width:0}
+  .icon-btn {
+    width:48px;height:48px;border-radius:16px;border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.06);color:#fff;cursor:pointer;display:grid;place-items:center;
+    font-size:20px;box-shadow:var(--shadow);position:relative;flex-shrink:0
+  }
+  .notif-badge{
+    position:absolute;top:-6px;right:-6px;min-width:22px;height:22px;border-radius:999px;
+    background:var(--warn);color:#000;font-size:12px;font-weight:800;display:grid;place-items:center;padding:0 6px
+  }
+  .brand { display:flex; align-items:center; gap:14px; min-width:0; }
+  .brand-logo {
+    width:56px; height:56px; border-radius:18px; object-fit:cover;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10);
+    box-shadow:var(--shadow); flex-shrink:0;
+  }
+  .brand h1 { margin:0; font-size:26px; letter-spacing:.8px; }
+  .brand-text { display:flex; flex-direction:column; min-width:0; }
+  .brand p { margin:4px 0 0; color:var(--muted); font-size:14px; }
+  .pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+    color:var(--muted); padding:10px 14px; border-radius:999px; font-size:13px;
+  }
+  .hero {
+    display:grid; grid-template-columns:1.1fr .9fr; gap:28px; align-items:center; padding:18px 0 30px;
+  }
+  .hero h2 { font-size:50px; line-height:1.02; margin:0 0 14px; letter-spacing:-1px; }
+  .hero h2 span { opacity:.8; }
+  .hero p { color:var(--muted); font-size:17px; line-height:1.7; margin:0 0 22px; max-width:760px; }
+  .login-card,.panel,.section-card {
+    background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .login-card { padding:24px; }
+  .login-card h3 { margin:0 0 10px; font-size:24px; }
+  .login-card p { color:var(--muted); line-height:1.6; margin:0 0 18px; }
+  .field { display:flex; gap:12px; flex-wrap:wrap; }
+  .input {
+    flex:1 1 220px; min-height:52px; border-radius:16px; border:1px solid rgba(255,255,255,.1);
+    background:#0c0c0c; color:#fff; padding:0 16px; font-size:16px; outline:none;
+  }
+  .input::placeholder { color:#8c8c8c; }
+  .btn {
+    min-height:52px; padding:0 18px; border-radius:16px; border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.06); color:#fff; font-weight:700; cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; justify-content:center; transition:.2s ease;
+  }
+  .btn:hover { transform:translateY(-1px); }
+  .btn-primary { background:linear-gradient(180deg, #ffffff 0%, #dfdfdf 100%); color:#000; }
+  .btn-secondary { background:rgba(255,255,255,.05); color:#fff; }
+  .helper { margin-top:14px; color:var(--soft); font-size:13px; }
+  .error {
+    display:none; margin-top:14px; padding:12px 14px; border-radius:14px;
+    background:rgba(255,123,123,.09); border:1px solid rgba(255,123,123,.25); color:#ffc0c0; font-size:14px;
+  }
+  .main-app { display:none; margin-top:14px; }
+  .view-panel{display:none; gap:20px}
+  .view-panel.active{display:grid}
+  .panel { padding:24px; }
+  .panel-top {
+    display:flex; justify-content:space-between; gap:18px; align-items:flex-start; flex-wrap:wrap; margin-bottom:18px;
+  }
+  .user h3 { margin:0 0 6px; font-size:28px; }
+  .user p { margin:0; color:var(--muted); line-height:1.6; }
+  .big-saldo {
+    min-width:220px; padding:18px 20px; border-radius:20px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+  }
+  .big-saldo span { display:block; color:var(--muted); font-size:13px; margin-bottom:8px; }
+  .big-saldo strong { font-size:36px; line-height:1; }
+  .stats {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px;
+  }
+  .stat {
+    padding:18px; border-radius:20px; background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .stat .label { display:block; color:var(--muted); font-size:13px; margin-bottom:10px; }
+  .stat .value { font-size:26px; font-weight:800; line-height:1.15; }
+  .section-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:18px; flex-wrap:wrap;
+  }
+  .section-head h4 { margin:0; font-size:24px; }
+  .section-head p { margin:6px 0 0; color:var(--muted); }
+  .rules {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+  }
+  .rule {
+    padding:18px; border-radius:20px; background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .rule strong { display:block; margin-bottom:8px; font-size:16px; }
+  .rule p { margin:0; color:var(--muted); line-height:1.55; font-size:14px; }
+  .profile-hero{
+    display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center;
+    margin-top:8px; padding:18px; border-radius:22px; background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .avatar-wrap{ display:flex; align-items:center; justify-content:center; }
+  .avatar-badge{
+    width:112px;height:112px;border-radius:28px;overflow:hidden;padding:10px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  }
+  .avatar-badge img,.user-mini-avatar img{ width:100%;height:100%;object-fit:contain;display:block; }
+  .user-top-row{ display:flex; align-items:center; gap:14px; }
+  .user-mini-avatar{
+    width:84px;height:84px;border-radius:22px;background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;flex-shrink:0;overflow:hidden;padding:8px;
+  }
+  .level-pill{
+    display:inline-flex; margin-top:10px; padding:8px 12px; border-radius:999px;
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08);
+    font-size:13px; font-weight:700;
+  }
+  .progress-box{ margin-top:14px; }
+  .progress-label{
+    display:flex; justify-content:space-between; gap:12px; color:var(--muted); font-size:13px; margin-bottom:8px;
+  }
+  .progress-track{
+    width:100%; height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;
+    border:1px solid rgba(255,255,255,.07);
+  }
+  .progress-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg,#9c7b47,#d2b47c); width:0%; }
+  .section-list{ display:grid; gap:12px; }
+  .section-item{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 16px; border-radius:18px; background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08); font-size:16px;
+  }
+  .section-item span:last-child{ font-weight:800; text-align:right; }
+  .top-hours-list{ display:grid; gap:12px; }
+  .top-hour-item{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 16px; border-radius:18px; background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .top-hour-left{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .top-rank{
+    width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+    background:rgba(255,255,255,.08);font-size:19px;flex-shrink:0;
+  }
+  .top-hour-name{ font-size:16px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; }
+  .top-hour-time{ color:var(--muted); font-size:14px; }
+  .coming-soon{
+    padding:22px; border-radius:22px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.08); text-align:left;
+  }
+  .coming-soon h5{ margin:0 0 10px; font-size:22px; }
+  .coming-soon p{ margin:0; color:var(--muted); line-height:1.7; }
+  .dev-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .dev-card{
+    padding:18px; border-radius:22px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.08); display:flex; flex-direction:column; gap:12px;
+  }
+  .dev-card .icon{ width:54px; height:54px; display:grid; place-items:center; border-radius:16px; background:rgba(255,255,255,.08); font-size:26px; }
+  .dev-card h5{ margin:0; font-size:20px; }
+  .dev-card p{ margin:0; color:var(--muted); line-height:1.6; }
+  .dev-card .pill{ width:max-content }
+  .notify-item{
+    padding:14px 16px; border-radius:18px; background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08); margin-bottom:12px;
+  }
+  .notify-item strong{ display:block; font-size:16px; margin-bottom:6px; }
+  .notify-item p{ margin:0; color:var(--muted); line-height:1.55; }
+  .notify-item .notify-meta{ margin-top:10px; font-size:13px; color:var(--soft); }
+  .footer-note { color:var(--soft); font-size:13px; text-align:center; padding:14px 0 16px; }
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.55); opacity:0; pointer-events:none; transition:.24s ease; z-index:80;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .drawer, .notif-panel{
+    position:fixed; top:0; height:100vh; width:min(88vw,360px);
+    background:linear-gradient(180deg, rgba(5,5,5,.98), rgba(8,17,31,.98) 46%, rgba(12,28,54,.98) 100%);
+    border:1px solid rgba(255,255,255,.08); z-index:90; padding:18px; overflow-y:auto;
+    transition:.28s ease; box-shadow:var(--shadow);
+  }
+  .drawer{ left:-100%; border-radius:0 26px 26px 0; }
+  .drawer.open{ left:0; }
+  .notif-panel{ right:-100%; border-radius:26px 0 0 26px; }
+  .notif-panel.open{ right:0; }
+  .drawer-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; }
+  .drawer-profile{
+    padding:16px; border-radius:22px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); margin-bottom:16px;
+  }
+  .drawer-profile h4{ margin:0 0 6px; font-size:20px; }
+  .drawer-profile p{ margin:0; color:var(--muted); line-height:1.55; }
+  .menu-list{ display:grid; gap:10px; }
+  .menu-item{
+    padding:14px 16px; border-radius:18px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; font-weight:700;
+  }
+  .menu-item.active{ background:rgba(255,255,255,.11); }
+  .hidden{ display:none!important; }
+  @media (max-width: 1080px) {
+    .hero { grid-template-columns:1fr; }
+    .stats, .rules, .dev-grid { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 680px) {
+    .wrap { padding:18px; }
+    .topbar { align-items:flex-start; flex-direction:column; }
+    .top-left{ width:100%; }
+    .hero h2 { font-size:36px; }
+    .stats, .rules, .dev-grid { grid-template-columns:1fr; }
+    .profile-hero{ grid-template-columns:1fr; }
+    .avatar-wrap{ justify-content:flex-start; }
+    .big-saldo strong { font-size:30px; }
+    .section-head h4 { font-size:22px; }
+  }
 </style>
 </head>
-
 <body>
+<div class="overlay" id="overlay"></div>
 
-<header>
-<div id="menuBtn">☰</div>
-<h2>Apex Connect</h2>
-</header>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="pill">Menu lateral</div>
+    <button class="icon-btn" id="closeDrawer" type="button">✕</button>
+  </div>
 
-<div id="drawer">
-<h3>Menu</h3>
-<p>Dados</p>
-<p>Desenvolvimento</p>
-<p>Apex Shop disponível em breve</p>
+  <div class="drawer-profile">
+    <h4 id="drawerUser">@seu_arroba</h4>
+    <p id="drawerMeta">Faça login com seu ID para liberar as áreas da Apex Connect.</p>
+  </div>
+
+  <div class="menu-list">
+    <div class="menu-item active" data-view="dados"><span>📊 Dados</span><span>›</span></div>
+    <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
+    <div class="menu-item" data-view="shop"><span>🛍️ Apex Conect disponível em breve</span><span>›</span></div>
+  </div>
+</aside>
+
+<aside class="notif-panel" id="notifPanel">
+  <div class="drawer-head">
+    <div class="pill">Notificações</div>
+    <button class="icon-btn" id="closeNotif" type="button">✕</button>
+  </div>
+  <div id="notifList"></div>
+</aside>
+
+<div id="apex-shop-app">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="top-left">
+        <button class="icon-btn hidden" id="openDrawer" type="button">☰</button>
+        <div class="brand">
+          <img class="brand-logo" src="Apex Conect Logo.png" alt="Logo Apex Conect" />
+          <div class="brand-text">
+            <h1>Apex Connect</h1>
+            <p>Relatório individual + resgates internos da agência</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <button class="icon-btn hidden" id="openNotif" type="button">
+          🔔
+          <span class="notif-badge" id="notifBadge">3</span>
+        </button>
+        <div class="pill" id="accessStatus">Acesso por ID • 6 últimos dígitos</div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div class="pill" style="margin-bottom:14px;">Programa interno</div>
+        <h2>Entre com os <span>6 últimos dígitos</span> do seu ID</h2>
+        <p>
+          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong> e <strong>Desenvolvimento</strong>, além do <strong>Apex Shop disponível em breve</strong>.
+        </p>
+      </div>
+
+      <div class="login-card">
+        <h3>Entrar na Apex Connect</h3>
+        <p>Digite apenas os 6 últimos dígitos do seu ID para acessar sua área individual.</p>
+        <div class="field">
+          <input class="input" id="loginInput" inputmode="numeric" maxlength="6" placeholder="Ex.: 000000" />
+          <button class="btn btn-primary" id="enterBtn" type="button">ENTRAR</button>
+        </div>
+        <div class="helper">Digite os 6 últimos dígitos do seu ID para acessar sua área individual.</div>
+        <div class="error" id="errorBox"></div>
+      </div>
+    </section>
+
+    <section class="main-app" id="mainApp">
+      <div class="view-panel active" id="view-dados">
+        <div class="panel">
+          <div class="panel-top">
+            <div class="user user-top">
+              <div class="user-top-row">
+                <div class="user-mini-avatar" id="userMiniAvatar"></div>
+                <div>
+                  <h3 id="userName">seu_arroba</h3>
+                  <p id="userMetaTop">ID final: 000000 • Período: --/-- a --/--</p>
+                </div>
+              </div>
+            </div>
+            <div class="big-saldo">
+              <span>Saldo atual</span>
+              <strong id="saldoValue">0 Ᵽ</strong>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <span class="label">Diamantes</span>
+              <div class="value" id="diamantesValue">0</div>
+            </div>
+            <div class="stat">
+              <span class="label">Duração da LIVE</span>
+              <div class="value" id="horasValue" style="font-size:22px;">0h 0m 0s</div>
+            </div>
+            <div class="stat">
+              <span class="label">Dias válidos</span>
+              <div class="value" id="diasValue">0</div>
+            </div>
+            <div class="stat">
+              <span class="label">Lives feitas</span>
+              <div class="value" id="livesValue">0</div>
+            </div>
+          </div>
+
+          <div class="profile-hero">
+            <div class="avatar-wrap">
+              <div class="avatar-badge" id="avatarBox"></div>
+            </div>
+            <div class="profile-copy">
+              <h4 id="nivelNome" style="margin:0 0 4px;font-size:22px;">Alpinista Bronze</h4>
+              <p id="nivelTexto" style="margin:0;color:var(--muted);line-height:1.55;">Seu avatar muda de acordo com sua faixa de horas dentro da Apex Conect.</p>
+              <div class="level-pill">Alpinista Bronze: abaixo de 50h • Alpinista Prata: 50h a 99h • Alpinista Ouro: 100h+</div>
+              <div class="progress-box">
+                <div class="progress-label">
+                  <span>Progresso de nível</span>
+                  <span id="progressInfo">0h / 50h</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Resumo de batalhas</h4>
+              <p>Dados separados do bloco principal, conforme solicitado.</p>
+            </div>
+            <div class="pill">Batalhas</div>
+          </div>
+          <div class="section-list">
+            <div class="section-item"><span>Total de batalhas</span><span id="batalhasValue">0</span></div>
+            <div class="section-item"><span>Diamantes em batalhas</span><span id="diamantesBatalhasValue">0</span></div>
+            <div class="section-item"><span>Posição no Top Horas</span><span id="topHorasPosicao">#0</span></div>
+          </div>
+        </div>
+
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Comparativo com o mês anterior</h4>
+              <p>Comparativo separado do resumo de batalhas.</p>
+            </div>
+            <div class="pill">Mês anterior</div>
+          </div>
+          <div class="section-list">
+            <div class="section-item"><span>💎 Diamantes do mês passado</span><span id="diamantesPassadoValue">0</span></div>
+            <div class="section-item"><span>⏰ Duração do mês passado</span><span id="duracaoPassadoValue">0</span></div>
+            <div class="section-item"><span>🗓️ Dias válidos</span><span id="diasPassadoValue">0</span></div>
+            <div class="section-item"><span>💫 Lives</span><span id="livesPassadoValue">0</span></div>
+          </div>
+        </div>
+
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Top Horas</h4>
+              <p>Ranking geral exibido em bloco separado.</p>
+            </div>
+            <div class="pill">Top Horas</div>
+          </div>
+          <div class="top-hours-list" id="topHorasLista"></div>
+        </div>
+      </div>
+
+      <div class="view-panel" id="view-desenvolvimento">
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Desenvolvimento</h4>
+              <p>Espaço para concentrar benefícios, treinamentos e encontros da agência.</p>
+            </div>
+            <div class="pill">Conteúdos internos</div>
+          </div>
+
+          <div class="dev-grid">
+            <div class="dev-card">
+              <div class="icon">🇬🇧</div>
+              <h5>Curso de inglês</h5>
+              <p>Área para divulgar turma atual, cronograma, orientações e link principal de acesso.</p>
+              <div class="pill">Turma disponível</div>
+              <a class="btn btn-secondary" href="#" target="_blank" rel="noopener">ABRIR LINK</a>
+            </div>
+
+            <div class="dev-card">
+              <div class="icon">🎓</div>
+              <h5>Treinamento inicial</h5>
+              <p>Espaço para onboarding, diretrizes, vídeos, PDFs e conteúdos base para novos criadores.</p>
+              <div class="pill">Material base</div>
+              <a class="btn btn-secondary" href="#" target="_blank" rel="noopener">ABRIR MATERIAL</a>
+            </div>
+
+            <div class="dev-card">
+              <div class="icon">🧠</div>
+              <h5>Mentoria / Workshop</h5>
+              <p>Workshop com a psicopedagoga toda quarta-feira às 19h30, com link direto para acesso.</p>
+              <div class="pill">Quarta • 19:30</div>
+              <a class="btn btn-secondary" href="#" target="_blank" rel="noopener">ENTRAR NO WORKSHOP</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view-panel" id="view-shop">
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Apex Conect disponível em breve</h4>
+              <p>Loja temporariamente oculta nesta versão.</p>
+            </div>
+            <div class="pill">Em breve</div>
+          </div>
+
+          <div class="coming-soon">
+            <h5>Apex Conect disponível em breve</h5>
+            <p>
+              Por enquanto, a loja permanece oculta. O saldo está zerado para todos os acessos
+              e a área de resgates não está sendo exibida nesta atualização semanal.
+            </p>
+          </div>
+
+          <div class="section-head" style="margin-top:22px;">
+            <div>
+              <h4>Regras da Apex Conect</h4>
+              <p>Informações fixas do programa de resgates.</p>
+            </div>
+            <button class="btn btn-secondary" id="logoutBtn" type="button">SAIR</button>
+          </div>
+
+          <div class="rules">
+            <div class="rule"><strong>Expiração dos Ᵽicos</strong><p>Os Ᵽicos expiram a cada 90 dias.</p></div>
+            <div class="rule"><strong>1 resgate por mês</strong><p>Cada streamer tem direito a um resgate por mês.</p></div>
+            <div class="rule"><strong>Limite de itens</strong><p>A disponibilidade dos itens pode variar conforme o período.</p></div>
+            <div class="rule"><strong>Janela da loja</strong><p>A loja fica disponível por 48 horas em cada abertura.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">Apex Connect Beta v0.02 - Todos direitos reservados à Assessoria Apex Agency LTDA.</div>
+  </div>
 </div>
-
-<div style="padding:20px">
-
-<div class="card">
-<h3>Acesso ao site</h3>
-<p>Digite os 6 últimos dígitos do seu ID:</p>
-<input id="userID" placeholder="000000">
-<button onclick="login()">Entrar</button>
-</div>
-
-<div id="dadosArea"></div>
-
-</div>
-
-<footer>
-Apex Connect Beta v0.02 - Todos direitos reservados à Assessoria Apex Agency LTDA.
-</footer>
 
 <script>
-
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBN9qWKYpXhC1ZfuH1qiQTY0D9pty3vhKeqeLjMYA/exec";
 
-document.getElementById("menuBtn").onclick = () => {
-document.getElementById("drawer").classList.toggle("open");
+const loginInput = document.getElementById("loginInput");
+const enterBtn = document.getElementById("enterBtn");
+const errorBox = document.getElementById("errorBox");
+const mainApp = document.getElementById("mainApp");
+const logoutBtn = document.getElementById("logoutBtn");
+const accessStatus = document.getElementById("accessStatus");
+
+const userMiniAvatar = document.getElementById("userMiniAvatar");
+const avatarBox = document.getElementById("avatarBox");
+const userName = document.getElementById("userName");
+const userMetaTop = document.getElementById("userMetaTop");
+const saldoValue = document.getElementById("saldoValue");
+const diamantesValue = document.getElementById("diamantesValue");
+const horasValue = document.getElementById("horasValue");
+const diasValue = document.getElementById("diasValue");
+const livesValue = document.getElementById("livesValue");
+const nivelNome = document.getElementById("nivelNome");
+const nivelTexto = document.getElementById("nivelTexto");
+const progressInfo = document.getElementById("progressInfo");
+const progressFill = document.getElementById("progressFill");
+const batalhasValue = document.getElementById("batalhasValue");
+const diamantesBatalhasValue = document.getElementById("diamantesBatalhasValue");
+const topHorasPosicao = document.getElementById("topHorasPosicao");
+const diamantesPassadoValue = document.getElementById("diamantesPassadoValue");
+const duracaoPassadoValue = document.getElementById("duracaoPassadoValue");
+const diasPassadoValue = document.getElementById("diasPassadoValue");
+const livesPassadoValue = document.getElementById("livesPassadoValue");
+const topHorasLista = document.getElementById("topHorasLista");
+const devGrid = document.getElementById("devGrid");
+
+const overlay = document.getElementById("overlay");
+const drawer = document.getElementById("drawer");
+const notifPanel = document.getElementById("notifPanel");
+const openDrawer = document.getElementById("openDrawer");
+const closeDrawer = document.getElementById("closeDrawer");
+const openNotif = document.getElementById("openNotif");
+const closeNotif = document.getElementById("closeNotif");
+const drawerUser = document.getElementById("drawerUser");
+const drawerMeta = document.getElementById("drawerMeta");
+const notifBadge = document.getElementById("notifBadge");
+const notifList = document.getElementById("notifList");
+
+let appData = {
+  periodo: "",
+  criadores: [],
+  top_horas: [],
+  notificacoes: [],
+  desenvolvimento: []
+};
+
+function normalizeLogin(value) {
+  return String(value || "").replace(/\D+/g, "").slice(0, 6);
 }
-
-async function login(){
-const id = document.getElementById("userID").value;
-
-const res = await fetch(APPS_SCRIPT_URL);
-const data = await res.json();
-
-const user = data.criadores.find(c => c.id == id);
-
-if(!user){
-alert("ID não encontrado");
-return;
+function showError(message) {
+  errorBox.textContent = message;
+  errorBox.style.display = "block";
 }
-
-mostrarDados(user);
+function clearError() {
+  errorBox.textContent = "";
+  errorBox.style.display = "none";
 }
-
-function mostrarDados(user){
-
-document.getElementById("dadosArea").innerHTML = `
-
-<div class="card">
-<h3>Diamantes</h3>
-<p>${user.diamantes}</p>
-</div>
-
-<div class="card">
-<h3>Duração da LIVE</h3>
-<p>${user.horas}</p>
-</div>
-
-<div class="card">
-<h3>Dias válidos</h3>
-<p>${user.dias}</p>
-</div>
-
-<div class="card">
-<h3>Lives feitas</h3>
-<p>${user.lives}</p>
-</div>
-
-`;
-
+function parseHoursToFloat(text) {
+  const value = String(text || "");
+  const h = Number((value.match(/(\d+)h/) || [0, 0])[1]);
+  const m = Number((value.match(/(\d+)m/) || [0, 0])[1]);
+  const s = Number((value.match(/(\d+)s/) || [0, 0])[1]);
+  return h + (m / 60) + (s / 3600);
 }
+function getLevelData(hoursText) {
+  const hours = parseHoursToFloat(hoursText);
+  if (hours >= 100) {
+    return {
+      level: "Ouro",
+      title: "Alpinista Ouro",
+      text: "Você está na faixa Ouro, com excelente volume de horas no período.",
+      progress: 100,
+      info: `${Math.floor(hours)}h / 100h+`
+    };
+  }
+  if (hours >= 50) {
+    return {
+      level: "Prata",
+      title: "Alpinista Prata",
+      text: "Você está na faixa Prata. Continue para alcançar o nível Ouro.",
+      progress: Math.min(100, Math.round((hours / 100) * 100)),
+      info: `${Math.floor(hours)}h / 100h`
+    };
+  }
+  return {
+    level: "Bronze",
+    title: "Alpinista Bronze",
+    text: "Você está na faixa Bronze. Continue evoluindo suas horas para subir de nível.",
+    progress: Math.min(100, Math.round((hours / 50) * 100)),
+    info: `${Math.floor(hours)}h / 50h`
+  };
+}
+function avatarHTML(hoursText) {
+  const level = getLevelData(hoursText);
+  if (level.level === "Ouro") {
+    return `<img alt="Alpinista Ouro" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><rect rx='30' width='160' height='160' fill='%230d0d0d'/><circle cx='80' cy='90' r='42' fill='%23f0d37d'/><path d='M52 58l12 16 16-20 16 20 12-16 8 30H44z' fill='%23c89f39'/><circle cx='80' cy='88' r='24' fill='%23fff2b2'/></svg>">`;
+  }
+  if (level.level === "Prata") {
+    return `<img alt="Alpinista Prata" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><rect rx='30' width='160' height='160' fill='%230d0d0d'/><circle cx='80' cy='90' r='42' fill='%23d9d9d9'/><path d='M52 58l12 16 16-20 16 20 12-16 8 30H44z' fill='%239da3a8'/><circle cx='80' cy='88' r='24' fill='%23f5f5f5'/></svg>">`;
+  }
+  return `<img alt="Alpinista Bronze" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><rect rx='30' width='160' height='160' fill='%230d0d0d'/><circle cx='80' cy='90' r='42' fill='%23c67c3d'/><path d='M52 58l12 16 16-20 16 20 12-16 8 30H44z' fill='%239b5c27'/><circle cx='80' cy='88' r='24' fill='%23e1a26f'/></svg>">`;
+}
+function closePanels() {
+  drawer.classList.remove("open");
+  notifPanel.classList.remove("open");
+  overlay.classList.remove("show");
+}
+function openDrawerPanel() {
+  if (mainApp.style.display === "none") return;
+  notifPanel.classList.remove("open");
+  drawer.classList.add("open");
+  overlay.classList.add("show");
+}
+function openNotifPanel() {
+  if (mainApp.style.display === "none") return;
+  drawer.classList.remove("open");
+  notifPanel.classList.add("open");
+  overlay.classList.add("show");
+}
+function setView(viewName) {
+  document.querySelectorAll(".view-panel").forEach(el => el.classList.remove("active"));
+  const panel = document.getElementById(`view-${viewName}`);
+  if (panel) panel.classList.add("active");
+  document.querySelectorAll(".menu-item").forEach(el => {
+    el.classList.toggle("active", el.dataset.view === viewName);
+  });
+}
+function renderNotificacoes() {
+  const ativos = (appData.notificacoes || []).filter(item => String(item.status || "ativo").toLowerCase() === "ativo");
+  notifBadge.textContent = String(ativos.length);
+  notifList.innerHTML = ativos.length ? ativos.map(item => `
+    <div class="notify-item">
+      <strong>${item.titulo || "-"}</strong>
+      <p>${item.descricao || ""}</p>
+      <div class="notify-meta">${item.data || ""}${item.horario ? " • " + item.horario : ""}</div>
+    </div>
+  `).join("") : `<div class="notify-item"><strong>Nenhuma notificação</strong><p>Não há avisos ativos no momento.</p></div>`;
+}
+function renderTopHoras() {
+  topHorasLista.innerHTML = "";
+  (appData.top_horas || []).forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "top-hour-item";
+    row.innerHTML = `
+      <div class="top-hour-left">
+        <div class="top-rank">👑</div>
+        <div>
+          <div class="top-hour-name">Top ${item.posicao || "-"} • @${item.arroba || item.display || "-"}</div>
+          <div class="top-hour-time">${item.duracao_live || item.horas || "-"}</div>
+        </div>
+      </div>
+      <div class="pill">#${item.posicao || "-"}</div>
+    `;
+    topHorasLista.appendChild(row);
+  });
+}
+function renderDesenvolvimento() {
+  const itens = appData.desenvolvimento || [];
+  const fallback = [
+    {tipo:"ingles", titulo:"Curso de inglês", descricao:"Área para divulgar turma atual, cronograma e link principal de acesso.", data:"", horario:"", link:"#"},
+    {tipo:"treinamento", titulo:"Treinamento inicial", descricao:"Espaço para onboarding, diretrizes, vídeos, PDFs e conteúdos base.", data:"", horario:"", link:"#"},
+    {tipo:"workshop", titulo:"Mentoria / Workshop", descricao:"Workshop com a psicopedagoga toda quarta-feira às 19h30.", data:"", horario:"19:30", link:"#"}
+  ];
+  const cards = itens.length ? itens : fallback;
+  const icons = { ingles:"🇬🇧", treinamento:"🎓", workshop:"🧠", mentoria:"🧠", relatorio:"📊" };
+  devGrid.innerHTML = cards.map(item => `
+    <div class="dev-card">
+      <div class="icon">${icons[String(item.tipo || "").toLowerCase()] || "🚀"}</div>
+      <h5>${item.titulo || "-"}</h5>
+      <p>${item.descricao || ""}</p>
+      <div class="pill">${item.data || "Conteúdo disponível"}${item.horario ? " • " + item.horario : ""}</div>
+      <a class="btn btn-secondary" href="${item.link || "#"}" target="_blank" rel="noopener">ABRIR LINK</a>
+    </div>
+  `).join("");
+}
+function renderLevel(user) {
+  const level = getLevelData(user.duracao_live || user.horas || "0h 0m 0s");
+  avatarBox.innerHTML = avatarHTML(user.duracao_live || user.horas || "0h 0m 0s");
+  userMiniAvatar.innerHTML = avatarHTML(user.duracao_live || user.horas || "0h 0m 0s");
+  nivelNome.textContent = level.title;
+  nivelTexto.textContent = level.text;
+  progressInfo.textContent = level.info;
+  progressFill.style.width = `${level.progress}%`;
+  if (level.level === "Ouro") {
+    progressFill.style.background = "linear-gradient(90deg,#dcb33a,#f1d774)";
+  } else if (level.level === "Prata") {
+    progressFill.style.background = "linear-gradient(90deg,#97988f,#c8c9c1)";
+  } else {
+    progressFill.style.background = "linear-gradient(90deg,#b16e2c,#d58e45)";
+  }
+}
+function fillUser(user) {
+  mainApp.style.display = "block";
+  userName.textContent = user.arroba || "seu_arroba";
+  userMetaTop.textContent = `ID final: ${user.id || "000000"} • Período: ${appData.periodo || "--/-- a --/--"}`;
+  drawerUser.textContent = `@${user.arroba || "seu_arroba"}`;
+  drawerMeta.textContent = `ID final: ${user.id || "000000"} • Navegue pelo menu lateral da Apex Connect.`;
+  accessStatus.textContent = `Acesso liberado • @${user.arroba || "seu_arroba"}`;
+  document.getElementById("openDrawer").classList.remove("hidden");
+  document.getElementById("openNotif").classList.remove("hidden");
 
+  saldoValue.textContent = user.picos || "0 Ᵽ";
+  diamantesValue.textContent = user.diamantes || "0";
+  horasValue.textContent = user.duracao_live || user.horas || "0h 0m 0s";
+  diasValue.textContent = user.dias_validos || user.dias || "0";
+  livesValue.textContent = user.lives_feitas || user.lives || "0";
+  renderLevel(user);
+
+  batalhasValue.textContent = user.batalhas_total || user.batalhas || "0";
+  diamantesBatalhasValue.textContent = user.diamantes_batalhas || "0";
+  topHorasPosicao.textContent = user.top_horas_posicao ? `#${user.top_horas_posicao}` : (user.top_horas || "#0");
+
+  diamantesPassadoValue.textContent = user.diamantes_mes_passado || "0";
+  duracaoPassadoValue.textContent = user.duracao_mes_passado || "0";
+  diasPassadoValue.textContent = user.dias_validos_mes_passado || user.dias_mes_passado || "0";
+  livesPassadoValue.textContent = user.lives_feitas_mes_passado || user.lives_mes_passado || "0";
+
+  renderTopHoras();
+  renderNotificacoes();
+  renderDesenvolvimento();
+  setView("dados");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+async function loadRemoteData() {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("COLE_AQUI")) {
+    throw new Error("Você ainda precisa colar a URL do Apps Script no código.");
+  }
+  const response = await fetch(APPS_SCRIPT_URL, { cache: "no-store" });
+  if (!response.ok) throw new Error("Não foi possível carregar os dados da planilha.");
+  const data = await response.json();
+  appData = {
+    periodo: data.periodo || "",
+    criadores: Array.isArray(data.criadores) ? data.criadores : [],
+    top_horas: Array.isArray(data.top_horas) ? data.top_horas : [],
+    notificacoes: Array.isArray(data.notificacoes) ? data.notificacoes : [],
+    desenvolvimento: Array.isArray(data.desenvolvimento) ? data.desenvolvimento : []
+  };
+  renderTopHoras();
+  renderNotificacoes();
+  renderDesenvolvimento();
+}
+async function handleEnter() {
+  try {
+    clearError();
+    if (!appData.criadores.length) {
+      await loadRemoteData();
+    }
+    const login = normalizeLogin(loginInput.value);
+    const found = appData.criadores.find(u => String(u.id || "") === login);
+    if (!found) {
+      showError("ID não encontrado. Confira os 6 últimos dígitos e tente novamente.");
+      return;
+    }
+    fillUser(found);
+  } catch (error) {
+    showError(error.message || "Erro ao carregar os dados.");
+  }
+}
+function handleLogout() {
+  mainApp.style.display = "none";
+  loginInput.value = "";
+  accessStatus.textContent = "Acesso por ID • 6 últimos dígitos";
+  drawerUser.textContent = "@seu_arroba";
+  drawerMeta.textContent = "Faça login com seu ID para liberar as áreas da Apex Connect.";
+  userName.textContent = "seu_arroba";
+  userMetaTop.textContent = "ID final: 000000 • Período: --/-- a --/--";
+  document.getElementById("openDrawer").classList.add("hidden");
+  document.getElementById("openNotif").classList.add("hidden");
+  closePanels();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+enterBtn.addEventListener("click", handleEnter);
+loginInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") handleEnter();
+});
+logoutBtn.addEventListener("click", handleLogout);
+openDrawer.addEventListener("click", openDrawerPanel);
+closeDrawer.addEventListener("click", closePanels);
+openNotif.addEventListener("click", openNotifPanel);
+closeNotif.addEventListener("click", closePanels);
+overlay.addEventListener("click", closePanels);
+document.querySelectorAll(".menu-item").forEach(item => {
+  item.addEventListener("click", () => {
+    setView(item.dataset.view);
+    closePanels();
+    if (mainApp.style.display !== "none") {
+      mainApp.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+  });
+});
+renderNotificacoes();
+renderDesenvolvimento();
 </script>
-
 </body>
 </html>
