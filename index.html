@@ -312,7 +312,7 @@
   <div class="menu-list">
     <div class="menu-item active" data-view="dados"><span>📊 Dados</span><span>›</span></div>
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
-    <div class="menu-item" data-view="shop"><span>🛍️ Apex Connect disponível em breve</span><span>›</span></div>
+    <div class="menu-item" data-view="shop"><span>🛍️ Apex Shop disponível em breve</span><span>›</span></div>
   </div>
 </aside>
 
@@ -352,7 +352,7 @@
         <div class="pill" style="margin-bottom:14px;">Programa interno</div>
         <h2>Entre com os <span>6 últimos dígitos</span> do seu ID</h2>
         <p>
-          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong> e <strong>Desenvolvimento</strong>, além do <strong>Apex Connect disponível em breve</strong>.
+          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong> e <strong>Desenvolvimento</strong>, além do <strong>Apex Shop disponível em breve</strong>.
         </p>
       </div>
 
@@ -512,14 +512,14 @@
         <div class="section-card panel">
           <div class="section-head">
             <div>
-              <h4>Apex Connect disponível em breve</h4>
+              <h4>Apex Shop disponível em breve</h4>
               <p>Loja temporariamente oculta nesta versão.</p>
             </div>
             <div class="pill">Em breve</div>
           </div>
 
           <div class="coming-soon">
-            <h5>Apex Connect disponível em breve</h5>
+            <h5>Apex Shop disponível em breve</h5>
             <p>
               Por enquanto, a loja permanece oculta. O saldo está zerado para todos os acessos
               e a área de resgates não está sendo exibida nesta atualização semanal.
@@ -528,10 +528,9 @@
 
           <div class="section-head" style="margin-top:22px;">
             <div>
-              <h4>Regras da Apex Connect</h4>
+              <h4>Regras da Apex Shop</h4>
               <p>Informações fixas do programa de resgates.</p>
             </div>
-            <button class="btn btn-secondary" id="logoutBtn" type="button">SAIR</button>
           </div>
 
           <div class="rules">
@@ -555,7 +554,6 @@ const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
 const errorBox = document.getElementById("errorBox");
 const mainApp = document.getElementById("mainApp");
-const logoutBtn = document.getElementById("logoutBtn");
 const accessStatus = document.getElementById("accessStatus");
 const userMiniAvatar = document.getElementById("userMiniAvatar");
 const avatarBox = document.getElementById("avatarBox");
@@ -921,7 +919,6 @@ enterBtn.addEventListener("click", handleEnter);
 loginInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") handleEnter();
 });
-logoutBtn.addEventListener("click", handleLogout);
 if (drawerLogoutBtn) drawerLogoutBtn.addEventListener("click", handleLogout);
 if (drawerLogoutBtn) drawerLogoutBtn.addEventListener("click", handleLogout);
 openDrawer.addEventListener("click", openDrawerPanel);
