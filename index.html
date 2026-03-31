@@ -321,6 +321,10 @@
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
     <div class="menu-item" data-view="shop"><span>🛍️ Apex Shop disponível em breve</span><span>›</span></div>
   </div>
+
+  <div class="drawer-footer">
+    <button id="drawerLogoutBtn" class="btn btn-secondary hidden" type="button" style="width:100%;">SAIR</button>
+  </div>
 </aside>
 
 <aside class="notif-panel" id="notifPanel">
@@ -743,6 +747,7 @@ function setView(viewName) {
   });
 }
 
+
 function renderNotificacoes() {
   const ativos = (appData.notificacoes || []).filter(item => String(item.status || "ativo").toLowerCase() === "ativo");
   notifBadge.textContent = String(ativos.length);
@@ -784,6 +789,7 @@ function normalizeExternalLink(url) {
   return "https://" + raw;
 }
 
+
 function renderDesenvolvimento() {
   const itens = appData.desenvolvimento || [];
   const fallback = [
@@ -794,19 +800,16 @@ function renderDesenvolvimento() {
   const cards = itens.length ? itens : fallback;
   const icons = { ingles:"🇬🇧", treinamento:"🎓", workshop:"🧠", mentoria:"🧠", relatorio:"📊" };
   if (!devGrid) return;
-
   devGrid.innerHTML = cards.map(item => {
     const href = normalizeExternalLink(item.link);
     const label = getDevelopmentButtonLabel(item.tipo);
     const disabled = href === "#";
-    const updateText = formatUpdatedAgo(item.data);
-
     return `
       <div class="dev-card">
         <div class="icon">${icons[String(item.tipo || "").toLowerCase()] || "🚀"}</div>
         <h5>${item.titulo || "-"}</h5>
         <p>${item.descricao || ""}</p>
-        <div class="pill">${updateText}</div>
+        <div class="pill">${formatUpdatedAgo(item.data)}</div>
         <a class="btn btn-secondary" href="${href}" ${disabled ? 'aria-disabled="true"' : 'target="_blank" rel="noopener noreferrer"'}>${label}</a>
       </div>
     `;
@@ -830,9 +833,14 @@ function fillUser(user) {
   userMetaTop.textContent = `ID final: ${user.id || user.login6 || "000000"} • Período: ${appData.periodo || user.periodo || "--/-- a --/--"}`;
   drawerUser.textContent = `${user.arroba || user.display || "seu_usuario"}`;
   drawerMeta.textContent = `ID: ${user.id || user.login6 || "000000"}`;
-  accessStatus.textContent = `Acesso liberado • @${user.arroba || user.display || "seu_arroba"}`;
+  accessStatus.textContent = `Acesso liberado • ${user.arroba || user.display || "seu_usuario"}`;
   openDrawer.classList.remove("hidden");
   openNotif.classList.remove("hidden");
+  if (drawerLogoutBtn) { drawerLogoutBtn.classList.remove("hidden"); drawerLogoutBtn.style.display = "inline-flex"; }
+  const preLoginHero = document.getElementById("preLoginHero");
+  const preLoginLoginCard = document.getElementById("preLoginLoginCard");
+  if (preLoginHero) preLoginHero.style.display = "none";
+  if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
   if (drawerLogoutBtn) { drawerLogoutBtn.classList.remove("hidden"); drawerLogoutBtn.style.display = "inline-flex"; }
   const preLoginHero = document.getElementById("preLoginHero");
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
