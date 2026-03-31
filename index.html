@@ -631,6 +631,121 @@
     }
   }
 
+
+  @media (max-width: 768px) {
+    #preLoginHero {
+      gap: 12px !important;
+      padding-top: 8px !important;
+      padding-bottom: 12px !important;
+    }
+
+    #preLoginHero > div:first-child {
+      margin-bottom: 0 !important;
+    }
+
+    #preLoginHero > div:first-child .pill {
+      margin-bottom: 10px !important;
+      width: auto !important;
+      display: inline-flex !important;
+      padding: 8px 12px !important;
+      font-size: 12px !important;
+    }
+
+    #preLoginHero h2 {
+      font-size: 22px !important;
+      line-height: 1.08 !important;
+      margin: 0 0 10px !important;
+      max-width: 280px !important;
+    }
+
+    #preLoginHero p {
+      font-size: 13px !important;
+      line-height: 1.5 !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+    }
+
+    #preLoginLoginCard {
+      margin-top: 0 !important;
+      padding: 16px !important;
+    }
+
+    #preLoginLoginCard h3 {
+      font-size: 18px !important;
+      line-height: 1.2 !important;
+      margin: 0 0 8px !important;
+    }
+
+    #preLoginLoginCard p,
+    #preLoginLoginCard .helper {
+      font-size: 13px !important;
+      line-height: 1.45 !important;
+    }
+
+    #preLoginLoginCard .field {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+
+    #preLoginLoginCard .input {
+      width: 100% !important;
+      height: 52px !important;
+      min-height: 52px !important;
+      max-height: 52px !important;
+      padding: 0 16px !important;
+      font-size: 16px !important;
+      line-height: 52px !important;
+      border-radius: 16px !important;
+      box-sizing: border-box !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+    }
+
+    #preLoginLoginCard .btn {
+      width: 100% !important;
+      height: 48px !important;
+      min-height: 48px !important;
+      padding: 0 16px !important;
+      font-size: 15px !important;
+      border-radius: 16px !important;
+    }
+
+    .drawer-head .pill {
+      width: auto !important;
+      min-width: 52px;
+      justify-content: center !important;
+    }
+
+    .drawer-footer {
+      display: block !important;
+    }
+
+    .drawer-footer .btn {
+      width: 100% !important;
+      display: inline-flex !important;
+      justify-content: center !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    #preLoginHero h2 {
+      font-size: 19px !important;
+      max-width: 240px !important;
+    }
+
+    #preLoginLoginCard {
+      padding: 14px !important;
+    }
+
+    #preLoginLoginCard .input {
+      height: 50px !important;
+      min-height: 50px !important;
+      max-height: 50px !important;
+      line-height: 50px !important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -638,7 +753,7 @@
 
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
-    <div class="pill">Menu lateral</div>
+    <div class="pill">•••</div>
     <button class="icon-btn" id="closeDrawer" type="button">✕</button>
   </div>
 
@@ -654,7 +769,7 @@
   </div>
 
   <div class="drawer-footer">
-    <button class="btn btn-secondary hidden" id="drawerLogoutBtn" type="button" style="width:100%;">SAIR</button>
+    <button class="btn btn-secondary" id="drawerLogoutBtn" type="button" style="width:100%;">SAIR</button>
   </div>
 </aside>
 
@@ -934,6 +1049,21 @@ const notifList = document.getElementById("notifList");
 
 let appData = { periodo: "", criadores: [], top_horas: [], notificacoes: [], desenvolvimento: [] };
 
+function formatDiamondsK(value) {
+  if (value === null || value === undefined || value === "") return "0";
+
+  const original = String(value).trim();
+  const numeric = Number(original.replace(/[^\d.-]/g, ""));
+
+  if (Number.isNaN(numeric)) return original;
+
+  if (Math.abs(numeric) >= 1000) {
+    return (numeric / 1000).toFixed(1).replace(".", ",") + "K";
+  }
+
+  return String(Math.round(numeric));
+}
+
 function normalizeLogin(value) {
   return String(value || "").replace(/\D+/g, "").slice(0, 6);
 }
@@ -1150,7 +1280,7 @@ function fillUser(user) {
   saveSession(user.id || user.login6 || "");
 
   saldoValue.textContent = user.picos || "0 Ᵽ";
-  diamantesValue.textContent = user.diamantes || "0";
+  diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
   horasValue.textContent = user.duracao_live || user.horas || "0h 0m 0s";
   diasValue.textContent = user.dias_validos || user.dias || "0";
   livesValue.textContent = user.lives_feitas || user.lives || "0";
@@ -1160,7 +1290,7 @@ function fillUser(user) {
   diamantesBatalhasValue.textContent = user.diamantes_batalhas || "0";
   topHorasPosicao.textContent = user.top_horas_posicao ? `#${user.top_horas_posicao}` : (user.top_horas || "#0");
 
-  diamantesPassadoValue.textContent = user.diamantes_mes_passado || "0";
+  diamantesPassadoValue.textContent = formatDiamondsK(user.diamantes_mes_passado || "0");
   duracaoPassadoValue.textContent = user.duracao_mes_passado || "0";
   diasPassadoValue.textContent = user.dias_validos_mes_passado || user.dias_mes_passado || "0";
   livesPassadoValue.textContent = user.lives_feitas_mes_passado || user.lives_mes_passado || "0";
