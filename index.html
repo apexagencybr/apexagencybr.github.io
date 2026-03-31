@@ -323,7 +323,7 @@
   </div>
 
   <div class="drawer-footer">
-    <button id="drawerLogoutBtn" class="btn btn-secondary hidden" type="button" style="width:100%;">SAIR</button>
+    <button id="drawerLogoutBtn" class="btn btn-secondary" type="button" style="width:100%;">SAIR</button>
   </div>
 </aside>
 
@@ -947,12 +947,11 @@ function handleLogout() {
   userMetaTop.textContent = "ID final: 000000 • Período: --/-- a --/--";
   openDrawer.classList.add("hidden");
   openNotif.classList.add("hidden");
-  if (drawerLogoutBtn) { drawerLogoutBtn.classList.add("hidden"); drawerLogoutBtn.style.display = ""; }
   const preLoginHero = document.getElementById("preLoginHero");
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
   if (preLoginHero) preLoginHero.style.display = "";
   if (preLoginLoginCard) preLoginLoginCard.style.display = "";
-  clearSession();
+  try { localStorage.removeItem("apex_connect_login6"); } catch (e) {}
   closePanels();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
