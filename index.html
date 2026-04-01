@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1107,6 +1106,14 @@ align-items:stretch; grid-template-columns:1fr; }
             </div>
 
             <div class="status-box" id="indicacaoStatus"></div>
+
+            <form id="referralForm" method="POST" action="https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec" target="hidden_iframe" style="display:none;">
+              <input type="hidden" name="idUsuario" id="formIdUsuario" />
+              <input type="hidden" name="nomeUsuario" id="formNomeUsuario" />
+              <input type="hidden" name="usuarioTikTok" id="formUsuarioTikTok" />
+              <input type="hidden" name="whatsapp" id="formWhatsapp" />
+            </form>
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
           </div>
 
           <div class="section-card panel">
@@ -1170,23 +1177,13 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    
-
-<form id="indicacaoForm" action="https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec" method="POST" target="indicacaoSubmitFrame" class="hidden">
-  <input type="hidden" name="idUsuario" id="indicacaoFormIdUsuario">
-  <input type="hidden" name="nomeUsuario" id="indicacaoFormNomeUsuario">
-  <input type="hidden" name="usuarioTikTok" id="indicacaoFormUsuarioTikTok">
-  <input type="hidden" name="whatsapp" id="indicacaoFormWhatsapp">
-</form>
-<iframe name="indicacaoSubmitFrame" id="indicacaoSubmitFrame" class="hidden"></iframe>
-
     <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect BETA V0.07</div>
   </div>
 </div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz89VTLrt9owO_7W8fN2RI8VK6eQdA4sJIuEpzIe6DVL3CIMH-MhDblQUC-bQ8hyGgG/exec";
-const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec";
+const REFERRAL_FORM_URL = "https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec";
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -1348,51 +1345,42 @@ function enviarIndicacao() {
   }
 
   if (!/^\d{10,11}$/.test(whatsapp)) {
-    showIndicacaoStatus("Digite o WhatsApp com DDD + número. Ex.: 18999998888", true);
+    showIndicacaoStatus("Digite o WhatsApp com DDD, somente números.", true);
     if (indicacaoWhatsapp) indicacaoWhatsapp.focus();
     return;
   }
 
-  const form = document.getElementById("indicacaoForm");
-  const fieldId = document.getElementById("indicacaoFormIdUsuario");
-  const fieldNome = document.getElementById("indicacaoFormNomeUsuario");
-  const fieldTikTok = document.getElementById("indicacaoFormUsuarioTikTok");
-  const fieldWhatsapp = document.getElementById("indicacaoFormWhatsapp");
-
-  if (!form || !fieldId || !fieldNome || !fieldTikTok || !fieldWhatsapp) {
+  if (!referralForm || !formIdUsuario || !formNomeUsuario || !formUsuarioTikTok || !formWhatsapp) {
     showIndicacaoStatus("Formulário de indicação não encontrado.", true);
     return;
   }
 
-  fieldId.value = String(currentUser.id || currentUser.login6 || "");
-  fieldNome.value = String(currentUser.arroba || currentUser.display || "");
-  fieldTikTok.value = usuarioTikTok;
-  fieldWhatsapp.value = whatsapp;
+  formIdUsuario.value = String(currentUser.id || currentUser.login6 || "");
+  formNomeUsuario.value = String(currentUser.arroba || currentUser.display || currentUser.nome || "");
+  formUsuarioTikTok.value = usuarioTikTok;
+  formWhatsapp.value = whatsapp;
+  referralForm.action = REFERRAL_FORM_URL;
+
+  if (enviarIndicacaoBtn) {
+    enviarIndicacaoBtn.disabled = true;
+    enviarIndicacaoBtn.textContent = "ENVIANDO...";
+  }
 
   try {
-    if (enviarIndicacaoBtn) {
-      enviarIndicacaoBtn.disabled = true;
-      enviarIndicacaoBtn.textContent = "ENVIANDO...";
-    }
-
-    showIndicacaoStatus("Enviando indicação para análise...", false);
-    form.submit();
-
-    window.setTimeout(function(){
-      showIndicacaoStatus("Indicação enviada para análise. Se os dados forem válidos, ela será registrada em instantes.", false);
-      clearIndicacaoFields();
+    referralForm.submit();
+    showIndicacaoStatus("Indicação enviada para analise, copie a mensagem a baixo e envie para seu indicado!");
+    if (indicacaoTikTok) indicacaoTikTok.value = "";
+    if (indicacaoWhatsapp) indicacaoWhatsapp.value = "";
+  } catch (error) {
+    console.error("Erro ao enviar indicação:", error);
+    showIndicacaoStatus("Não foi possível enviar a indicação agora.", true);
+  } finally {
+    window.setTimeout(() => {
       if (enviarIndicacaoBtn) {
         enviarIndicacaoBtn.disabled = false;
         enviarIndicacaoBtn.textContent = "ENVIAR INDICAÇÃO";
       }
-    }, 1200);
-  } catch (error) {
-    console.error("Erro ao enviar indicação:", error);
-    showIndicacaoStatus("Não foi possível enviar a indicação agora.", true);
-    if (enviarIndicacaoBtn) {
-      enviarIndicacaoBtn.disabled = false;
-      enviarIndicacaoBtn.textContent = "ENVIAR INDICAÇÃO";
-    }
+    }, 600);
   }
 }
 
