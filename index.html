@@ -1170,6 +1170,16 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
+    
+
+<form id="indicacaoForm" action="https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec" method="POST" target="indicacaoSubmitFrame" class="hidden">
+  <input type="hidden" name="idUsuario" id="indicacaoFormIdUsuario">
+  <input type="hidden" name="nomeUsuario" id="indicacaoFormNomeUsuario">
+  <input type="hidden" name="usuarioTikTok" id="indicacaoFormUsuarioTikTok">
+  <input type="hidden" name="whatsapp" id="indicacaoFormWhatsapp">
+</form>
+<iframe name="indicacaoSubmitFrame" id="indicacaoSubmitFrame" class="hidden"></iframe>
+
     <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect BETA V0.07</div>
   </div>
 </div>
@@ -1320,7 +1330,7 @@ async function handleCopyMensagem() {
 }
 
 
-async function enviarIndicacao() {
+function enviarIndicacao() {
   clearIndicacaoStatus();
 
   if (!currentUser) {
@@ -1343,12 +1353,21 @@ async function enviarIndicacao() {
     return;
   }
 
-  const payload = {
-    idUsuario: String(currentUser.id || currentUser.login6 || ""),
-    nomeUsuario: String(currentUser.arroba || currentUser.display || ""),
-    usuarioTikTok: usuarioTikTok,
-    whatsapp: whatsapp
-  };
+  const form = document.getElementById("indicacaoForm");
+  const fieldId = document.getElementById("indicacaoFormIdUsuario");
+  const fieldNome = document.getElementById("indicacaoFormNomeUsuario");
+  const fieldTikTok = document.getElementById("indicacaoFormUsuarioTikTok");
+  const fieldWhatsapp = document.getElementById("indicacaoFormWhatsapp");
+
+  if (!form || !fieldId || !fieldNome || !fieldTikTok || !fieldWhatsapp) {
+    showIndicacaoStatus("Formulário de indicação não encontrado.", true);
+    return;
+  }
+
+  fieldId.value = String(currentUser.id || currentUser.login6 || "");
+  fieldNome.value = String(currentUser.arroba || currentUser.display || "");
+  fieldTikTok.value = usuarioTikTok;
+  fieldWhatsapp.value = whatsapp;
 
   try {
     if (enviarIndicacaoBtn) {
@@ -1356,32 +1375,20 @@ async function enviarIndicacao() {
       enviarIndicacaoBtn.textContent = "ENVIANDO...";
     }
 
-    const response = await fetch(REFERRAL_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
+    showIndicacaoStatus("Enviando indicação para análise...", false);
+    form.submit();
 
-    const responseText = await response.text();
-    let result = {};
-
-    try {
-      result = responseText ? JSON.parse(responseText) : {};
-    } catch (parseError) {
-      throw new Error("Resposta inválida do sistema de indicações.");
-    }
-
-    if (!response.ok || result.ok === false || result.success === false) {
-      const serverMessage = result.message || result.error || (response.status === 405 ? "Erro 405. Reimplante o Apps Script como Aplicativo da Web e atualize a implantação." : `Erro ao enviar indicação (${response.status}).`);
-      throw new Error(serverMessage);
-    }
-
-    showIndicacaoStatus(result.message || "Indicação enviada com sucesso.");
-    clearIndicacaoFields();
+    window.setTimeout(function(){
+      showIndicacaoStatus("Indicação enviada para análise. Se os dados forem válidos, ela será registrada em instantes.", false);
+      clearIndicacaoFields();
+      if (enviarIndicacaoBtn) {
+        enviarIndicacaoBtn.disabled = false;
+        enviarIndicacaoBtn.textContent = "ENVIAR INDICAÇÃO";
+      }
+    }, 1200);
   } catch (error) {
     console.error("Erro ao enviar indicação:", error);
-    showIndicacaoStatus(error.message || "Erro ao conectar com o sistema de indicações.", true);
-  } finally {
+    showIndicacaoStatus("Não foi possível enviar a indicação agora.", true);
     if (enviarIndicacaoBtn) {
       enviarIndicacaoBtn.disabled = false;
       enviarIndicacaoBtn.textContent = "ENVIAR INDICAÇÃO";
