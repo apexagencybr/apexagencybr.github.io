@@ -291,12 +291,27 @@ min-height:320px;
   .menu-badge-new{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:999px;background:rgba(127,226,160,.18);border:1px solid rgba(127,226,160,.35);color:var(--success);font-size:11px;font-weight:800;letter-spacing:.4px;line-height:1;text-transform:uppercase;line-height:1;}
   .menu-badge-soon{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:999px;background:rgba(255,211,111,.18);border:1px solid rgba(255,211,111,.35);color:var(--warn);font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;line-height:1;}
   .copy-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px; }
-  .indicacoes-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+  .indicacoes-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
+  .indicacoes-grid .panel{ padding:20px; }
+  .indicacao-field{ margin-top:12px; }
+  .indicacao-field:first-of-type{ margin-top:0; }
+  .indicacao-field .input{
+    width:100%;
+    height:58px !important;
+    min-height:58px !important;
+    max-height:58px !important;
+    padding:0 16px !important;
+    line-height:58px !important;
+    display:block;
+    box-sizing:border-box;
+  }
   .textarea {
-    width:100%; min-height:190px; border-radius:18px; border:1px solid rgba(255,255,255,.1);
+    width:100%; min-height:240px; border-radius:18px; border:1px solid rgba(255,255,255,.1);
     background:#0c0c0c; color:#fff; padding:16px; font-size:15px; line-height:1.6; outline:none; resize:vertical;
     font-family: Inter, Arial, sans-serif;
   }
+  .indicacao-note{ margin-top:12px; color:var(--muted); line-height:1.5; font-size:14px; }
+  .indicacao-mini-helper{ margin-top:8px; color:var(--soft); font-size:13px; }
   .status-box{
     display:none; margin-top:14px; padding:12px 14px; border-radius:14px;
     background:rgba(127,226,160,.09); border:1px solid rgba(127,226,160,.22); color:#d7ffe5; font-size:14px;
@@ -638,6 +653,18 @@ align-items:stretch; grid-template-columns:1fr; }
     }
   }
 
+
+  @media (max-width: 768px) {
+    .indicacoes-grid { grid-template-columns:1fr; gap:14px; }
+    .indicacoes-grid .panel{ padding:16px; }
+    .indicacao-field .input{
+      height:54px !important;
+      min-height:54px !important;
+      max-height:54px !important;
+      line-height:54px !important;
+    }
+    .textarea{ min-height:220px; }
+  }
   @media (max-width: 420px) {
     .hero h2 {
       font-size: 28px;
@@ -1063,15 +1090,16 @@ align-items:stretch; grid-template-columns:1fr; }
               </div>
             </div>
 
-            <div class="field">
+            <div class="indicacao-field">
               <input class="input" id="indicacaoTikTok" placeholder="@usuariotiktok" />
             </div>
 
-            <div class="field" style="margin-top:12px;">
+            <div class="indicacao-field">
               <input class="input" id="indicacaoWhatsapp" inputmode="numeric" placeholder="5511999999999" />
+              <div class="indicacao-mini-helper">Digite o WhatsApp com DDD e código do país, somente números.</div>
             </div>
 
-            <div class="helper">Indique novos usuários para a Apex e ganhe R$30,00 por cada indicação, assim que o indicado concluir o treinamento inicial.</div>
+            <div class="indicacao-note">Indique novos usuários para a Apex e ganhe R$30,00 por cada indicação, assim que o indicado concluir o treinamento inicial.</div>
 
             <div class="copy-grid">
               <button class="btn btn-primary" id="enviarIndicacaoBtn" type="button">ENVIAR INDICAÇÃO</button>
@@ -1095,10 +1123,10 @@ align-items:stretch; grid-template-columns:1fr; }
 *Para se cadastrar é só acessar o link abaixo e preencher seus dados:*
 https://www.tiktok.com/t/ZMSjcemBa/
 
-Após o cadastro, você entrará para análise e assim sendo aprovado, deve chegar um convite dentro do seu aplicativo do TikTok.
-Na aba de notificações do sistema, você consegue visualizar e você deve aceitar o convite.
+Após o cadastro, você entrará para análise e, sendo aprovado, receberá um convite dentro do seu aplicativo do TikTok.
+Na aba de notificações do sistema, você conseguirá visualizar esse convite e deverá aceitá-lo.
 
-A equipe de integração entrará em contato com você em breve, assim que essa análise ser concluída.</textarea>
+A equipe de integração entrará em contato com você em breve, assim que essa análise for concluída.</textarea>
 
             <div class="copy-grid">
               <button class="btn btn-secondary" id="copiarMensagemBtn" type="button">COPIAR MENSAGEM</button>
@@ -1148,6 +1176,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz89VTLrt9owO_7W8fN2RI8VK6eQdA4sJIuEpzIe6DVL3CIMH-MhDblQUC-bQ8hyGgG/exec";
+const REFERRAL_SCRIPT_URL = "COLE_AQUI_A_URL_DO_SCRIPT_DE_INDICACOES";
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -1330,7 +1359,7 @@ async function enviarIndicacao() {
       enviarIndicacaoBtn.textContent = "ENVIANDO...";
     }
 
-    const response = await fetch(APPS_SCRIPT_URL, {
+    const response = await fetch(REFERRAL_SCRIPT_URL, {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
