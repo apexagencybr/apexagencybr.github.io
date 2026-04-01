@@ -1095,8 +1095,8 @@ align-items:stretch; grid-template-columns:1fr; }
             </div>
 
             <div class="indicacao-field">
-              <input class="input" id="indicacaoWhatsapp" inputmode="numeric" placeholder="5511999999999" />
-              <div class="indicacao-mini-helper">Digite o WhatsApp com DDD e código do país, somente números.</div>
+              <input class="input" id="indicacaoWhatsapp" inputmode="numeric" placeholder="18999998888" />
+              <div class="indicacao-mini-helper">Digite o WhatsApp com DDD, somente números.</div>
             </div>
 
             <div class="indicacao-note">Indique novos usuários para a Apex e ganhe R$30,00 por cada indicação, assim que o indicado concluir o treinamento inicial.</div>
@@ -1170,13 +1170,13 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">Apex Connect BETA V0.07</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect BETA V0.07</div>
   </div>
 </div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz89VTLrt9owO_7W8fN2RI8VK6eQdA4sJIuEpzIe6DVL3CIMH-MhDblQUC-bQ8hyGgG/exec";
-const REFERRAL_SCRIPT_URL = "COLE_AQUI_A_URL_DO_SCRIPT_DE_INDICACOES";
+const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec";
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -1337,8 +1337,8 @@ async function enviarIndicacao() {
     return;
   }
 
-  if (!whatsapp || whatsapp.length < 10) {
-    showIndicacaoStatus("Digite um WhatsApp válido com DDD.", true);
+  if (!/^\d{10,11}$/.test(whatsapp)) {
+    showIndicacaoStatus("Digite o WhatsApp com DDD + número. Ex.: 18999998888", true);
     if (indicacaoWhatsapp) indicacaoWhatsapp.focus();
     return;
   }
@@ -1368,11 +1368,12 @@ async function enviarIndicacao() {
 
     const result = await response.json().catch(() => ({}));
 
-    if (!response.ok || result.ok === false) {
-      throw new Error(result.error || `Erro ao enviar indicação (${response.status}).`);
+    if (!response.ok || result.ok === false || result.success === false) {
+      const serverMessage = result.message || result.error || (response.status === 405 ? "Erro 405. Reimplante o Apps Script como Aplicativo da Web e atualize a implantação." : `Erro ao enviar indicação (${response.status}).`);
+      throw new Error(serverMessage);
     }
 
-    showIndicacaoStatus("Indicação enviada com sucesso.");
+    showIndicacaoStatus(result.message || "Indicação enviada com sucesso.");
     clearIndicacaoFields();
   } catch (error) {
     console.error("Erro ao enviar indicação:", error);
