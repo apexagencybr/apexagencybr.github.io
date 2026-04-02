@@ -1170,7 +1170,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect BETA V0.07</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect BETA v0.010</div>
   </div>
 </div>
 
@@ -1316,7 +1316,7 @@ async function copyText(text) {
 
 async function handleCopyMensagem() {
   const copied = await copyText(indicacaoMensagem ? indicacaoMensagem.value : "");
-  showIndicacaoStatus(copied ? "Mensagem copiada com sucesso." : "Não foi possível copiar a mensagem agora.", !copied);
+  showIndicacaoStatus(copied ? "Mensagem copiada com Envio concluído com sucesso.." : "Não foi possível copiar a mensagem agora.", !copied);
 }
 
 
@@ -1373,7 +1373,7 @@ async function enviarIndicacao() {
       throw new Error(serverMessage);
     }
 
-    showIndicacaoStatus(result.message || "Indicação enviada com sucesso.");
+    showIndicacaoStatus(result.message || "Envio concluído com Envio concluído com sucesso..");
     clearIndicacaoFields();
   } catch (error) {
     console.error("Erro ao enviar indicação:", error);
