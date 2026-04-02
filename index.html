@@ -292,6 +292,83 @@ min-height:320px;
   .menu-badge-soon{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:999px;background:rgba(255,211,111,.18);border:1px solid rgba(255,211,111,.35);color:var(--warn);font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;line-height:1;}
   .copy-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px; }
   .indicacoes-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
+
+  .indicacoes-layout{display:grid;grid-template-columns:1fr;gap:16px;}
+  .indicacoes-header-card{
+    padding:20px;border-radius:22px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .indicacoes-top-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .indicacoes-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .indicacoes-list{display:grid;gap:14px;}
+  .indicacao-empty{
+    padding:22px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    color:var(--muted);line-height:1.7;
+  }
+  .indicacao-card{
+    padding:18px;border-radius:22px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .indicacao-card-top{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;
+  }
+  .indicacao-user{font-size:22px;font-weight:800;line-height:1.15;word-break:break-word;}
+  .indicacao-meta{color:var(--muted);font-size:14px;line-height:1.55;margin-top:6px;}
+  .indicacao-status-pill{
+    display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;border-radius:999px;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);font-size:13px;font-weight:800;
+  }
+  .steps-wrap{margin-top:8px;}
+  .steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:start;}
+  .step-item{position:relative;text-align:center;}
+  .step-dot{
+    width:18px;height:18px;border-radius:999px;margin:0 auto 8px;background:rgba(255,255,255,.14);
+    border:2px solid rgba(255,255,255,.12);position:relative;z-index:2;
+  }
+  .step-line{
+    position:absolute;top:8px;left:50%;width:100%;height:3px;background:rgba(255,255,255,.10);z-index:1;
+  }
+  .step-item:last-child .step-line{display:none;}
+  .step-label{font-size:12px;line-height:1.35;color:var(--muted);padding:0 4px;}
+  .step-item.done .step-dot,
+  .step-item.current .step-dot{
+    background:linear-gradient(180deg,#ffffff 0%, #dfdfdf 100%);
+    border-color:rgba(255,255,255,.9);
+    box-shadow:0 0 0 4px rgba(255,255,255,.08);
+  }
+  .step-item.done .step-line,
+  .step-item.current .step-line{background:linear-gradient(90deg, rgba(255,255,255,.85), rgba(255,255,255,.4));}
+  .step-item.current .step-label,
+  .step-item.done .step-label{color:#fff;font-weight:700;}
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:center;justify-content:center;
+    padding:18px;z-index:120;
+  }
+  .modal-backdrop.show{display:flex;animation:apexFadeIn .2s ease;}
+  .indicacao-modal{
+    width:min(100%,640px);max-height:90vh;overflow:auto;padding:20px;border-radius:24px;
+    background:linear-gradient(180deg, rgba(5,5,5,.98), rgba(8,17,31,.98) 46%, rgba(12,28,54,.98) 100%);
+    border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);
+  }
+  .indicacao-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px;}
+  .indicacao-modal-close{
+    width:46px;height:46px;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;
+    cursor:pointer;font-size:20px;flex-shrink:0;
+  }
+  .indicacao-form-grid{display:grid;gap:14px;}
+  .indicacao-modal .copy-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  @keyframes apexFadeIn{from{opacity:0}to{opacity:1}}
+  @media (max-width: 768px){
+    .indicacoes-top-row{flex-direction:column;align-items:stretch}
+    .indicacoes-actions{width:100%}
+    .indicacoes-actions .btn{width:100%}
+    .steps-row{grid-template-columns:1fr 1fr;row-gap:14px}
+    .step-item .step-line{display:none}
+    .indicacao-modal{padding:16px;border-radius:20px}
+    .indicacao-modal .copy-grid{grid-template-columns:1fr}
+    .indicacao-user{font-size:18px}
+  }
+
   .indicacoes-grid .panel{ padding:20px; }
   .indicacao-field{ margin-top:12px; }
   .indicacao-field:first-of-type{ margin-top:0; }
@@ -315,7 +392,14 @@ min-height:320px;
   .status-box{
     display:none; margin-top:14px; padding:12px 14px; border-radius:14px;
     background:rgba(127,226,160,.09); border:1px solid rgba(127,226,160,.22); color:#d7ffe5; font-size:14px;
+    animation:apexFadeInUp .28s ease;
   }
+  
+  @keyframes apexFadeInUp{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
   .status-box.error{
     background:rgba(255,123,123,.09); border-color:rgba(255,123,123,.25); color:#ffc0c0;
   }
@@ -1080,44 +1164,71 @@ align-items:stretch; grid-template-columns:1fr; }
         </div>
       </div>
 
-      <div class="view-panel" id="view-indicacoes">
-        <div class="indicacoes-grid">
-          <div class="section-card panel">
-            <div class="section-head">
+      
+<div class="view-panel" id="view-indicacoes">
+        <div class="indicacoes-layout">
+          <div class="section-card panel indicacoes-header-card">
+            <div class="indicacoes-top-row">
               <div>
-                <h4>Indicações</h4>
-                <p>Indique novos criadores para a Apex e ganhe R$30,00 por cada indicação.</p>
+                <h4 style="margin:0;font-size:24px;">Minhas indicações</h4>
+                <p style="margin:8px 0 0;color:var(--muted);line-height:1.65;">
+                  Acompanhe o andamento das suas indicações e veja em qual etapa cada uma está.
+                </p>
+              </div>
+              <div class="indicacoes-actions">
+                <button class="btn btn-primary" id="abrirNovaIndicacaoBtn" type="button">+ FAZER NOVA INDICAÇÃO</button>
               </div>
             </div>
-
-            <div class="indicacao-field">
-              <input class="input" id="indicacaoTikTok" placeholder="@usuariotiktok" />
+            <div class="helper" style="margin-top:14px;">
+              Não é permitido indicar um usuário já indicado anteriormente ou que já esteja na base da agência.
             </div>
-
-            <div class="indicacao-field">
-              <input class="input" id="indicacaoWhatsapp" inputmode="numeric" placeholder="18999998888" />
-              <div class="indicacao-mini-helper">Digite o WhatsApp com DDD, somente números.</div>
-            </div>
-
-            <div class="indicacao-note">Indique novos usuários para a Apex e ganhe R$30,00 por cada indicação, assim que o indicado concluir o treinamento inicial.</div>
-
-            <div class="copy-grid">
-              <button class="btn btn-primary" id="enviarIndicacaoBtn" type="button">ENVIAR INDICAÇÃO</button>
-              <button class="btn btn-secondary" id="limparIndicacaoBtn" type="button">LIMPAR CAMPOS</button>
-            </div>
-
-            <div class="status-box" id="indicacaoStatus"></div>
           </div>
 
-          <div class="section-card panel">
-            <div class="section-head">
+          <div class="indicacoes-list" id="minhasIndicacoesList">
+            <div class="indicacao-empty">Carregando suas indicações...</div>
+          </div>
+        </div>
+
+        <div class="modal-backdrop" id="indicacaoModalBackdrop">
+          <div class="indicacao-modal">
+            <div class="indicacao-modal-head">
               <div>
-                <h4>Mensagem pronta</h4>
-                <p>Copie a mensagem e envie junto com o link de cadastro.</p>
+                <h4 style="margin:0;font-size:24px;">Fazer nova indicação</h4>
+                <p style="margin:8px 0 0;color:var(--muted);line-height:1.6;">
+                  Envie o @ do TikTok e o WhatsApp do indicado. Se já estiver no sistema ou já tiver sido indicado, o envio será bloqueado.
+                </p>
               </div>
+              <button class="indicacao-modal-close" id="fecharIndicacaoModalBtn" type="button">✕</button>
             </div>
 
-            <textarea class="textarea" id="indicacaoMensagem" readonly>Olá! Estou te enviando o acesso para se cadastrar na Apex Agency.
+            <div class="indicacao-form-grid">
+              <div class="indicacao-field">
+                <input class="input" id="indicacaoTikTok" placeholder="@usuariotiktok" />
+              </div>
+
+              <div class="indicacao-field">
+                <input class="input" id="indicacaoWhatsapp" inputmode="numeric" placeholder="18999998888" />
+                <div class="indicacao-mini-helper">Digite o WhatsApp com DDD, somente números.</div>
+              </div>
+
+              <div class="indicacao-note">Indique novos usuários para a Apex e acompanhe todo o processo por aqui.</div>
+
+              <div class="copy-grid">
+                <button class="btn btn-primary" id="enviarIndicacaoBtn" type="button">ENVIAR INDICAÇÃO</button>
+                <button class="btn btn-secondary" id="limparIndicacaoBtn" type="button">LIMPAR CAMPOS</button>
+              </div>
+
+              <div class="status-box" id="indicacaoStatus"></div>
+
+              <div class="section-card panel" style="padding:18px;">
+                <div class="section-head">
+                  <div>
+                    <h4>Mensagem pronta</h4>
+                    <p>Copie a mensagem e envie junto com o link de cadastro.</p>
+                  </div>
+                </div>
+
+                <textarea class="textarea" id="indicacaoMensagem" readonly>Olá! Estou te enviando o acesso para se cadastrar na Apex Agency.
 > A Apex é uma agência oficial do TikTok LIVE que ajuda criadores a crescerem dentro da plataforma com suporte, treinamentos e acompanhamento.
 
 *Para se cadastrar é só acessar o link abaixo e preencher seus dados:*
@@ -1128,14 +1239,16 @@ Na aba de notificações do sistema, você conseguirá visualizar esse convite e
 
 A equipe de integração entrará em contato com você em breve, assim que essa análise for concluída.</textarea>
 
-            <div class="copy-grid">
-              <button class="btn btn-secondary" id="copiarMensagemBtn" type="button">COPIAR MENSAGEM</button>
+                <div class="copy-grid">
+                  <button class="btn btn-secondary" id="copiarMensagemBtn" type="button">COPIAR MENSAGEM</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="view-panel" id="view-shop">
+<div class="view-panel" id="view-shop">
         <div class="section-card panel">
           <div class="section-head">
             <div>
@@ -1170,13 +1283,13 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect BETA v0.010</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect versão BETA v0.11</div>
   </div>
 </div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz89VTLrt9owO_7W8fN2RI8VK6eQdA4sJIuEpzIe6DVL3CIMH-MhDblQUC-bQ8hyGgG/exec";
-const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqRTMzc3G-Jj6Qgu-T-I70p0LuGYiRlryhtkb8X_KKDBp5CaLY0pNCqHphiKk0VfZx/exec";
+const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9rNurGbqvTtRSw5n-Fy6qsSM2IyY3cVoHfXXDNZhhQ-OFLqbC_vxxdGtmbJHsP_c/exec";
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -1224,11 +1337,17 @@ const copiarMensagemBtn = document.getElementById("copiarMensagemBtn");
 const enviarIndicacaoBtn = document.getElementById("enviarIndicacaoBtn");
 const limparIndicacaoBtn = document.getElementById("limparIndicacaoBtn");
 const indicacaoStatus = document.getElementById("indicacaoStatus");
+const minhasIndicacoesList = document.getElementById("minhasIndicacoesList");
+const abrirNovaIndicacaoBtn = document.getElementById("abrirNovaIndicacaoBtn");
+const indicacaoModalBackdrop = document.getElementById("indicacaoModalBackdrop");
+const fecharIndicacaoModalBtn = document.getElementById("fecharIndicacaoModalBtn");
 
 const INDICACAO_LINK = "https://www.tiktok.com/t/ZMSjcemBa/";
+const INDICACAO_STEPS = ["Em análise", "Dentro da agência", "Integrado", "Indicação paga"];
 
 let appData = { periodo: "", criadores: [], top_horas: [], notificacoes: [], desenvolvimento: [] };
 let currentUser = null;
+let minhasIndicacoesCache = [];
 
 function formatDiamondsK(value) {
   if (value === null || value === undefined || value === "") return "0";
@@ -1260,6 +1379,7 @@ function clearError() {
 }
 
 
+
 function showIndicacaoStatus(message, isError = false) {
   if (!indicacaoStatus) return;
   indicacaoStatus.textContent = message;
@@ -1283,10 +1403,138 @@ function normalizeWhatsapp(value) {
   return String(value || "").replace(/\D+/g, "");
 }
 
+function formatWhatsappVisual(value) {
+  const digits = normalizeWhatsapp(value);
+  if (digits.length === 11) return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+  if (digits.length === 10) return `(${digits.slice(0,2)}) ${digits.slice(2,6)}-${digits.slice(6)}`;
+  return digits || "-";
+}
+
 function clearIndicacaoFields() {
   if (indicacaoTikTok) indicacaoTikTok.value = "";
   if (indicacaoWhatsapp) indicacaoWhatsapp.value = "";
   clearIndicacaoStatus();
+}
+
+function openIndicacaoModal() {
+  if (!indicacaoModalBackdrop) return;
+  indicacaoModalBackdrop.classList.add("show");
+  document.body.style.overflow = "hidden";
+  setTimeout(() => {
+    if (indicacaoTikTok) indicacaoTikTok.focus();
+  }, 50);
+}
+
+function closeIndicacaoModal() {
+  if (!indicacaoModalBackdrop) return;
+  indicacaoModalBackdrop.classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function getIndicacaoStepIndex(status) {
+  const normalized = String(status || "").trim().toLowerCase();
+  if (normalized === "em análise" || normalized === "em analise") return 0;
+  if (normalized === "dentro da agência" || normalized === "dentro da agencia") return 1;
+  if (normalized === "integrado") return 2;
+  if (normalized === "indicação paga" || normalized === "indicacao paga") return 3;
+  return 0;
+}
+
+function getIndicacaoStepsHTML(status) {
+  const currentIndex = getIndicacaoStepIndex(status);
+  return INDICACAO_STEPS.map((label, index) => {
+    const stateClass = index < currentIndex ? "done" : (index === currentIndex ? "current" : "");
+    return `
+      <div class="step-item ${stateClass}">
+        <div class="step-line"></div>
+        <div class="step-dot"></div>
+        <div class="step-label">${label}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderMinhasIndicacoes() {
+  if (!minhasIndicacoesList) return;
+
+  if (!currentUser) {
+    minhasIndicacoesList.innerHTML = `<div class="indicacao-empty">Faça login para visualizar suas indicações.</div>`;
+    return;
+  }
+
+  if (!minhasIndicacoesCache.length) {
+    minhasIndicacoesList.innerHTML = `
+      <div class="indicacao-empty">
+        Você ainda não fez nenhuma indicação por aqui.<br>
+        Toque em <strong>Fazer nova indicação</strong> para cadastrar a primeira.
+      </div>
+    `;
+    return;
+  }
+
+  minhasIndicacoesList.innerHTML = minhasIndicacoesCache.map(item => `
+    <div class="indicacao-card">
+      <div class="indicacao-card-top">
+        <div>
+          <div class="indicacao-user">${item.usuario || item.usuarioTikTokIndicacao || "-"}</div>
+          <div class="indicacao-meta">
+            Data: ${item.data || item.dataEnvio || "-"}<br>
+            WhatsApp: ${formatWhatsappVisual(item.whatsapp || item.whatsappIndicado || "")}
+          </div>
+        </div>
+        <div class="indicacao-status-pill">${item.status || "Em análise"}</div>
+      </div>
+
+      <div class="steps-wrap">
+        <div class="steps-row">
+          ${getIndicacaoStepsHTML(item.status || "Em análise")}
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function loadMinhasIndicacoes(force = false) {
+  if (!currentUser) {
+    minhasIndicacoesCache = [];
+    renderMinhasIndicacoes();
+    return;
+  }
+
+  if (!force && minhasIndicacoesCache.length) {
+    renderMinhasIndicacoes();
+    return;
+  }
+
+  if (minhasIndicacoesList) {
+    minhasIndicacoesList.innerHTML = `<div class="indicacao-empty">Carregando suas indicações...</div>`;
+  }
+
+  try {
+    const response = await fetch(REFERRAL_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        action: "minhasIndicacoes",
+        idUsuarioIndicou: String(currentUser.id || currentUser.login6 || "")
+      })
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.ok === false) {
+      throw new Error(result.message || "Não foi possível carregar suas indicações.");
+    }
+
+    minhasIndicacoesCache = Array.isArray(result.indicacoes) ? result.indicacoes : [];
+    renderMinhasIndicacoes();
+  } catch (error) {
+    console.error("Erro ao carregar minhas indicações:", error);
+    if (minhasIndicacoesList) {
+      minhasIndicacoesList.innerHTML = `<div class="indicacao-empty">Não foi possível carregar suas indicações agora.</div>`;
+    }
+  }
 }
 
 async function copyText(text) {
@@ -1316,9 +1564,8 @@ async function copyText(text) {
 
 async function handleCopyMensagem() {
   const copied = await copyText(indicacaoMensagem ? indicacaoMensagem.value : "");
-  showIndicacaoStatus(copied ? "Mensagem copiada com Envio concluído com sucesso.." : "Não foi possível copiar a mensagem agora.", !copied);
+  showIndicacaoStatus(copied ? "Mensagem copiada com sucesso." : "Não foi possível copiar a mensagem agora.", !copied);
 }
-
 
 async function enviarIndicacao() {
   clearIndicacaoStatus();
@@ -1344,8 +1591,7 @@ async function enviarIndicacao() {
   }
 
   const payload = {
-    action: "saveReferral",
-    dataEnvio: new Date().toISOString(),
+    action: "novaIndicacao",
     idUsuarioIndicou: String(currentUser.id || currentUser.login6 || ""),
     nomeUsuarioIndicou: String(currentUser.arroba || currentUser.display || ""),
     usuarioTikTokIndicacao: usuarioTikTok,
@@ -1373,8 +1619,12 @@ async function enviarIndicacao() {
       throw new Error(serverMessage);
     }
 
-    showIndicacaoStatus(result.message || "Envio concluído com Envio concluído com sucesso..");
+    showIndicacaoStatus(result.message || "✅ Envio concluído com sucesso.");
     clearIndicacaoFields();
+    await loadMinhasIndicacoes(true);
+    setTimeout(() => {
+      closeIndicacaoModal();
+    }, 700);
   } catch (error) {
     console.error("Erro ao enviar indicação:", error);
     showIndicacaoStatus(error.message || "Não foi possível enviar a indicação agora.", true);
@@ -1576,6 +1826,9 @@ function setView(viewName) {
   document.querySelectorAll(".menu-item").forEach(el => {
     el.classList.toggle("active", el.dataset.view === viewName);
   });
+  if (viewName === "indicacoes") {
+    loadMinhasIndicacoes(true);
+  }
 }
 
 function renderNotificacoes() {
@@ -1841,6 +2094,7 @@ function fillUser(user) {
   renderTopHoras();
   renderNotificacoes();
   renderDesenvolvimento();
+  loadMinhasIndicacoes(true);
   setView("dados");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -1926,6 +2180,9 @@ function handleLogout() {
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
   if (preLoginHero) preLoginHero.style.display = "";
   if (preLoginLoginCard) preLoginLoginCard.style.display = "";
+  minhasIndicacoesCache = [];
+  renderMinhasIndicacoes();
+  closeIndicacaoModal();
   clearSession();
   closePanels();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1940,6 +2197,16 @@ if (drawerLogoutBtn) drawerLogoutBtn.addEventListener("click", handleLogout);
 if (copiarMensagemBtn) copiarMensagemBtn.addEventListener("click", handleCopyMensagem);
 if (enviarIndicacaoBtn) enviarIndicacaoBtn.addEventListener("click", enviarIndicacao);
 if (limparIndicacaoBtn) limparIndicacaoBtn.addEventListener("click", clearIndicacaoFields);
+if (abrirNovaIndicacaoBtn) abrirNovaIndicacaoBtn.addEventListener("click", openIndicacaoModal);
+if (fecharIndicacaoModalBtn) fecharIndicacaoModalBtn.addEventListener("click", closeIndicacaoModal);
+if (indicacaoModalBackdrop) {
+  indicacaoModalBackdrop.addEventListener("click", (event) => {
+    if (event.target === indicacaoModalBackdrop) closeIndicacaoModal();
+  });
+}
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeIndicacaoModal();
+});
 if (indicacaoWhatsapp) {
   indicacaoWhatsapp.addEventListener("input", () => {
     indicacaoWhatsapp.value = normalizeWhatsapp(indicacaoWhatsapp.value).slice(0, 13);
@@ -1959,6 +2226,9 @@ overlay.addEventListener("click", closePanels);
 document.querySelectorAll(".menu-item").forEach(item => {
   item.addEventListener("click", () => {
     setView(item.dataset.view);
+    if (item.dataset.view === "indicacoes") {
+      loadMinhasIndicacoes(true);
+    }
     closePanels();
     if (mainApp.style.display !== "none") {
       mainApp.scrollIntoView({behavior:"smooth", block:"start"});
