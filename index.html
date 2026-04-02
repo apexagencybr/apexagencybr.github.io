@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1106,14 +1107,6 @@ align-items:stretch; grid-template-columns:1fr; }
             </div>
 
             <div class="status-box" id="indicacaoStatus"></div>
-
-            <form id="referralForm" method="POST" action="https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec" target="hidden_iframe" style="display:none;">
-              <input type="hidden" name="idUsuario" id="formIdUsuario" />
-              <input type="hidden" name="nomeUsuario" id="formNomeUsuario" />
-              <input type="hidden" name="usuarioTikTok" id="formUsuarioTikTok" />
-              <input type="hidden" name="whatsapp" id="formWhatsapp" />
-            </form>
-            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
           </div>
 
           <div class="section-card panel">
@@ -1183,7 +1176,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz89VTLrt9owO_7W8fN2RI8VK6eQdA4sJIuEpzIe6DVL3CIMH-MhDblQUC-bQ8hyGgG/exec";
-const REFERRAL_FORM_URL = "https://script.google.com/macros/s/AKfycbz-M3Rd7XgzkhMZipJHoZ_TYFX5262o1Wgx0_4mPyOvqnL4UnbH4BBsW1WoY9luxMot/exec";
+const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqRTMzc3G-Jj6Qgu-T-I70p0LuGYiRlryhtkb8X_KKDBp5CaLY0pNCqHphiKk0VfZx/exec";
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -1327,7 +1320,7 @@ async function handleCopyMensagem() {
 }
 
 
-function enviarIndicacao() {
+async function enviarIndicacao() {
   clearIndicacaoStatus();
 
   if (!currentUser) {
@@ -1345,42 +1338,51 @@ function enviarIndicacao() {
   }
 
   if (!/^\d{10,11}$/.test(whatsapp)) {
-    showIndicacaoStatus("Digite o WhatsApp com DDD, somente números.", true);
+    showIndicacaoStatus("Digite o WhatsApp com DDD + número. Ex.: 18999998888", true);
     if (indicacaoWhatsapp) indicacaoWhatsapp.focus();
     return;
   }
 
-  if (!referralForm || !formIdUsuario || !formNomeUsuario || !formUsuarioTikTok || !formWhatsapp) {
-    showIndicacaoStatus("Formulário de indicação não encontrado.", true);
-    return;
-  }
-
-  formIdUsuario.value = String(currentUser.id || currentUser.login6 || "");
-  formNomeUsuario.value = String(currentUser.arroba || currentUser.display || currentUser.nome || "");
-  formUsuarioTikTok.value = usuarioTikTok;
-  formWhatsapp.value = whatsapp;
-  referralForm.action = REFERRAL_FORM_URL;
-
-  if (enviarIndicacaoBtn) {
-    enviarIndicacaoBtn.disabled = true;
-    enviarIndicacaoBtn.textContent = "ENVIANDO...";
-  }
+  const payload = {
+    action: "saveReferral",
+    dataEnvio: new Date().toISOString(),
+    idUsuarioIndicou: String(currentUser.id || currentUser.login6 || ""),
+    nomeUsuarioIndicou: String(currentUser.arroba || currentUser.display || ""),
+    usuarioTikTokIndicacao: usuarioTikTok,
+    whatsappIndicado: whatsapp,
+    origem: "Apex Connect"
+  };
 
   try {
-    referralForm.submit();
-    showIndicacaoStatus("Indicação enviada para analise, copie a mensagem a baixo e envie para seu indicado!");
-    if (indicacaoTikTok) indicacaoTikTok.value = "";
-    if (indicacaoWhatsapp) indicacaoWhatsapp.value = "";
+    if (enviarIndicacaoBtn) {
+      enviarIndicacaoBtn.disabled = true;
+      enviarIndicacaoBtn.textContent = "ENVIANDO...";
+    }
+
+    const response = await fetch(REFERRAL_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.ok === false || result.success === false) {
+      const serverMessage = result.message || result.error || (response.status === 405 ? "Erro 405. Reimplante o Apps Script como Aplicativo da Web e atualize a implantação." : `Erro ao enviar indicação (${response.status}).`);
+      throw new Error(serverMessage);
+    }
+
+    showIndicacaoStatus(result.message || "Indicação enviada com sucesso.");
+    clearIndicacaoFields();
   } catch (error) {
     console.error("Erro ao enviar indicação:", error);
-    showIndicacaoStatus("Não foi possível enviar a indicação agora.", true);
+    showIndicacaoStatus(error.message || "Não foi possível enviar a indicação agora.", true);
   } finally {
-    window.setTimeout(() => {
-      if (enviarIndicacaoBtn) {
-        enviarIndicacaoBtn.disabled = false;
-        enviarIndicacaoBtn.textContent = "ENVIAR INDICAÇÃO";
-      }
-    }, 600);
+    if (enviarIndicacaoBtn) {
+      enviarIndicacaoBtn.disabled = false;
+      enviarIndicacaoBtn.textContent = "ENVIAR INDICAÇÃO";
+    }
   }
 }
 
