@@ -404,6 +404,28 @@ min-height:320px;
     background:rgba(255,123,123,.09); border-color:rgba(255,123,123,.25); color:#ffc0c0;
   }
   .hidden{ display:none!important; }
+
+  .avatar-badge{ width:182px;height:182px;padding:2px; }
+  .user-mini-avatar{ width:108px;height:108px;padding:4px; }
+  .user-mini-avatar img,.avatar-badge img{ object-fit:contain; transform:scale(1.18); }
+  .top-rank{ width:84px;height:84px;border-radius:20px;padding:4px;background:rgba(255,255,255,.05); }
+  .top-rank img{ width:100%;height:100%;object-fit:contain;display:block;transform:scale(1.22); }
+  .season-gallery{ display:flex; gap:14px; overflow-x:auto; padding-bottom:6px; }
+  .season-card{ min-width:210px; padding:18px; border-radius:22px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); }
+  .season-card.current{ border-color:rgba(255,255,255,.18); background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); }
+  .season-badge{ width:150px;height:150px;margin:0 auto 12px; display:grid;place-items:center; }
+  .season-badge img{ width:100%;height:100%;object-fit:contain;transform:scale(1.16); }
+  .trail-grid{ display:grid; grid-template-columns:repeat(6,minmax(120px,1fr)); gap:12px; }
+  .trail-card{ padding:14px; border-radius:18px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); text-align:center; }
+  .trail-card.current{ border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.08); }
+  .trail-card.done{ border-color:rgba(127,226,160,.35); }
+  .trail-icon{ width:92px;height:92px;margin:0 auto 10px;display:grid;place-items:center; }
+  .trail-icon img{ width:100%;height:100%;object-fit:contain;transform:scale(1.18); }
+  .xp-missions{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .xp-mission{ padding:16px; border-radius:18px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); }
+  .battle-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+  @media (max-width:768px){ .avatar-badge{width:150px;height:150px;} .user-mini-avatar{width:104px;height:104px;} .trail-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .xp-missions,.battle-grid{grid-template-columns:1fr;} .season-card{min-width:190px;} }
+
   @media (max-width: 1080px) {
     .hero { grid-template-columns:1fr; }
     .stats, .rules, .dev-grid {
@@ -980,14 +1002,15 @@ align-items:stretch; grid-template-columns:1fr; }
   </div>
 
   <div class="drawer-profile">
-    <h4 id="drawerUser">seu_usuario</h4>
-    <p id="drawerMeta">ID: 000000</p>
+    <h4 id="drawerUser">Meu perfil</h4>
+    <p id="drawerMeta" style="display:none"></p>
   </div>
 
   <div class="menu-list">
-    <div class="menu-item active" data-view="dados"><span>📊 Dados</span><span>›</span></div>
+    <div class="menu-item active" data-view="dados"><span>👤 Meu perfil</span><span>›</span></div>
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
     <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
+    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas Oficiais <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
     <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon">EM BREVE</span></span><span>›</span></div>
   </div>
 
@@ -1091,13 +1114,13 @@ align-items:stretch; grid-template-columns:1fr; }
               <div class="avatar-badge" id="avatarBox"></div>
             </div>
             <div class="profile-copy">
-              <h4 id="nivelNome" style="margin:0 0 4px;font-size:22px;">Alpinista Bronze</h4>
-              <p id="nivelTexto" style="margin:0;color:var(--muted);line-height:1.55;">Seu avatar muda de acordo com sua faixa de horas dentro da Apex Connect.</p>
-              <div class="level-pill">Alpinista Bronze: abaixo de 50h • Alpinista Prata: 50h a 99h • Alpinista Ouro: 100h+</div>
+              <h4 id="nivelNome" style="margin:0 0 4px;font-size:24px;">Bronze I</h4>
+              <p id="nivelTexto" style="margin:0;color:var(--muted);line-height:1.55;">Seu nível é calculado automaticamente com base no seu XP do período atual.</p>
+              <div class="level-pill" id="xpTotalInfo">XP total: 0</div>
               <div class="progress-box">
                 <div class="progress-label">
-                  <span>Progresso de nível</span>
-                  <span id="progressInfo">0h / 50h</span>
+                  <span>Progresso até o próximo nível</span>
+                  <span id="progressInfo">0 / 1000 XP</span>
                 </div>
                 <div class="progress-track">
                   <div class="progress-fill" id="progressFill"></div>
@@ -1110,16 +1133,21 @@ align-items:stretch; grid-template-columns:1fr; }
         <div class="section-card panel">
           <div class="section-head">
             <div>
-              <h4>Resumo de batalhas</h4>
-              <p>Dados separados do bloco principal, conforme solicitado.</p>
+              <h4>Galeria de temporadas</h4>
+              <p>Temporada atual, temporada anterior e próximos níveis.</p>
             </div>
-            
           </div>
-          <div class="section-list">
-            <div class="section-item"><span>Total de batalhas</span><span id="batalhasValue">0</span></div>
-            <div class="section-item"><span>Diamantes em batalhas</span><span id="diamantesBatalhasValue">0</span></div>
-            <div class="section-item"><span>Posição no Top Horas</span><span id="topHorasPosicao">#0</span></div>
+          <div class="season-gallery" id="seasonGallery"></div>
+        </div>
+
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Jornada de níveis</h4>
+              <p>Acompanhe o nível atual, os já alcançados e os próximos níveis.</p>
+            </div>
           </div>
+          <div class="trail-grid" id="levelTrail"></div>
         </div>
 
         <div class="section-card panel">
@@ -1135,6 +1163,21 @@ align-items:stretch; grid-template-columns:1fr; }
             <div class="section-item"><span>⏰ Duração do mês passado</span><span id="duracaoPassadoValue">0</span></div>
             <div class="section-item"><span>🗓️ Dias válidos</span><span id="diasPassadoValue">0</span></div>
             <div class="section-item"><span>💫 Lives</span><span id="livesPassadoValue">0</span></div>
+          </div>
+        </div>
+
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Missões para ganhar XP</h4>
+              <p>O cálculo final será puxado automaticamente da sua planilha.</p>
+            </div>
+          </div>
+          <div class="xp-missions">
+            <div class="xp-mission"><strong>Horas de live</strong><p style="margin:8px 0 0;color:var(--muted);">Metas de 10h até 200h liberam XP progressivo no período.</p></div>
+            <div class="xp-mission"><strong>Dias válidos</strong><p style="margin:8px 0 0;color:var(--muted);">Metas de 1, 5, 10, 15 e 20 dias válidos liberam XP.</p></div>
+            <div class="xp-mission"><strong>Batalhas</strong><p style="margin:8px 0 0;color:var(--muted);">Metas de 5 até 100 batalhas entram no cálculo do seu XP.</p></div>
+            <div class="xp-mission"><strong>Diamantes</strong><p style="margin:8px 0 0;color:var(--muted);">Faixas de 500 até 1.000.000+ diamantes completam o XP total.</p></div>
           </div>
         </div>
 
@@ -1248,6 +1291,53 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
         </div>
       </div>
 
+
+<div class="view-panel" id="view-batalhas">
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
+              <h4>Batalhas Oficiais</h4>
+              <p>Solicite sua batalha oficial e acompanhe o histórico logo abaixo.</p>
+            </div>
+          </div>
+          <div class="battle-grid">
+            <div class="section-card panel" style="padding:18px;">
+              <div class="section-head"><div><h4 style="margin:0;font-size:22px;">Solicitar batalha</h4></div></div>
+              <div class="indicacao-form-grid">
+                <div class="indicacao-field"><input class="input" id="batalhaData" type="date" /></div>
+                <div class="indicacao-field"><input class="input" id="batalhaHora" type="time" /></div>
+                <div class="indicacao-field"><input class="input" id="batalhaMeta" inputmode="numeric" placeholder="Meta de diamantes" /></div>
+                <div class="indicacao-field">
+                  <select class="input" id="batalhaRounds">
+                    <option value="">Rounds</option>
+                    <option value="1">1 round</option>
+                    <option value="3">3 rounds</option>
+                  </select>
+                </div>
+                <div class="indicacao-field">
+                  <select class="input" id="batalhaUrgencia">
+                    <option value="NÃO">Urgente?</option>
+                    <option value="SIM">SIM</option>
+                    <option value="NÃO">NÃO</option>
+                  </select>
+                </div>
+                <div class="copy-grid">
+                  <button class="btn btn-primary" id="enviarBatalhaBtn" type="button">ENVIAR SOLICITAÇÃO</button>
+                  <button class="btn btn-secondary" id="limparBatalhaBtn" type="button">LIMPAR</button>
+                </div>
+                <div class="status-box" id="batalhaStatus"></div>
+              </div>
+            </div>
+            <div class="section-card panel" style="padding:18px;">
+              <div class="section-head"><div><h4 style="margin:0;font-size:22px;">Batalhas solicitadas</h4></div></div>
+              <div class="indicacoes-list" id="minhasBatalhasList">
+                <div class="indicacao-empty">Nenhuma batalha solicitada até o momento.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 <div class="view-panel" id="view-shop">
         <div class="section-card panel">
           <div class="section-head">
@@ -1283,13 +1373,13 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect versão BETA v0.11</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect versão v0.11</div>
   </div>
 </div>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz89VTLrt9owO_7W8fN2RI8VK6eQdA4sJIuEpzIe6DVL3CIMH-MhDblQUC-bQ8hyGgG/exec";
-const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9rNurGbqvTtRSw5n-Fy6qsSM2IyY3cVoHfXXDNZhhQ-OFLqbC_vxxdGtmbJHsP_c/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYNubETZMIuSesu_DYrSyIuj_bZqJbc-hbbnJxcsiIGJXBN6hG55fMzlP1iRs0fZZr/exec";
+const REFERRAL_SCRIPT_URL = APPS_SCRIPT_URL;
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -2265,6 +2355,77 @@ notifList.addEventListener("click", (event) => {
 renderNotificacoes();
 renderDesenvolvimento();
 restoreSessionIfPossible();
+
+const LEVELS = [
+  { key:"bronze1", name:"Bronze I", badge:"nivel 1.png", min:0, max:7999 },
+  { key:"bronze2", name:"Bronze II", badge:"nivel 2.png", min:8000, max:15999 },
+  { key:"prata1", name:"Prata I", badge:"nivel 3.png", min:16000, max:29999 },
+  { key:"prata2", name:"Prata II", badge:"nivel 4.png", min:30000, max:49999 },
+  { key:"ouro", name:"Ouro", badge:"nivel 5.png", min:50000, max:79999 },
+  { key:"diamante", name:"Diamante", badge:"nivel 6.png", min:80000, max:99999999 }
+];
+function parseHorasToHours(str){
+  const m=(str||'').match(/(\d+)h(?:\s*(\d+)m)?(?:\s*(\d+)s)?/i);
+  if(!m) return 0;
+  return (+m[1]) + ((+m[2]||0)/60) + ((+m[3]||0)/3600);
+}
+function parseNum(str){ return Number(String(str||'').replace(/[^\d]/g,''))||0; }
+function formatXP(v){ return new Intl.NumberFormat('pt-BR').format(Math.round(v)) + ' XP'; }
+function calcXP(){
+  const horas = parseHorasToHours(horasValue?.textContent);
+  const dias = parseNum(diasValue?.textContent);
+  const batalhas = parseNum(batalhasValue?.textContent);
+  const diamantes = parseNum(diamantesValue?.textContent);
+  return Math.round((horas*900) + (dias*1000) + (batalhas*120) + ((diamantes/1000)*10));
+}
+function getLevelByXP(xp){ return LEVELS.find(l=>xp>=l.min && xp<=l.max) || LEVELS[0]; }
+function buildProfileExtras(){
+  const xp=calcXP();
+  const level=getLevelByXP(xp);
+  const idx=LEVELS.findIndex(l=>l.key===level.key);
+  const next=LEVELS[Math.min(idx+1, LEVELS.length-1)];
+  const currentMin=level.min;
+  const currentMax=level.max;
+  const progress = level.key===next.key ? 100 : Math.max(0, Math.min(100, ((xp-currentMin)/((currentMax-currentMin)||1))*100));
+  if(nivelNome) nivelNome.textContent = level.name;
+  if(nivelTexto) nivelTexto.textContent = 'Nome, período e nível calculados a partir dos seus dados atuais.';
+  const xpTotalInfo=document.getElementById('xpTotalInfo'); if(xpTotalInfo) xpTotalInfo.textContent='XP total: '+formatXP(xp);
+  if(progressInfo) progressInfo.textContent = level.key===next.key ? formatXP(xp) : `${formatXP(xp)} • Próximo nível: ${next.name}`;
+  if(progressFill) progressFill.style.width = progress+'%';
+  if(avatarBox) avatarBox.innerHTML=`<img src="${level.badge}" alt="${level.name}">`;
+  if(userMiniAvatar) userMiniAvatar.innerHTML=`<img src="${level.badge}" alt="${level.name}">`;
+  const sg=document.getElementById('seasonGallery');
+  if(sg){
+    const previous = LEVELS[Math.max(idx-1,0)];
+    sg.innerHTML = `
+      <div class="season-card">
+        <div class="season-badge"><img src="${previous.badge}" alt="${previous.name}"></div>
+        <strong style="display:block;text-align:center;font-size:18px;">Temporada anterior</strong>
+        <div style="text-align:center;color:var(--muted);margin-top:8px;">${previous.name}</div>
+      </div>
+      <div class="season-card current">
+        <div class="season-badge"><img src="${level.badge}" alt="${level.name}"></div>
+        <strong style="display:block;text-align:center;font-size:18px;">Temporada atual</strong>
+        <div style="text-align:center;color:var(--muted);margin-top:8px;">${level.name}</div>
+      </div>
+      <div class="season-card">
+        <div class="season-badge"><img src="${next.badge}" alt="${next.name}"></div>
+        <strong style="display:block;text-align:center;font-size:18px;">Próximo nível</strong>
+        <div style="text-align:center;color:var(--muted);margin-top:8px;">${next.name}</div>
+      </div>`;
+  }
+  const trail=document.getElementById('levelTrail');
+  if(trail){
+    trail.innerHTML = LEVELS.map((l,i)=>`<div class="trail-card ${i<idx?'done':''} ${i===idx?'current':''}">
+      <div class="trail-icon"><img src="${l.badge}" alt="${l.name}"></div>
+      <strong>${l.name}</strong>
+    </div>`).join('');
+  }
+  const topImgs=['top horas 1.png','top horas 2.png','top horas 3.png'];
+  document.querySelectorAll('.top-rank').forEach((el,i)=>{ if(i<3) el.innerHTML=`<img src="${topImgs[i]}" alt="top ${i+1}">`; });
+}
+setInterval(()=>{ if(mainApp && getComputedStyle(mainApp).display !== 'none') buildProfileExtras(); },800);
+
 </script>
 
 <script>
@@ -2447,6 +2608,278 @@ restoreSessionIfPossible();
 
   rebindLoginControls();
 })();
+
+
+const LEVELS = [
+  { key:"bronze_1", name:"Bronze I", badge:"nivel 1.png", min:0, max:7999 },
+  { key:"bronze_2", name:"Bronze II", badge:"nivel 2.png", min:8000, max:19999 },
+  { key:"prata_1", name:"Prata I", badge:"nivel 3.png", min:20000, max:39999 },
+  { key:"prata_2", name:"Prata II", badge:"nivel 4.png", min:40000, max:79999 },
+  { key:"ouro", name:"Ouro", badge:"nivel 5.png", min:80000, max:149999 },
+  { key:"diamante", name:"Diamante", badge:"nivel 6.png", min:150000, max:99999999 }
+];
+const XP_TABLES = {
+  horas:[["10h",500],["20h",1000],["30h",1600],["40h",2300],["50h",3100],["60h",4000],["80h",5300],["100h",6800],["120h",8500],["150h",10500],["180h",12800],["200h",15000]],
+  dias:[["1 dia",300],["5 dias",1000],["10 dias",2200],["15 dias",3800],["20 dias",6000]],
+  batalhas:[["5",300],["10",700],["15",1100],["20",1600],["30",2400],["40",3300],["50",4300],["60",5400],["80",7000],["100",9000]],
+  diamantes:[["500",200],["1.000",400],["2.500",800],["5.000",1500],["10.000",2800],["25.000",5000],["50.000",8000],["100.000",12000],["250.000",20000],["500.000",32000],["1.000.000+",50000]]
+};
+
+function formatXP(v){ return new Intl.NumberFormat('pt-BR').format(Math.round(Number(v||0))) + ' XP'; }
+function qs(id){ return document.getElementById(id); }
+function seasonName(raw){
+  if(!raw) return 'Temporada';
+  return String(raw).replace(/^Temporada_/,'Temporada ').replace(/_/g,' ');
+}
+function getLevelByXP(xp){ return LEVELS.find(l=>xp>=l.min && xp<=l.max) || LEVELS[0]; }
+function getPrevLevel(key){ const i=LEVELS.findIndex(l=>l.key===key); return LEVELS[Math.max(0,i-1)]||LEVELS[0];}
+function getNextLevel(key){ const i=LEVELS.findIndex(l=>l.key===key); return LEVELS[Math.min(LEVELS.length-1,i+1)]||LEVELS[LEVELS.length-1];}
+
+async function apiCall(action, payload={}, method='GET'){
+  const url = new URL(APPS_SCRIPT_URL);
+  url.searchParams.set('action', action);
+  url.searchParams.set('t', Date.now());
+  if(method==='GET'){
+    Object.entries(payload||{}).forEach(([k,v])=>{ if(v!==undefined && v!==null && v!=='') url.searchParams.set(k, v); });
+    const res = await fetch(url.toString(), { method:'GET', mode:'cors', cache:'no-store' });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || 'Erro ao carregar dados.');
+    return data;
+  }
+  const res = await fetch(url.toString(), {
+    method:'POST',
+    mode:'cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload||{})
+  });
+  const data = await res.json();
+  if(!data.ok) throw new Error(data.error || 'Erro ao enviar dados.');
+  return data;
+}
+
+function buildMissionCards(){
+  const boxes = document.querySelectorAll('.xp-mission');
+  if(boxes.length < 4) return;
+  boxes[0].innerHTML = `<strong>Horas de live</strong><p style="margin:8px 0 0;color:var(--muted);">${XP_TABLES.horas.map(([k,v])=>`${k} = ${formatXP(v)}`).join('<br>')}</p>`;
+  boxes[1].innerHTML = `<strong>Dias válidos</strong><p style="margin:8px 0 0;color:var(--muted);">${XP_TABLES.dias.map(([k,v])=>`${k} = ${formatXP(v)}`).join('<br>')}</p>`;
+  boxes[2].innerHTML = `<strong>Batalhas</strong><p style="margin:8px 0 0;color:var(--muted);">${XP_TABLES.batalhas.map(([k,v])=>`${k} = ${formatXP(v)}`).join('<br>')}</p>`;
+  boxes[3].innerHTML = `<strong>Diamantes</strong><p style="margin:8px 0 0;color:var(--muted);">${XP_TABLES.diamantes.map(([k,v])=>`${k} = ${formatXP(v)}`).join('<br>')}</p>`;
+}
+
+function renderSeasonGallery(profile){
+  const sg = qs('seasonGallery'); if(!sg) return;
+  const items = [];
+  if(profile.latestHistoricalSeason) items.push({ title: seasonName(profile.latestHistoricalSeason.seasonName), badge: profile.latestHistoricalSeason.level.badge, level: profile.latestHistoricalSeason.level.label, xp: profile.latestHistoricalSeason.totalXp });
+  if(profile.currentSeason) items.push({ title: seasonName(profile.currentSeason.seasonName||'Temporada atual'), badge: profile.currentSeason.level.badge, level: profile.currentSeason.level.label, xp: profile.currentSeason.totalXp, current:true });
+  const next = profile.nextLevel || getNextLevel(profile.currentLevel.key);
+  items.push({ title:'Próximo nível', badge: next.badge, level: next.label || next.name, xp:null });
+  sg.innerHTML = items.map(item=>`
+    <div class="season-card ${item.current ? 'current' : ''}">
+      <div class="season-badge"><img src="${item.badge}" alt="${item.level}"></div>
+      <strong style="display:block;text-align:center;font-size:18px;">${item.title}</strong>
+      <div style="text-align:center;color:var(--muted);margin-top:8px;">${item.level}</div>
+      ${item.xp!==null ? `<div style="text-align:center;color:var(--muted);margin-top:8px;">${formatXP(item.xp)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderLevelTrail(profile){
+  const trail = qs('levelTrail'); if(!trail) return;
+  const currentKey = profile.currentLevel.key;
+  const currentIndex = LEVELS.findIndex(l => l.key === currentKey);
+  trail.innerHTML = LEVELS.map((l,i)=>`
+    <div class="trail-card ${i<currentIndex?'done':''} ${i===currentIndex?'current':''}">
+      <div class="trail-icon"><img src="${l.badge}" alt="${l.name}"></div>
+      <strong>${l.name}</strong>
+      <div style="margin-top:6px;color:var(--muted);font-size:13px;">a partir de ${new Intl.NumberFormat('pt-BR').format(l.min)} XP</div>
+    </div>
+  `).join('');
+}
+
+function renderTopHorasFromProfile(profile){
+  if(!topHorasLista) return;
+  const list = profile.topHoras || [];
+  topHorasLista.innerHTML = list.length ? list.map((item,idx)=>`
+    <div class="top-hour-item">
+      <div class="top-hour-left">
+        <div class="top-rank"><img src="top horas ${Math.min(idx+1,3)}.png" alt="top ${idx+1}"></div>
+        <div>
+          <div class="top-hour-name">Top ${item.posicao || idx+1} • @${item.username || item.arroba || '-'}</div>
+          <div class="top-hour-time">${item.horas || item.duracao_live || '-'}</div>
+        </div>
+      </div>
+    </div>
+  `).join('') : `<div class="indicacao-empty">Sem dados de Top Horas no momento.</div>`;
+}
+
+function renderNotificationsFromProfile(profile){
+  appData.notificacoes = profile.notifications || [];
+  renderNotificacoes();
+}
+
+function renderBatalhasList(items){
+  const list = qs('minhasBatalhasList'); if(!list) return;
+  list.innerHTML = (items && items.length) ? items.map(item=>`
+    <div class="indicacao-card">
+      <div class="indicacao-card-top">
+        <div>
+          <div class="indicacao-user">${item.dataBatalha || item.data || '-'}</div>
+          <div class="indicacao-meta">Hora: ${item.horaBatalha || item.hora || '-'} • Meta: ${new Intl.NumberFormat('pt-BR').format(Number(item.metaDiamantes||item.meta||0))} diamantes • Rounds: ${item.rounds || '-'}</div>
+        </div>
+        <div class="indicacao-status-pill">${item.status || 'Solicitado'}</div>
+      </div>
+    </div>
+  `).join('') : `<div class="indicacao-empty">Nenhuma batalha solicitada até o momento.</div>`;
+}
+
+function fillUserFromProfile(profile){
+  currentUser = {
+    id: profile.id,
+    arroba: profile.username || profile.creatorName || 'usuario',
+    display: profile.creatorName || profile.username || 'Criador',
+    diamantes: profile.metrics?.diamantes || 0,
+    horas: profile.metrics?.horas || '-',
+    duracao_live: profile.metrics?.horas || '-',
+    dias_validos: profile.metrics?.diasValidos || 0,
+    lives_feitas: profile.metrics?.livesFeitas || 0,
+    batalhas: profile.metrics?.batalhas || 0,
+    diamantes_batalhas: profile.metrics?.diamantesBatalhas || 0,
+    top_horas_posicao: profile.topHoras?.find(x=>String(x.id)===String(profile.id))?.posicao || ''
+  };
+  mainApp.style.display = "block";
+  userName.textContent = profile.creatorName || profile.username || "seu_arroba";
+  userMetaTop.textContent = `Período: ${profile.period || "--/-- a --/--"}`;
+  drawerUser.textContent = `Meu perfil`;
+  drawerMeta.textContent = `${profile.creatorName || profile.username || ""}`;
+  accessStatus.textContent = `Acesso liberado`;
+  openDrawer.classList.remove("hidden");
+  openNotif.classList.remove("hidden");
+  if (drawerLogoutBtn) drawerLogoutBtn.classList.remove("hidden");
+  const preLoginHero = document.getElementById("preLoginHero");
+  const preLoginLoginCard = document.getElementById("preLoginLoginCard");
+  if (preLoginHero) preLoginHero.style.display = "none";
+  if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
+  saveSession(profile.id || "");
+
+  saldoValue.textContent = "0 Ᵽ";
+  diamantesValue.textContent = formatDiamondsK(profile.metrics?.diamantes || "0");
+  horasValue.textContent = profile.metrics?.horas || "0h";
+  diasValue.textContent = profile.metrics?.diasValidos || "0";
+  livesValue.textContent = profile.metrics?.livesFeitas || "0";
+
+  batalhasValue.textContent = profile.metrics?.batalhas || "0";
+  diamantesBatalhasValue.textContent = formatDiamondsK(profile.metrics?.diamantesBatalhas || "0");
+  topHorasPosicao.textContent = profile.topHoras?.find(x=>String(x.id)===String(profile.id))?.posicao ? `#${profile.topHoras.find(x=>String(x.id)===String(profile.id)).posicao}` : "#0";
+
+  diamantesPassadoValue.textContent = formatDiamondsK(profile.latestHistoricalSeason?.metrics?.diamantes || "0");
+  duracaoPassadoValue.textContent = profile.latestHistoricalSeason?.metrics?.horas || "0";
+  diasPassadoValue.textContent = profile.latestHistoricalSeason?.metrics?.diasValidos || "0";
+  livesPassadoValue.textContent = profile.latestHistoricalSeason?.metrics?.livesFeitas || "0";
+
+  const currentLevel = profile.currentLevel;
+  const nextLevel = profile.nextLevel || getNextLevel(currentLevel.key);
+  const prevLevel = profile.previousLevel || getPrevLevel(currentLevel.key);
+
+  if(nivelNome) nivelNome.textContent = currentLevel.label || currentLevel.name;
+  if(nivelTexto) nivelTexto.textContent = 'Nome, período e nível calculados automaticamente com base nos seus dados atuais.';
+  if(qs('xpTotalInfo')) qs('xpTotalInfo').textContent = 'XP total: ' + formatXP(profile.currentXp || 0);
+  if(progressInfo) progressInfo.textContent = `${formatXP(profile.currentXp || 0)} • Próximo nível: ${nextLevel.label || nextLevel.name}`;
+  if(progressFill) progressFill.style.width = `${profile.xpProgress?.percent || 0}%`;
+  if(avatarBox) avatarBox.innerHTML=`<img src="${currentLevel.badge}" alt="${currentLevel.label || currentLevel.name}">`;
+  if(userMiniAvatar) userMiniAvatar.innerHTML=`<img src="${currentLevel.badge}" alt="${currentLevel.label || currentLevel.name}">`;
+
+  renderSeasonGallery(profile);
+  renderLevelTrail(profile);
+  renderTopHorasFromProfile(profile);
+  renderNotificationsFromProfile(profile);
+  appData.top_horas = profile.topHoras || [];
+  minhasIndicacoesCache = profile.indicacoes || [];
+  if(typeof renderMinhasIndicacoes === 'function') renderMinhasIndicacoes(minhasIndicacoesCache);
+  renderBatalhasList(profile.batalhas || []);
+  buildMissionCards();
+  setView("dados");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function loadRemoteData() {
+  try{
+    const data = await apiCall('getNotifications');
+    appData.notificacoes = data.items || [];
+    renderNotificacoes();
+  }catch(e){ console.error(e); }
+}
+async function handleEnter() {
+  try {
+    clearError();
+    const login = normalizeLogin(loginInput.value);
+    if (!login) {
+      showError("Digite os 6 últimos dígitos do seu ID.");
+      return;
+    }
+    const data = await apiCall('getAppData', { id: login });
+    fillUserFromProfile(data.profile);
+  } catch (error) {
+    console.error(error);
+    showError(error.message || "Erro ao carregar os dados.");
+  }
+}
+async function restoreSessionIfPossible() {
+  const savedLogin = getSavedSession();
+  if (!savedLogin) return;
+  try {
+    const data = await apiCall('getAppData', { id: savedLogin });
+    fillUserFromProfile(data.profile);
+  } catch (error) {
+    clearSession();
+    console.error("Falha ao restaurar sessão:", error);
+  }
+}
+
+async function loadMinhasIndicacoes(force=false){
+  if(!currentUser?.id) return;
+  if(!force && minhasIndicacoesCache.length) { if(typeof renderMinhasIndicacoes === 'function') renderMinhasIndicacoes(minhasIndicacoesCache); return; }
+  try{
+    const data = await apiCall('getIndicacoes', { id: currentUser.id });
+    minhasIndicacoesCache = data.items || [];
+    if(typeof renderMinhasIndicacoes === 'function') renderMinhasIndicacoes(minhasIndicacoesCache);
+  }catch(e){ console.error(e); }
+}
+
+function showBatalhaStatus(message,isError=false){
+  const el=qs('batalhaStatus'); if(!el) return;
+  el.textContent=message; el.style.display='block'; el.classList.toggle('error', !!isError);
+}
+function clearBatalhaStatus(){ const el=qs('batalhaStatus'); if(!el) return; el.textContent=''; el.style.display='none'; el.classList.remove('error'); }
+
+async function submitBatalhaForm(){
+  if(!currentUser?.id) return;
+  try{
+    clearBatalhaStatus();
+    await apiCall('submitBatalha', {
+      id: currentUser.id,
+      usuario: currentUser.arroba,
+      dataBatalha: qs('batalhaData')?.value || '',
+      horaBatalha: qs('batalhaHora')?.value || '',
+      metaDiamantes: qs('batalhaMeta')?.value || '',
+      rounds: qs('batalhaRounds')?.value || '',
+      urgencia: qs('batalhaUrgencia')?.value || 'NÃO'
+    }, 'POST');
+    showBatalhaStatus('Solicitação enviada com sucesso.');
+    ['batalhaData','batalhaHora','batalhaMeta','batalhaRounds','batalhaUrgencia'].forEach(id=>{ if(qs(id)) qs(id).value = id==='batalhaUrgencia' ? 'NÃO' : '';});
+    const data = await apiCall('getBatalhas', { id: currentUser.id });
+    renderBatalhasList(data.items || []);
+  }catch(e){
+    console.error(e); showBatalhaStatus(e.message || 'Erro ao enviar batalha.', true);
+  }
+}
+
+(function initFinalBindings(){
+  buildMissionCards();
+  setTimeout(()=>{ loadRemoteData(); restoreSessionIfPossible(); }, 50);
+  qs('enviarBatalhaBtn')?.addEventListener('click', submitBatalhaForm);
+  qs('limparBatalhaBtn')?.addEventListener('click', ()=>['batalhaData','batalhaHora','batalhaMeta','batalhaRounds','batalhaUrgencia'].forEach(id=>{ if(qs(id)) qs(id).value = id==='batalhaUrgencia' ? 'NÃO' : '';}));
+})();
+
 </script>
 
 </body>
