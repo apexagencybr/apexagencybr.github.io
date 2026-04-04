@@ -2526,28 +2526,19 @@ setInterval(()=>{ if(mainApp && getComputedStyle(mainApp).display !== 'none') bu
     setBusyState(true);
 
     try {
-      if (typeof loadRemoteData === "function") {
-        await loadRemoteData();
-      }
-      const found = findUser(login);
-      if (!found) {
-        if (typeof accessStatus !== "undefined" && accessStatus) {
-          accessStatus.textContent = "Acesso por ID • 6 últimos dígitos";
-        }
-        if (typeof showError === "function") {
-          showError("ID não encontrado. Confira os 6 últimos dígitos e tente novamente.");
-        }
-        return false;
+      const data = await apiCall('getAppData', { id: login });
+      if (!data || !data.ok || !data.profile) {
+        throw new Error((data && data.error) || "ID não encontrado. Confira os 6 últimos dígitos e tente novamente.");
       }
 
-      if (typeof currentUser !== "undefined") {
-        currentUser = found;
+      if (typeof fillUserFromProfile === "function") {
+        fillUserFromProfile(data.profile);
+      } else if (typeof fillUser === "function") {
+        fillUser(data.profile);
       }
-      if (typeof fillUser === "function") {
-        fillUser(found);
-      }
+
       if (typeof accessStatus !== "undefined" && accessStatus) {
-        accessStatus.textContent = `Conectado • @${found.display || found.nome || "criador"}`;
+        accessStatus.textContent = "Acesso liberado";
       }
       return true;
     } catch (error) {
