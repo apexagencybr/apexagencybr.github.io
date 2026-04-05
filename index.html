@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Connect - BETA v0.12</title>
+<title>Apex Connect - BETA v0.13</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
@@ -1017,7 +1018,7 @@ align-items:stretch; grid-template-columns:1fr; }
     <div class="menu-item" data-view="dados"><span>📊 Dados</span><span>›</span></div>
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
     <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
-    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas Oficiais <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
+    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalha <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
     <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon">EM BREVE</span></span><span>›</span></div>
   </div>
 
@@ -1062,7 +1063,7 @@ align-items:stretch; grid-template-columns:1fr; }
         <div class="pill" style="margin-bottom:14px;">Programa interno</div>
         <h2>Entre com os <span>6 últimos dígitos</span> do seu ID</h2>
         <p>
-          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong>, <strong>Desenvolvimento</strong> e <strong>Indicações</strong>, além do <strong>Apex Shop disponível em breve</strong>.
+          O acesso ao site é controlado pelo seu ID. Depois de entrar, você poderá abrir o menu lateral e navegar entre <strong>Meu perfil</strong>, <strong>Dados</strong>, <strong>Desenvolvimento</strong>, <strong>Indicações</strong>, <strong>Batalha</strong> e <strong>Apex Shop disponível em breve</strong>.
         </p>
       </div>
 
@@ -1335,7 +1336,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
 
 <div class="view-panel" id="view-batalhas">
   <div class="panel">
-    <div class="section-head"><div><h4>Batalhas Oficiais</h4><p>Solicite sua batalha oficial e acompanhe as solicitações abaixo.</p></div></div>
+    <div class="section-head"><div><h4>Batalha</h4><p>Solicite sua batalha e acompanhe as solicitações abaixo.</p></div></div>
     <div class="battle-form-grid">
       <input class="input" id="battleDate" type="date" />
       <input class="input" id="battleTime" type="time" />
@@ -1345,6 +1346,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       <button class="btn btn-primary full" type="button" id="sendBattleBtn">SOLICITAR BATALHA</button>
     </div>
     <div class="helper">O histórico abaixo mostra as batalhas solicitadas por você.</div>
+    <div class="status-box" id="battleStatus"></div>
   </div>
   <div class="section-card panel">
     <div class="section-head"><div><h4>Batalhas solicitadas</h4><p>Status e dados das suas solicitações.</p></div></div>
@@ -1387,13 +1389,13 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect Beta v0.12</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect Beta v0.13</div>
   </div>
 </div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvlk2vnH5sbv3FsovV1BgTLx3oxLVkBxlk5QCU8GbLfVu2HHpcQ7JKJWTRGq-Z4aUb/exec";
-const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9rNurGbqvTtRSw5n-Fy6qsSM2IyY3cVoHfXXDNZhhQ-OFLqbC_vxxdGtmbJHsP_c/exec";
+const REFERRAL_SCRIPT_URL = APPS_SCRIPT_URL;
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -1848,18 +1850,183 @@ function renderPerfilExtras(user) {
   }
 }
 
+let minhasBatalhasCache = [];
+
+function showBattleStatus(message, isError = false) {
+  const battleStatus = document.getElementById("battleStatus");
+  if (!battleStatus) return;
+  battleStatus.textContent = message || "";
+  battleStatus.style.display = message ? "block" : "none";
+  battleStatus.classList.toggle("error", !!isError);
+}
+
+function clearBattleStatus() {
+  const battleStatus = document.getElementById("battleStatus");
+  if (!battleStatus) return;
+  battleStatus.textContent = "";
+  battleStatus.style.display = "none";
+  battleStatus.classList.remove("error");
+}
+
 function renderBattleHistory() {
   const battleHistoryList = document.getElementById("battleHistoryList");
   if (!battleHistoryList) return;
-  battleHistoryList.innerHTML = `
+
+  if (!currentUser) {
+    battleHistoryList.innerHTML = `
+      <div class="battle-card">
+        <strong>Faça login</strong>
+        <p>Entre com o seu ID para visualizar as batalhas já solicitadas.</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (!Array.isArray(minhasBatalhasCache) || !minhasBatalhasCache.length) {
+    battleHistoryList.innerHTML = `
+      <div class="battle-card">
+        <strong>Nenhuma batalha solicitada</strong>
+        <p>Assim que você enviar uma solicitação, ela aparecerá aqui.</p>
+        <div style="margin-top:10px;"><span class="status-pill">AGUARDANDO</span></div>
+      </div>
+    `;
+    return;
+  }
+
+  battleHistoryList.innerHTML = minhasBatalhasCache.map(item => `
     <div class="battle-card">
-      <strong>Histórico em breve</strong>
-      <p>Assim que a integração da aba Batalhas for ativada no Apps Script, suas solicitações aparecerão aqui.</p>
-      <div style="margin-top:10px;"><span class="status-pill">AGUARDANDO</span></div>
+      <strong>${item.data_batalha || "Sem data"} • ${item.hora_batalha || "--:--"}</strong>
+      <p>Meta de diamantes: <strong>${formatDiamondsK(item.meta_diamantes || 0)}</strong><br>Rounds: <strong>${item.rounds || "1"}</strong><br>Urgência: <strong>${item.urgencia || "Não"}</strong></p>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <span class="status-pill">SOLICITADA</span>
+        <span class="status-pill">Envio: ${item.data_envio || "--/--/----"}</span>
+      </div>
     </div>
-  `;
+  `).join("");
 }
 
+async function loadBattleHistory(force = false) {
+  const battleHistoryList = document.getElementById("battleHistoryList");
+
+  if (!currentUser) {
+    minhasBatalhasCache = [];
+    renderBattleHistory();
+    return;
+  }
+
+  if (!force && minhasBatalhasCache.length) {
+    renderBattleHistory();
+    return;
+  }
+
+  if (battleHistoryList) {
+    battleHistoryList.innerHTML = `
+      <div class="battle-card">
+        <strong>Carregando...</strong>
+        <p>Buscando suas batalhas solicitadas.</p>
+      </div>
+    `;
+  }
+
+  try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "minhasBatalhas", idUsuario: String(currentUser.id || currentUser.login6 || "") })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.ok === false) {
+      throw new Error(result.message || `Erro ao carregar batalhas (${response.status}).`);
+    }
+
+    minhasBatalhasCache = Array.isArray(result.batalhas) ? result.batalhas : [];
+    renderBattleHistory();
+  } catch (error) {
+    console.error("Erro ao carregar batalhas:", error);
+    if (battleHistoryList) {
+      battleHistoryList.innerHTML = `
+        <div class="battle-card">
+          <strong>Não foi possível carregar</strong>
+          <p>${error && error.message ? error.message : "Tente novamente em instantes."}</p>
+        </div>
+      `;
+    }
+  }
+}
+
+async function enviarBatalha() {
+  clearBattleStatus();
+
+  if (!currentUser) {
+    showBattleStatus("Faça login para solicitar uma batalha.", true);
+    return;
+  }
+
+  const battleDate = document.getElementById("battleDate");
+  const battleTime = document.getElementById("battleTime");
+  const battleGoal = document.getElementById("battleGoal");
+  const battleRounds = document.getElementById("battleRounds");
+  const battleUrgency = document.getElementById("battleUrgency");
+  const sendBattleBtn = document.getElementById("sendBattleBtn");
+
+  const dataBatalha = battleDate ? String(battleDate.value || "").trim() : "";
+  const horaBatalha = battleTime ? String(battleTime.value || "").trim() : "";
+  const metaDiamantes = battleGoal ? Number(String(battleGoal.value || "0").replace(/\D+/g, "")) : 0;
+  const rounds = battleRounds ? String(battleRounds.value || "1") : "1";
+  const urgencia = battleUrgency ? String(battleUrgency.value || "Não") : "Não";
+
+  if (!dataBatalha) { showBattleStatus("Selecione a data da batalha.", true); if (battleDate) battleDate.focus(); return; }
+  if (!horaBatalha) { showBattleStatus("Selecione a hora da batalha.", true); if (battleTime) battleTime.focus(); return; }
+  if (!metaDiamantes) { showBattleStatus("Informe a meta de diamantes.", true); if (battleGoal) battleGoal.focus(); return; }
+
+  const payload = {
+    action: "novaBatalha",
+    idUsuario: String(currentUser.id || currentUser.login6 || ""),
+    usuario: String(currentUser.arroba || currentUser.display || ""),
+    dataBatalha,
+    horaBatalha,
+    metaDiamantes,
+    rounds,
+    urgencia
+  };
+
+  try {
+    if (sendBattleBtn) {
+      sendBattleBtn.disabled = true;
+      sendBattleBtn.textContent = "ENVIANDO...";
+    }
+
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.ok === false || result.success === false) {
+      throw new Error(result.message || `Erro ao enviar batalha (${response.status}).`);
+    }
+
+    showBattleStatus(result.message || "✅ Batalha enviada com sucesso.");
+    if (battleDate) battleDate.value = "";
+    if (battleTime) battleTime.value = "";
+    if (battleGoal) battleGoal.value = "";
+    if (battleRounds) battleRounds.value = "1";
+    if (battleUrgency) battleUrgency.value = "Não";
+    await loadBattleHistory(true);
+  } catch (error) {
+    console.error("Erro ao enviar batalha:", error);
+    showBattleStatus(error && error.message ? error.message : "Não foi possível enviar a batalha agora.", true);
+  } finally {
+    if (sendBattleBtn) {
+      sendBattleBtn.disabled = false;
+      sendBattleBtn.textContent = "SOLICITAR BATALHA";
+    }
+  }
+}
 
 function saveSession(login6) {
   try {
@@ -2239,42 +2406,45 @@ function renderLevel(user) {
 
 function fillUser(user) {
   currentUser = user;
-  mainApp.style.display = "block";
-  userName.textContent = user.arroba || user.display || "seu_arroba";
-  userMetaTop.textContent = `ID final: ${user.id || user.login6 || "000000"} • Período: ${appData.periodo || user.periodo || "--/-- a --/--"}`;
-  drawerUser.textContent = `${user.arroba || user.display || "seu_usuario"}`;
-  drawerMeta.textContent = `ID: ${user.id || user.login6 || "000000"}`;
-  accessStatus.textContent = `Acesso liberado • @${user.arroba || user.display || "seu_arroba"}`;
-  openDrawer.classList.remove("hidden");
-  openNotif.classList.remove("hidden");
-  if (drawerLogoutBtn) drawerLogoutBtn.classList.remove("hidden");
+  if (mainApp) mainApp.style.display = "block";
+
   const preLoginHero = document.getElementById("preLoginHero");
   const preLoginLoginCard = document.getElementById("preLoginLoginCard");
   if (preLoginHero) preLoginHero.style.display = "none";
   if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
+
+  if (userName) userName.textContent = user.arroba || user.display || "seu_arroba";
+  if (userMetaTop) userMetaTop.textContent = `ID final: ${user.id || user.login6 || "000000"} • Período: ${appData.periodo || user.periodo || "--/-- a --/--"}`;
+  if (drawerUser) drawerUser.textContent = `${user.arroba || user.display || "seu_usuario"}`;
+  if (drawerMeta) drawerMeta.textContent = `ID: ${user.id || user.login6 || "000000"}`;
+  if (accessStatus) accessStatus.textContent = `Acesso liberado • @${user.arroba || user.display || "seu_arroba"}`;
+  if (openDrawer) openDrawer.classList.remove("hidden");
+  if (openNotif) openNotif.classList.remove("hidden");
+  if (drawerLogoutBtn) drawerLogoutBtn.classList.remove("hidden");
+
   saveSession(user.id || user.login6 || "");
 
-  saldoValue.textContent = user.picos || "0 Ᵽ";
-  diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
-  horasValue.textContent = user.duracao_live || user.horas || "0h 0m 0s";
-  diasValue.textContent = user.dias_validos || user.dias || "0";
-  livesValue.textContent = user.lives_feitas || user.lives || "0";
+  if (saldoValue) saldoValue.textContent = user.picos || "0 Ᵽ";
+  if (diamantesValue) diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
+  if (horasValue) horasValue.textContent = user.duracao_live || user.horas || "0h 0m 0s";
+  if (diasValue) diasValue.textContent = user.dias_validos || user.dias || "0";
+  if (livesValue) livesValue.textContent = user.lives_feitas || user.lives || "0";
   renderPerfilExtras(user);
 
-  batalhasValue.textContent = user.batalhas_total || user.batalhas || "0";
-  diamantesBatalhasValue.textContent = formatDiamondsK(user.diamantes_batalhas || "0");
-  topHorasPosicao.textContent = user.top_horas_posicao ? `#${user.top_horas_posicao}` : (user.top_horas || "#0");
+  if (batalhasValue) batalhasValue.textContent = user.batalhas_total || user.batalhas || "0";
+  if (diamantesBatalhasValue) diamantesBatalhasValue.textContent = formatDiamondsK(user.diamantes_batalhas || "0");
+  if (topHorasPosicao) topHorasPosicao.textContent = user.top_horas_posicao ? `#${user.top_horas_posicao}` : (user.top_horas || "#0");
 
-  diamantesPassadoValue.textContent = formatDiamondsK(user.diamantes_mes_passado || "0");
-  duracaoPassadoValue.textContent = user.duracao_mes_passado || "0";
-  diasPassadoValue.textContent = user.dias_validos_mes_passado || user.dias_mes_passado || "0";
-  livesPassadoValue.textContent = user.lives_feitas_mes_passado || user.lives_mes_passado || "0";
+  if (diamantesPassadoValue) diamantesPassadoValue.textContent = formatDiamondsK(user.diamantes_mes_passado || "0");
+  if (duracaoPassadoValue) duracaoPassadoValue.textContent = user.duracao_mes_passado || "0";
+  if (diasPassadoValue) diasPassadoValue.textContent = user.dias_validos_mes_passado || user.dias_mes_passado || "0";
+  if (livesPassadoValue) livesPassadoValue.textContent = user.lives_feitas_mes_passado || user.lives_mes_passado || "0";
 
   renderTopHoras();
   renderNotificacoes();
   renderDesenvolvimento();
   loadMinhasIndicacoes(true);
-  renderBattleHistory();
+  loadBattleHistory(true);
   setView("perfil");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -2293,6 +2463,7 @@ async function loadRemoteData() {
     throw new Error("A planilha não retornou JSON. Verifique a implantação /exec e as permissões do Apps Script.");
   }
   const data = await response.json();
+  if (data && data.ok === false) throw new Error(data.message || "Erro ao carregar dados da planilha.");
   appData = {
     periodo: data.periodo || "",
     criadores: Array.isArray(data.criadores) ? data.criadores : [],
@@ -2308,6 +2479,7 @@ async function loadRemoteData() {
 
 
 async function restoreSessionIfPossible() {
+  return;
   const savedLogin = getSavedSession();
   if (!savedLogin) return;
   try {
@@ -2362,8 +2534,11 @@ function handleLogout() {
   if (preLoginHero) preLoginHero.style.display = "";
   if (preLoginLoginCard) preLoginLoginCard.style.display = "";
   minhasIndicacoesCache = [];
+  minhasBatalhasCache = [];
   renderMinhasIndicacoes();
+  renderBattleHistory();
   closeIndicacaoModal();
+  clearBattleStatus();
   clearSession();
   closePanels();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2410,6 +2585,9 @@ document.querySelectorAll(".menu-item").forEach(item => {
     if (item.dataset.view === "indicacoes") {
       loadMinhasIndicacoes(true);
     }
+    if (item.dataset.view === "batalhas") {
+      loadBattleHistory(true);
+    }
     closePanels();
     if (mainApp.style.display !== "none") {
       mainApp.scrollIntoView({behavior:"smooth", block:"start"});
@@ -2447,11 +2625,12 @@ renderNotificacoes();
 renderDesenvolvimento();
 const sendBattleBtn = document.getElementById("sendBattleBtn");
 if (sendBattleBtn) {
-  sendBattleBtn.addEventListener("click", () => {
-    alert("A integração da aba Batalhas Oficiais entra no Apps Script na próxima etapa.");
-  });
+  const freshSendBattleBtn = sendBattleBtn.cloneNode(true);
+  sendBattleBtn.parentNode.replaceChild(freshSendBattleBtn, sendBattleBtn);
+  freshSendBattleBtn.addEventListener("click", enviarBatalha);
 }
-restoreSessionIfPossible();
+clearSession();
+renderBattleHistory();
 </script>
 
 <script>
