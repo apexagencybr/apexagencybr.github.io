@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Connect - BETA v0.23</title>
+<title>Apex Connect - BETA v0.24</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
@@ -995,7 +995,7 @@ align-items:stretch; grid-template-columns:1fr; }
   .profile-badge-sub{color:var(--muted);line-height:1.6;margin:0;}
   .data-header-badge{width:96px;height:96px;border-radius:24px;padding:6px;background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;overflow:hidden;}
   @media (max-width: 1080px) {.xp-summary, .mission-grid, .battle-history { grid-template-columns:1fr 1fr; }}
-  @media (max-width: 768px) {.xp-summary, .mission-grid, .battle-history, .battle-form-grid { grid-template-columns:1fr; } .profile-hero.profile-xp{grid-template-columns:1fr;} .season-card{min-width:100%;max-width:100%;}}
+  @media (max-width: 768px) {.xp-summary, .mission-grid, .battle-history, .battle-form-grid { grid-template-columns:1fr !important; } .xp-mission-grid{grid-template-columns:1fr !important;} .xp-mission-grid .mission-card p{font-size:14px;line-height:1.7;} .profile-hero.profile-xp{grid-template-columns:1fr;} .season-card{min-width:100%;max-width:100%;}}
 
 
   .season-card.glow-gold .season-badge::before,
@@ -1041,12 +1041,12 @@ align-items:stretch; grid-template-columns:1fr; }
     display:grid;
     place-items:center;
   }
-  .badge-wrap-level.level-bronze1 .badge-img-level{ transform: translateY(-2px) scale(1.08); }
-  .badge-wrap-level.level-bronze2 .badge-img-level{ transform: translateY(-22px) scale(1.24); }
-  .badge-wrap-level.level-prata1 .badge-img-level{ transform: translateY(-6px) scale(1.14); }
-  .badge-wrap-level.level-prata2 .badge-img-level{ transform: translateY(-6px) scale(1.14); }
-  .badge-wrap-level.level-ouro .badge-img-level{ transform: translateY(-8px) scale(1.16); }
-  .badge-wrap-level.level-diamante .badge-img-level{ transform: translateY(-6px) scale(1.12); }
+  .badge-wrap-level.level-bronze1 .badge-img-level{ transform: scale(1.18); }
+  .badge-wrap-level.level-bronze2 .badge-img-level{ transform: scale(1.18); }
+  .badge-wrap-level.level-prata1 .badge-img-level{ transform: scale(1.12); }
+  .badge-wrap-level.level-prata2 .badge-img-level{ transform: scale(1.12); }
+  .badge-wrap-level.level-ouro .badge-img-level{ transform: scale(1.1); }
+  .badge-wrap-level.level-diamante .badge-img-level{ transform: scale(1.08); }
   .season-card{
     width:100%;
     max-width:420px;
@@ -1216,7 +1216,7 @@ align-items:stretch; grid-template-columns:1fr; }
             </div>
             <div class="xp-card">
               <strong style="display:block;margin-bottom:12px;font-size:18px;">Como ganhar XP</strong>
-              <div class="mission-grid" style="grid-template-columns:1fr 1fr;">
+              <div class="mission-grid xp-mission-grid">
                 <div class="mission-card"><strong>Horas</strong><p>10h = 1.500 XP<br>20h = 3.000 XP<br>30h = 4.500 XP<br>40h = 6.000 XP<br>50h = 7.500 XP<br>60h = 9.000 XP<br>80h = 12.000 XP<br>100h = 15.000 XP<br>120h = 18.000 XP<br>150h = 22.500 XP<br>180h = 27.000 XP<br>200h = 30.000 XP</p></div>
                 <div class="mission-card"><strong>Dias válidos</strong><p>1 dia = 250 XP<br>5 dias = 1.250 XP<br>10 dias = 2.500 XP<br>15 dias = 3.750 XP<br>20 dias = 5.000 XP</p></div>
                 <div class="mission-card"><strong>Batalhas</strong><p>5 = 200 XP<br>10 = 400 XP<br>15 = 600 XP<br>20 = 800 XP<br>30 = 1.200 XP<br>40 = 1.600 XP<br>50 = 2.000 XP<br>60 = 2.400 XP<br>80 = 3.200 XP<br>100 = 4.000 XP</p></div>
@@ -1226,7 +1226,7 @@ align-items:stretch; grid-template-columns:1fr; }
           </div>
         </div>
         <div class="section-card panel">
-          <div class="section-head"><div><h4>Galeria de temporadas</h4><p>A badge abaixo mostra a temporada anterior disponível para o seu histórico.</p></div></div>
+          <div class="section-head"><div><h4>Galeria de temporadas</h4><p>As badges abaixo mostram automaticamente todas as temporadas disponíveis no seu histórico.</p></div></div>
           <div class="horizontal-cards" id="temporadasList"></div>
         </div>
       </div>
@@ -2803,6 +2803,13 @@ restoreSessionIfPossible();
   function monthNamePt(month){
     return ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"][month] || "";
   }
+  function parseSeasonSortValue(name){
+    const raw = String(name || '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+    const months = {janeiro:0, fevereiro:1, marco:2, abril:3, maio:4, junho:5, julho:6, agosto:7, setembro:8, outubro:9, novembro:10, dezembro:11};
+    const match = raw.match(/(janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+(\d{4})/);
+    if (!match) return 0;
+    return Number(match[2]) * 100 + (months[match[1]] ?? 0);
+  }
   function parseDateLoose(value){
     const raw = String(value || "").trim();
     if (!raw) return null;
@@ -2901,7 +2908,7 @@ restoreSessionIfPossible();
       const myLogin = String(user?.login6 || user?.id || "").replace(/\D+/g,"").slice(-6);
       const temporadas = (Array.isArray(appData?.temporadas) ? appData.temporadas : [])
         .filter(item => String(item?.login6 || "").replace(/\D+/g,"").slice(-6) === myLogin)
-        .slice(0,1);
+        .sort((a,b) => parseSeasonSortValue(b?.temporada_nome || b?.nome || '') - parseSeasonSortValue(a?.temporada_nome || a?.nome || ''));
       const cards = temporadas.length ? temporadas.map(item => {
         const badge = getBadgeByNivel(normalizeNivelTitle(item.nivel, item.xp_total || 0));
         const nivel = normalizeNivelTitle(item.nivel || d.current.title, item.xp_total || 0);
@@ -2914,7 +2921,7 @@ restoreSessionIfPossible();
           levelKey: getLevelKey(nivel, item.xp_total || 0)
         };
       }) : [{
-        nome: "Temporada anterior",
+        nome: "Temporada atual",
         nivel: d.current.title,
         xp: d.xp.total,
         avatar: d.current.avatar,
