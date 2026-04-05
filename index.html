@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Connect - BETA v0.22</title>
+<title>Apex Connect - BETA v0.23</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
@@ -1016,6 +1016,86 @@ align-items:stretch; grid-template-columns:1fr; }
     .season-badge img{max-width:270px;max-height:270px;}
   }
 
+
+  .profile-hero.profile-xp .avatar-badge.big-badge{
+    width: 188px;
+    height: 188px;
+    padding: 8px;
+    display:grid;
+    place-items:center;
+  }
+  .profile-hero.profile-xp .avatar-badge.big-badge img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .badge-img-level{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    transform-origin:center center;
+  }
+  .badge-wrap-level{
+    width:100%;
+    height:100%;
+    display:grid;
+    place-items:center;
+  }
+  .badge-wrap-level.level-bronze1 .badge-img-level{ transform: translateY(-2px) scale(1.08); }
+  .badge-wrap-level.level-bronze2 .badge-img-level{ transform: translateY(-22px) scale(1.24); }
+  .badge-wrap-level.level-prata1 .badge-img-level{ transform: translateY(-6px) scale(1.14); }
+  .badge-wrap-level.level-prata2 .badge-img-level{ transform: translateY(-6px) scale(1.14); }
+  .badge-wrap-level.level-ouro .badge-img-level{ transform: translateY(-8px) scale(1.16); }
+  .badge-wrap-level.level-diamante .badge-img-level{ transform: translateY(-6px) scale(1.12); }
+  .season-card{
+    width:100%;
+    max-width:420px;
+    min-height:460px;
+    padding:24px 22px 26px;
+  }
+  .season-badge{
+    width:320px;
+    height:320px;
+    margin:0 auto 18px;
+    display:grid;
+    place-items:center;
+    overflow:visible;
+  }
+  .season-badge img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+  }
+  .season-card .season-name{
+    font-size:22px;
+    line-height:1.15;
+  }
+  .season-card .season-rank{
+    font-size:19px;
+    line-height:1.2;
+  }
+  .season-card .season-xp{
+    font-size:18px;
+  }
+  @media (max-width: 768px){
+    .profile-hero.profile-xp .avatar-badge.big-badge{
+      width: 170px;
+      height: 170px;
+    }
+    .season-card{
+      max-width:100%;
+      min-height:430px;
+      padding:22px 18px 24px;
+    }
+    .season-badge{
+      width:290px;
+      height:290px;
+      margin-bottom:14px;
+    }
+    .season-card .season-name{font-size:21px;}
+    .season-card .season-rank{font-size:18px;}
+  }
+
 </style>
 </head>
 <body>
@@ -1190,25 +1270,6 @@ align-items:stretch; grid-template-columns:1fr; }
             </div>
           </div>
 
-          <div class="profile-hero">
-            <div class="avatar-wrap">
-              <div class="avatar-badge" id="avatarBox"></div>
-            </div>
-            <div class="profile-copy">
-              <h4 id="nivelNome" style="margin:0 0 4px;font-size:22px;">Alpinista Bronze</h4>
-              <p id="nivelTexto" style="margin:0;color:var(--muted);line-height:1.55;">Seu avatar muda de acordo com sua faixa de horas dentro da Apex Connect.</p>
-              <div class="level-pill">Alpinista Bronze: abaixo de 50h • Alpinista Prata: 50h a 99h • Alpinista Ouro: 100h+</div>
-              <div class="progress-box">
-                <div class="progress-label">
-                  <span>Progresso de nível</span>
-                  <span id="progressInfo">0h / 50h</span>
-                </div>
-                <div class="progress-track">
-                  <div class="progress-fill" id="progressFill"></div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="section-card panel">
@@ -1859,7 +1920,7 @@ function renderPerfilExtras(user) {
     }) : [{ nome: "Temporada atual", nivel: d.current.title, xp: d.xp.total, avatar: d.current.avatar }];
     temporadasList.innerHTML = cards.map(card => `
       <div class="season-card">
-        <div class="season-badge"><img src="${card.avatar}" alt="${card.nivel}"></div>
+        <div class="season-badge"><div class="badge-wrap-level level-${card.levelKey} ${card.glowClass}"><img class="badge-img-level" src="${card.avatar}" alt="${card.nivel}"></div></div>
         <div class="season-name">${card.nome.replace(/\bMarco\b/g,'Março')}</div>
         <div class="season-rank">${card.nivel}</div>
         <div class="season-xp">${Number(card.xp || 0).toLocaleString('pt-BR')} XP</div>
@@ -2249,12 +2310,12 @@ function renderDesenvolvimento() {
 function renderLevel(user) {
   const hoursText = user.duracao_live || user.horas || "0h 0m 0s";
   const level = getLevelData(hoursText);
-  avatarBox.innerHTML = avatarHTML(hoursText);
-  userMiniAvatar.innerHTML = avatarHTML(hoursText);
-  nivelNome.textContent = level.title;
-  nivelTexto.textContent = level.text;
-  progressInfo.textContent = level.info;
-  progressFill.style.width = `${level.progress}%`;
+  if (avatarBox) avatarBox.innerHTML = avatarHTML(hoursText);
+  if (userMiniAvatar) userMiniAvatar.innerHTML = avatarHTML(hoursText);
+  if (nivelNome) nivelNome.textContent = level.title;
+  if (nivelTexto) nivelTexto.textContent = level.text;
+  if (progressInfo) progressInfo.textContent = level.info;
+  if (progressFill) progressFill.style.width = `${level.progress}%`;
 }
 
 function fillUser(user) {
@@ -2693,7 +2754,7 @@ restoreSessionIfPossible();
   }
 
 </style>
-<script id="apex-patch-script-v022">
+<script id="apex-patch-script-v023">
 (function(){
   const LEVELS = [
     { key:"bronze1", title:"Trilheiro Bronze I", min:0, avatar: BADGES?.[0]?.avatar || "" },
@@ -2707,12 +2768,12 @@ restoreSessionIfPossible();
   function normalizeNivelTitle(raw, xpValue){
     const t = String(raw || '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
     if (t){
-      if (t.includes('diamante') || t.includes('lenda')) return 'Lenda da Montanha';
-      if (t.includes('ouro')) return 'Alpinista Ouro';
-      if (t.includes('prata ii')) return 'Escalador Prata II';
-      if (t.includes('prata i')) return 'Escalador Prata I';
-      if (t.includes('bronze ii')) return 'Trilheiro Bronze II';
-      if (t.includes('bronze i')) return 'Trilheiro Bronze I';
+      if (t.includes('lenda') || t.includes('diamante')) return 'Lenda da Montanha';
+      if (t.includes('alpinista ouro') || t === 'ouro' || t.includes(' ouro')) return 'Alpinista Ouro';
+      if (t.includes('escalador prata ii') || t.includes('prata ii')) return 'Escalador Prata II';
+      if (t.includes('escalador prata i') || t.includes('prata i')) return 'Escalador Prata I';
+      if (t.includes('trilheiro bronze ii') || t.includes('bronze ii')) return 'Trilheiro Bronze II';
+      if (t.includes('trilheiro bronze i') || t.includes('bronze i')) return 'Trilheiro Bronze I';
     }
     const xp = Number(xpValue || 0);
     if (xp >= 75000) return 'Lenda da Montanha';
@@ -2726,6 +2787,10 @@ restoreSessionIfPossible();
   function getBadgeByNivel(raw, xpValue){
     const nivel = normalizeNivelTitle(raw, xpValue);
     return LEVELS.find(b => b.title === nivel) || LEVELS[0];
+  }
+
+  function getLevelKey(raw, xpValue){
+    return (getBadgeByNivel(raw, xpValue) || LEVELS[0]).key || 'bronze1';
   }
 
   function getGlowClassByNivel(raw, xpValue){
@@ -2800,7 +2865,8 @@ restoreSessionIfPossible();
   window.avatarHTML = function(user){
     const d = getLevelDataPatched(user);
     const glowClass = d.current.title === 'Alpinista Ouro' ? 'perfil-badge-glow-gold' : (d.current.title === 'Lenda da Montanha' ? 'perfil-badge-glow-diamond' : '');
-    return `<div class="${glowClass}" style="width:100%;height:100%;display:grid;place-items:center;"><img src="${d.current.avatar}" alt="${d.current.title}"></div>`;
+    const levelKey = getLevelKey(d.current.title, d.xp.total);
+    return `<div class="badge-wrap-level level-${levelKey} ${glowClass}"><img class="badge-img-level" src="${d.current.avatar}" alt="${d.current.title}"></div>`;
   };
   window.renderPerfilExtras = function(user){
     const d = getLevelDataPatched(user);
@@ -2844,18 +2910,20 @@ restoreSessionIfPossible();
           nivel,
           xp: Number(item.xp_total || 0),
           avatar: badge.avatar,
-          glowClass: getGlowClassByNivel(nivel)
+          glowClass: getGlowClassByNivel(nivel),
+          levelKey: getLevelKey(nivel, item.xp_total || 0)
         };
       }) : [{
         nome: "Temporada anterior",
         nivel: d.current.title,
         xp: d.xp.total,
         avatar: d.current.avatar,
-        glowClass: getGlowClassByNivel(d.current.title)
+        glowClass: getGlowClassByNivel(d.current.title),
+        levelKey: getLevelKey(d.current.title, d.xp.total)
       }];
       temporadasList.innerHTML = cards.map(card => `
         <div class="season-card ${card.glowClass}">
-          <div class="season-badge"><img src="${card.avatar}" alt="${card.nivel}"></div>
+          <div class="season-badge"><div class="badge-wrap-level level-${card.levelKey} ${card.glowClass}"><img class="badge-img-level" src="${card.avatar}" alt="${card.nivel}"></div></div>
           <div class="season-name">${card.nome.replace(/\bMarco\b/g,'Março')}</div>
           <div class="season-rank">${card.nivel}</div>
           <div class="season-xp">${card.xp.toLocaleString('pt-BR')} XP</div>
@@ -2991,8 +3059,8 @@ restoreSessionIfPossible();
     });
     const viewDados = document.getElementById("view-dados");
     if (viewDados){
-      const levelBits = viewDados.querySelectorAll("#nivelNome, #nivelTexto, #progressInfo, #progressFill, .data-header-badge, .user-mini-avatar, #avatarBox");
-      levelBits.forEach(el => { if (el) el.style.display = "none"; });
+      const dataProfileHero = viewDados.querySelector('.profile-hero');
+      if (dataProfileHero) dataProfileHero.remove();
     }
   }
 
