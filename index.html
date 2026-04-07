@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -2447,7 +2448,8 @@ async function renderBattleHistory() {
               <span>Adversário</span>
               <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                 <span>${adversario || "-"}</span>
-                ${tiktokLink ? `<a class="btn btn-secondary" href="${tiktokLink}" target="_blank" rel="noopener noreferrer" style="min-height:38px;padding:0 14px;font-size:13px;">Seguir</a>` : ""}
+                ${adversario ? `<span style="font-weight:700;">@${adversario.replace(/^@/,'')}</span>` : ""}
+${tiktokLink ? `<a class="btn btn-secondary" href="${tiktokLink}" target="_blank">Seguir</a>` : ""}
               </span>
             </div>
           </div>
