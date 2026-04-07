@@ -2387,16 +2387,82 @@ function renderPerfilExtras(user) {
   }
 }
 
-function renderBattleHistory() {
+async function renderBattleHistory() {
   const battleHistoryList = document.getElementById("battleHistoryList");
   if (!battleHistoryList) return;
+
+  if (!currentUser) {
+    battleHistoryList.innerHTML = "";
+    return;
+  }
+
   battleHistoryList.innerHTML = `
     <div class="battle-card">
-      <strong>Histórico em breve</strong>
-      <p>Assim que a integração da aba Batalhas for ativada no Apps Script, suas solicitações aparecerão aqui.</p>
-      <div style="margin-top:10px;"><span class="status-pill">AGUARDANDO</span></div>
+      <strong>Carregando...</strong>
+      <p>Buscando suas batalhas.</p>
     </div>
   `;
+
+  try {
+    const login6 = String(currentUser.id || currentUser.login6 || "").replace(/\D+/g, "").slice(-6);
+
+    const response = await fetch(
+      `${APPS_SCRIPT_URL}?action=minhasbatalhas&idUsuario=${encodeURIComponent(login6)}&t=${Date.now()}`,
+      { method: "GET", mode: "cors", cache: "no-store" }
+    );
+
+    const data = await response.json();
+    const items = Array.isArray(data?.batalhas) ? data.batalhas : [];
+
+    if (!items.length) {
+      battleHistoryList.innerHTML = `
+        <div class="battle-card">
+          <strong>Nenhuma batalha cadastrada</strong>
+          <p>Quando você solicitar uma batalha, ela aparecerá aqui com status e adversário.</p>
+          <div style="margin-top:10px;"><span class="status-pill">AGUARDANDO</span></div>
+        </div>
+      `;
+      return;
+    }
+
+    battleHistoryList.innerHTML = items.map(item => {
+      const adversario = String(item.adversario || "").trim();
+      const tiktokLink = adversario
+        ? `https://www.tiktok.com/@${adversario.replace(/^@+/, "")}`
+        : "";
+
+      const dataBatalha = item.data_batalha || "--/--/----";
+      const horaBatalha = item.hora_batalha || "--:--";
+
+      return `
+        <div class="battle-card">
+          <strong>Batalha marcada para: ${dataBatalha} às ${horaBatalha}</strong>
+          <p>Meta de diamantes: <strong>${item.meta_diamantes || "0K"}</strong></p>
+
+          <div class="battle-card-row">
+            <div class="section-item"><span>Rounds</span><span>${item.rounds || "-"}</span></div>
+            <div class="section-item"><span>Urgência</span><span>${item.urgencia || "Não"}</span></div>
+            <div class="section-item"><span>Status</span><span>${item.status || "Aguardando"}</span></div>
+            <div class="section-item">
+              <span>Adversário</span>
+              <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span>${adversario || "-"}</span>
+                ${tiktokLink ? `<a class="btn btn-secondary" href="${tiktokLink}" target="_blank" rel="noopener noreferrer" style="min-height:38px;padding:0 14px;font-size:13px;">Seguir</a>` : ""}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    battleHistoryList.innerHTML = `
+      <div class="battle-card">
+        <strong>Erro ao carregar</strong>
+        <p>${error?.message || "Não foi possível carregar as batalhas."}</p>
+      </div>
+    `;
+  }
 }
 
 
