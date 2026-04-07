@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Connect - BETA v0.24</title>
+<title>Apex Connect - v1.0</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
@@ -1096,6 +1096,179 @@ align-items:stretch; grid-template-columns:1fr; }
     .season-card .season-rank{font-size:18px;}
   }
 
+
+  .perfil-dropdown{
+    margin-top:14px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+    overflow:hidden;
+  }
+  .perfil-dropdown summary{
+    list-style:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    font-weight:800;
+    font-size:15px;
+  }
+  .perfil-dropdown summary::-webkit-details-marker{display:none;}
+  .perfil-dropdown summary::after{
+    content:"▾";
+    font-size:16px;
+    opacity:.85;
+    transition:transform .2s ease;
+  }
+  .perfil-dropdown[open] summary::after{ transform:rotate(180deg); }
+  .perfil-dropdown-body{ padding:0 16px 16px; }
+  .levels-roadmap{
+    display:grid;
+    grid-template-columns:repeat(6,minmax(130px,1fr));
+    gap:12px;
+    margin-top:12px;
+    overflow-x:auto;
+    padding-bottom:6px;
+  }
+  .level-node{
+    min-width:130px;
+    text-align:center;
+    position:relative;
+    padding-top:8px;
+  }
+  .level-node:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top:44px;
+    left:60%;
+    width:80%;
+    height:3px;
+    background:linear-gradient(90deg, rgba(210,180,124,.85), rgba(210,180,124,.15));
+  }
+  .level-node-badge{
+    width:72px;
+    height:72px;
+    margin:0 auto 10px;
+    display:grid;
+    place-items:center;
+    padding:6px;
+    border-radius:20px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);
+  }
+  .level-node-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .level-node-name{ font-size:13px; font-weight:800; line-height:1.35; }
+  .level-node-xp{ margin-top:6px; color:var(--muted); font-size:12px; line-height:1.3; }
+  .ranking-grid{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:16px;
+    align-items:start;
+  }
+  .ranking-card-soft{
+    padding:18px;
+    border-radius:22px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .ranking-list{ display:grid; gap:12px; }
+  .ranking-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .ranking-medal{
+    width:34px;
+    flex-shrink:0;
+    font-size:22px;
+    text-align:center;
+  }
+  .ranking-badge{
+    width:56px;
+    height:56px;
+    padding:6px;
+    border-radius:16px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+  }
+  .ranking-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .ranking-meta{ min-width:0; flex:1; }
+  .ranking-name{ font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ranking-level{ color:var(--muted); font-size:13px; margin-top:4px; }
+  .ranking-xp{ font-size:15px; font-weight:800; text-align:right; }
+  .ranking-pos{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:44px;
+    height:28px;
+    padding:0 10px;
+    border-radius:999px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.08);
+    font-size:13px;
+    font-weight:800;
+    margin-bottom:12px;
+  }
+  .community-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:16px;
+  }
+  .community-card{
+    padding:20px;
+    border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .community-links{ display:grid; gap:12px; margin-top:16px; }
+  .community-link{
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .community-icon{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    background:rgba(255,255,255,.08);
+    font-size:22px;
+    flex-shrink:0;
+  }
+  .community-link strong{ display:block; margin-bottom:4px; font-size:15px; }
+  .community-link span{ color:var(--muted); font-size:13px; line-height:1.45; }
+  @media (max-width: 900px){
+    .ranking-grid,
+    .community-grid{
+      grid-template-columns:1fr;
+    }
+  }
+  @media (max-width: 768px){
+    .levels-roadmap{
+      grid-template-columns:repeat(6,minmax(118px,1fr));
+    }
+    .level-node:not(:last-child)::after{
+      width:72%;
+      left:64%;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1119,6 +1292,7 @@ align-items:stretch; grid-template-columns:1fr; }
     <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
     <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
     <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon">EM BREVE</span></span><span>›</span></div>
+    <div class="menu-item" data-view="comunidade"><span class="menu-label">🌐 Comunidade <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
   </div>
 
   <div class="drawer-footer">
@@ -1198,6 +1372,38 @@ align-items:stretch; grid-template-columns:1fr; }
                 <div class="progress-label"><span>Progresso de nível</span><span id="perfilProgressInfo">0 XP / 0 XP</span></div>
                 <div class="progress-track"><div class="progress-fill" id="perfilProgressFill"></div></div>
               </div>
+              <details class="perfil-dropdown" id="xpLevelsDropdown">
+                <summary>XP e níveis</summary>
+                <div class="perfil-dropdown-body">
+                  <div class="mission-grid xp-mission-grid">
+                    <div class="mission-card"><strong>Horas</strong><p>10h = 1.500 XP<br>20h = 3.000 XP<br>30h = 4.500 XP<br>40h = 6.000 XP<br>50h = 7.500 XP<br>60h = 9.000 XP<br>80h = 12.000 XP<br>100h = 15.000 XP<br>120h = 18.000 XP<br>150h = 22.500 XP<br>180h = 27.000 XP<br>200h = 30.000 XP<br>250h = 40.000 XP</p></div>
+                    <div class="mission-card"><strong>Dias válidos</strong><p>1 dia = 250 XP<br>5 dias = 1.250 XP<br>10 dias = 2.500 XP<br>15 dias = 3.750 XP<br>20 dias = 5.000 XP<br>22 dias = 5.500 XP<br>30 dias = 7.500 XP</p></div>
+                    <div class="mission-card"><strong>Batalhas</strong><p>5 = 200 XP<br>10 = 400 XP<br>15 = 600 XP<br>20 = 800 XP<br>30 = 1.200 XP<br>40 = 1.600 XP<br>50 = 2.000 XP<br>60 = 2.400 XP<br>80 = 3.200 XP<br>100 = 4.000 XP<br>200 = 8.000 XP<br>300 = 12.000 XP<br>400 = 16.000 XP<br>500 = 20.000 XP</p></div>
+                    <div class="mission-card"><strong>Diamantes</strong><p>500 = 60 XP<br>1K = 120 XP<br>2,5K = 300 XP<br>5K = 600 XP<br>10K = 1.200 XP<br>25K = 3.000 XP<br>50K = 6.000 XP<br>100K = 12.000 XP<br>250K = 30.000 XP<br>500K = 60.000 XP<br>1M = 120.000 XP<br>1,5M = 150.000 XP<br>2M = 200.000 XP</p></div>
+                  </div>
+                  <div class="levels-roadmap" id="levelsRoadmap"></div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+        <div class="section-card panel">
+          <div class="section-head"><div><h4>Ranking da temporada atual</h4><p>Top 3 por XP, sua posição atual e quanto falta para entrar no top 3.</p></div></div>
+          <div class="ranking-grid">
+            <div class="ranking-card-soft">
+              <div class="ranking-list" id="seasonTopRanking"></div>
+            </div>
+            <div class="ranking-card-soft">
+              <div class="ranking-pos" id="mySeasonPosition">#--</div>
+              <div class="ranking-item" id="mySeasonRankingCard">
+                <div class="ranking-badge" id="mySeasonBadge"></div>
+                <div class="ranking-meta">
+                  <div class="ranking-name" id="mySeasonName">@usuario</div>
+                  <div class="ranking-level" id="mySeasonLevel">Nível atual</div>
+                </div>
+                <div class="ranking-xp" id="mySeasonXp">0 XP</div>
+              </div>
+              <div class="muted" style="margin-top:14px;" id="xpToTop3">Faltam 0 XP para entrar no Top 3</div>
             </div>
           </div>
         </div>
@@ -1215,12 +1421,10 @@ align-items:stretch; grid-template-columns:1fr; }
               </div>
             </div>
             <div class="xp-card">
-              <strong style="display:block;margin-bottom:12px;font-size:18px;">Como ganhar XP</strong>
+              <strong style="display:block;margin-bottom:12px;font-size:18px;">Resumo da progressão</strong>
               <div class="mission-grid xp-mission-grid">
-                <div class="mission-card"><strong>Horas</strong><p>10h = 1.500 XP<br>20h = 3.000 XP<br>30h = 4.500 XP<br>40h = 6.000 XP<br>50h = 7.500 XP<br>60h = 9.000 XP<br>80h = 12.000 XP<br>100h = 15.000 XP<br>120h = 18.000 XP<br>150h = 22.500 XP<br>180h = 27.000 XP<br>200h = 30.000 XP</p></div>
-                <div class="mission-card"><strong>Dias válidos</strong><p>1 dia = 250 XP<br>5 dias = 1.250 XP<br>10 dias = 2.500 XP<br>15 dias = 3.750 XP<br>20 dias = 5.000 XP</p></div>
-                <div class="mission-card"><strong>Batalhas</strong><p>5 = 200 XP<br>10 = 400 XP<br>15 = 600 XP<br>20 = 800 XP<br>30 = 1.200 XP<br>40 = 1.600 XP<br>50 = 2.000 XP<br>60 = 2.400 XP<br>80 = 3.200 XP<br>100 = 4.000 XP</p></div>
-                <div class="mission-card"><strong>Diamantes</strong><p>500 = 60 XP<br>1K = 120 XP<br>2,5K = 300 XP<br>5K = 600 XP<br>10K = 1.200 XP<br>25K = 3.000 XP<br>50K = 6.000 XP<br>100K = 12.000 XP<br>250K = 30.000 XP<br>500K = 60.000 XP<br>1M = 120.000 XP</p></div>
+                <div class="mission-card"><strong>Nível atual</strong><p id="perfilResumoNivel">Seu nível será exibido aqui automaticamente.</p></div>
+                <div class="mission-card"><strong>Meta do Top 3</strong><p id="perfilResumoTop3">Acompanhe nesta página quanto falta para entrar no Top 3 da temporada.</p></div>
               </div>
             </div>
           </div>
@@ -1433,6 +1637,60 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
   </div>
 </div>
 
+
+<div class="view-panel" id="view-comunidade">
+  <div class="panel">
+    <div class="section-head">
+      <div>
+        <h4>Comunidade</h4>
+        <p>Participe dos grupos da Apex Agency e acompanhe nossos perfis oficiais.</p>
+      </div>
+    </div>
+    <div class="community-grid">
+      <div class="community-card">
+        <h5 style="margin:0 0 8px;font-size:22px;">Grupos de WhatsApp</h5>
+        <p style="margin:0;color:var(--muted);line-height:1.65;">Entre nos grupos para interagir, acompanhar avisos, atualizações, eventos e incentivos semanais.</p>
+        <div class="community-links">
+          <a class="community-link" href="https://chat.whatsapp.com/BJ1CK6rILwM1z3GWXJzsbi" target="_blank" rel="noopener noreferrer">
+            <div class="community-icon">💬</div>
+            <div>
+              <strong>Grupo geral da Apex Agency</strong>
+              <span>Pode acessar e interagir com todos da comunidade.</span>
+            </div>
+          </a>
+          <a class="community-link" href="https://chat.whatsapp.com/C0KzpnHLbhF52DQsrFkhCo" target="_blank" rel="noopener noreferrer">
+            <div class="community-icon">📢</div>
+            <div>
+              <strong>Grupo de avisos</strong>
+              <span>Mudanças, atualizações, eventos, incentivos semanais e ganhadores.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="community-card">
+        <h5 style="margin:0 0 8px;font-size:22px;">Nossos perfis</h5>
+        <p style="margin:0;color:var(--muted);line-height:1.65;">Siga nossas redes sociais para acompanhar novidades, conteúdos e comunicações da agência.</p>
+        <div class="community-links">
+          <a class="community-link" href="https://www.tiktok.com/@agencia.apex?lang=pt-BR" target="_blank" rel="noopener noreferrer">
+            <div class="community-icon">🎵</div>
+            <div>
+              <strong>TikTok oficial</strong>
+              <span>@agencia.apex</span>
+            </div>
+          </a>
+          <a class="community-link" href="https://www.instagram.com/ttk.apexagency?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+            <div class="community-icon">📸</div>
+            <div>
+              <strong>Instagram oficial</strong>
+              <span>@ttk.apexagency</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="view-panel" id="view-shop">
         <div class="section-card panel">
           <div class="section-head">
@@ -1468,7 +1726,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect Beta v0.20</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v1.0</div>
   </div>
 </div>
 
@@ -1850,10 +2108,10 @@ function calculateXpFromUser(user) {
   const dias = Number(String(user.dias_validos || user.dias || "0").replace(/\D+/g,'')) || 0;
   const batalhas = Number(String(user.batalhas_total || user.batalhas || user.lives_feitas || 0).replace(/\D+/g,'')) || 0;
   const diamantes = Number(String(user.diamantes || "0").replace(/[^\d]/g,'')) || 0;
-  const horasXp = xpByTable(horas, [[10,1500],[20,3000],[30,4500],[40,6000],[50,7500],[60,9000],[80,12000],[100,15000],[120,18000],[150,22500],[180,27000],[200,30000]]);
-  const diasXp = xpByTable(dias, [[1,250],[5,1250],[10,2500],[15,3750],[20,5000]]);
-  const batalhasXp = xpByTable(batalhas, [[5,200],[10,400],[15,600],[20,800],[30,1200],[40,1600],[50,2000],[60,2400],[80,3200],[100,4000]]);
-  const diamantesXp = xpByTable(diamantes, [[500,60],[1000,120],[2500,300],[5000,600],[10000,1200],[25000,3000],[50000,6000],[100000,12000],[250000,30000],[500000,60000],[1000000,120000]]);
+  const horasXp = xpByTable(horas, [[10,1500],[20,3000],[30,4500],[40,6000],[50,7500],[60,9000],[80,12000],[100,15000],[120,18000],[150,22500],[180,27000],[200,30000],[250,40000]]);
+  const diasXp = xpByTable(dias, [[1,250],[5,1250],[10,2500],[15,3750],[20,5000],[22,5500],[30,7500]]);
+  const batalhasXp = xpByTable(batalhas, [[5,200],[10,400],[15,600],[20,800],[30,1200],[40,1600],[50,2000],[60,2400],[80,3200],[100,4000],[200,8000],[300,12000],[400,16000],[500,20000]]);
+  const diamantesXp = xpByTable(diamantes, [[500,60],[1000,120],[2500,300],[5000,600],[10000,1200],[25000,3000],[50000,6000],[100000,12000],[250000,30000],[500000,60000],[1000000,120000],[1500000,150000],[2000000,200000]]);
   return { horasXp, diasXp, batalhasXp, diamantesXp, total: horasXp+diasXp+batalhasXp+diamantesXp };
 }
 
@@ -2875,6 +3133,83 @@ restoreSessionIfPossible();
     const levelKey = getLevelKey(d.current.title, d.xp.total);
     return `<div class="badge-wrap-level level-${levelKey} ${glowClass}"><img class="badge-img-level" src="${d.current.avatar}" alt="${d.current.title}"></div>`;
   };
+
+  function renderLevelsRoadmap(){
+    const levelsRoadmap = document.getElementById("levelsRoadmap");
+    if (!levelsRoadmap) return;
+    levelsRoadmap.innerHTML = LEVELS.map(level => `
+      <div class="level-node">
+        <div class="level-node-badge"><img src="${level.avatar}" alt="${level.title}"></div>
+        <div class="level-node-name">${level.title}</div>
+        <div class="level-node-xp">${Number(level.min || 0).toLocaleString('pt-BR')} XP</div>
+      </div>
+    `).join("");
+  }
+
+  function getSeasonXpRanking(){
+    if (!Array.isArray(appData?.criadores)) return [];
+    return [...appData.criadores]
+      .map(user => {
+        const d = getLevelDataPatched(user);
+        return {
+          user,
+          xp: Number(d.xp.total || 0),
+          level: d.current.title,
+          badge: d.current.avatar,
+          login6: String(user?.login6 || user?.id || "").replace(/\D+/g,"").slice(-6),
+          arroba: user?.arroba || user?.display || user?.nome || '@usuario'
+        };
+      })
+      .sort((a,b) => b.xp - a.xp);
+  }
+
+  function renderSeasonRanking(user){
+    const topContainer = document.getElementById("seasonTopRanking");
+    const myPosition = document.getElementById("mySeasonPosition");
+    const myBadge = document.getElementById("mySeasonBadge");
+    const myName = document.getElementById("mySeasonName");
+    const myLevel = document.getElementById("mySeasonLevel");
+    const myXp = document.getElementById("mySeasonXp");
+    const xpToTop3 = document.getElementById("xpToTop3");
+    const perfilResumoNivel = document.getElementById("perfilResumoNivel");
+    const perfilResumoTop3 = document.getElementById("perfilResumoTop3");
+    if (!topContainer || !user) return;
+
+    const ranking = getSeasonXpRanking();
+    const medals = ['🥇','🥈','🥉'];
+    const top3 = ranking.slice(0,3);
+
+    topContainer.innerHTML = top3.length ? top3.map((item, index) => `
+      <div class="ranking-item">
+        <div class="ranking-medal">${medals[index] || `#${index+1}`}</div>
+        <div class="ranking-badge"><img src="${item.badge}" alt="${item.level}"></div>
+        <div class="ranking-meta">
+          <div class="ranking-name">${item.arroba}</div>
+          <div class="ranking-level">${item.level}</div>
+        </div>
+        <div class="ranking-xp">${item.xp.toLocaleString('pt-BR')} XP</div>
+      </div>
+    `).join("") : `<div class="ranking-item"><div class="ranking-meta"><div class="ranking-name">Sem ranking disponível</div><div class="ranking-level">Os dados aparecerão aqui quando houver usuários carregados.</div></div></div>`;
+
+    const myLogin = String(user?.login6 || user?.id || "").replace(/\D+/g,"").slice(-6);
+    const myIndex = ranking.findIndex(item => item.login6 === myLogin);
+    const me = myIndex >= 0 ? ranking[myIndex] : (() => {
+      const d = getLevelDataPatched(user);
+      return { xp:Number(d.xp.total || 0), level:d.current.title, badge:d.current.avatar, arroba:user?.arroba || user?.display || '@usuario' };
+    })();
+    const cutoff = ranking[2]?.xp || 0;
+    const diff = Math.max(0, cutoff - Number(me.xp || 0));
+
+    if (myPosition) myPosition.textContent = myIndex >= 0 ? `#${myIndex + 1}` : '#--';
+    if (myBadge) myBadge.innerHTML = `<img src="${me.badge}" alt="${me.level}">`;
+    if (myName) myName.textContent = me.arroba;
+    if (myLevel) myLevel.textContent = me.level;
+    if (myXp) myXp.textContent = `${Number(me.xp || 0).toLocaleString('pt-BR')} XP`;
+    if (xpToTop3) xpToTop3.textContent = diff > 0 ? `Faltam ${diff.toLocaleString('pt-BR')} XP para entrar no Top 3.` : 'Você já está no Top 3 da temporada.';
+    if (perfilResumoNivel) perfilResumoNivel.textContent = `Você está em ${me.level} com ${Number(me.xp || 0).toLocaleString('pt-BR')} XP na temporada atual.`;
+    if (perfilResumoTop3) perfilResumoTop3.textContent = diff > 0 ? `Faltam ${diff.toLocaleString('pt-BR')} XP para você entrar no Top 3.` : 'Sua conta já está entre os 3 melhores da temporada atual.';
+  }
+
   window.renderPerfilExtras = function(user){
     const d = getLevelDataPatched(user);
     const perfilAvatarBox = document.getElementById("perfilAvatarBox");
@@ -2890,6 +3225,9 @@ restoreSessionIfPossible();
     const xpBatalhasValue = document.getElementById("xpBatalhasValue");
     const xpDiamantesValue = document.getElementById("xpDiamantesValue");
     const temporadasList = document.getElementById("temporadasList");
+
+    renderLevelsRoadmap();
+    renderSeasonRanking(user);
 
     if (perfilAvatarBox) perfilAvatarBox.innerHTML = avatarHTML(user);
     if (perfilNivelNome) perfilNivelNome.textContent = d.current.title;
@@ -2939,6 +3277,61 @@ restoreSessionIfPossible();
     }
   };
 
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatBattleDateBR(value){
+    if (value === null || value === undefined) return "--/--/----";
+    const raw = String(value).trim();
+    if (!raw) return "--/--/----";
+    if (raw === "1899-12-30" || raw === "1899-12-31") return "--/--/----";
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) return raw;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+      const [ano, mes, dia] = raw.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+    const date = new Date(raw);
+    if (!Number.isNaN(date.getTime())) {
+      const dia = String(date.getDate()).padStart(2, "0");
+      const mes = String(date.getMonth() + 1).padStart(2, "0");
+      const ano = date.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+    return raw;
+  }
+
+  function formatBattleTime(value){
+    if (value === null || value === undefined) return "--:--";
+    const raw = String(value).trim();
+    if (!raw) return "--:--";
+    if (raw === "1899-12-30" || raw === "1899-12-31") return "--:--";
+    const hm = raw.match(/^(\d{1,2}):(\d{2})/);
+    if (hm) return `${hm[1].padStart(2, "0")}:${hm[2]}`;
+    const timeDate = new Date(raw);
+    if (!Number.isNaN(timeDate.getTime())) {
+      const h = String(timeDate.getHours()).padStart(2, "0");
+      const m = String(timeDate.getMinutes()).padStart(2, "0");
+      if (`${h}:${m}` !== "00:00") return `${h}:${m}`;
+    }
+    return "--:--";
+  }
+
+  function buildTikTokFollowButton(handleValue){
+    const raw = String(handleValue || "").trim();
+    if (!raw || raw === "-") return "-";
+    const handle = raw.replace(/^@+/, "").split(/[\s/?#]/)[0].trim();
+    if (!handle) return escapeHtml(raw);
+    const safeHandle = escapeHtml(`@${handle}`);
+    const href = `https://www.tiktok.com/@${encodeURIComponent(handle)}`;
+    return `<span style="display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;"><span>${safeHandle}</span><a class="btn btn-secondary" href="${href}" target="_blank" rel="noopener noreferrer" style="min-height:36px;padding:0 14px;border-radius:12px;font-size:13px;">Seguir</a></span>`;
+  }
+
   window.renderBattleHistory = async function(){
     const battleHistoryList = document.getElementById("battleHistoryList");
     if (!battleHistoryList) return;
@@ -2961,18 +3354,22 @@ restoreSessionIfPossible();
           </div>`;
         return;
       }
-      battleHistoryList.innerHTML = items.map(item => `
+      battleHistoryList.innerHTML = items.map(item => {
+        const dataBatalha = formatBattleDateBR(item.data_batalha || item.data || item.dataMarcada || item.data_marcada);
+        const horaBatalha = formatBattleTime(item.hora_batalha || item.hora || item.horario || item.horaMarcada);
+        const linhaDataHora = horaBatalha && horaBatalha !== "--:--" ? `${dataBatalha} às ${horaBatalha}` : dataBatalha;
+        return `
         <div class="battle-card">
-          <strong>${item.data_batalha || "--/--/----"} • ${item.hora_batalha || "--:--"}</strong>
-          <p>Meta de diamantes: <strong>${item.meta_diamantes || "0K"}</strong></p>
+          <strong>Batalha marcada para: ${linhaDataHora}</strong>
+          <p>Meta de diamantes: <strong>${escapeHtml(item.meta_diamantes || "0K")}</strong></p>
           <div class="battle-card-row">
-            <div class="section-item"><span>Rounds</span><span>${item.rounds || "-"}</span></div>
-            <div class="section-item"><span>Urgência</span><span>${item.urgencia || "Não"}</span></div>
-            <div class="section-item"><span>Status</span><span>${item.status || "Aguardando"}</span></div>
-            <div class="section-item"><span>Adversário</span><span>${item.adversario || "-"}</span></div>
+            <div class="section-item"><span>Rounds</span><span>${escapeHtml(item.rounds || "-")}</span></div>
+            <div class="section-item"><span>Urgência</span><span>${escapeHtml(item.urgencia || "Não")}</span></div>
+            <div class="section-item"><span>Status</span><span>${escapeHtml(item.status || "Aguardando")}</span></div>
+            <div class="section-item"><span>Adversário</span><span>${buildTikTokFollowButton(item.adversario)}</span></div>
           </div>
         </div>
-      `).join("");
+      `}).join("");
     }catch(error){
       battleHistoryList.innerHTML = `<div class="battle-card"><strong>Erro ao carregar</strong><p>${error?.message || "Não foi possível carregar as batalhas."}</p></div>`;
     }
