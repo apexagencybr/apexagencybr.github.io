@@ -1270,104 +1270,144 @@ align-items:stretch; grid-template-columns:1fr; }
   }
 
 
-  .battle-opponent-wrap{
+  .battle-follow-wrap{
     display:flex;
     align-items:center;
     justify-content:flex-end;
     gap:10px;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
     width:100%;
+    min-width:0;
   }
-  .battle-opponent-handle{
-    word-break:break-word;
-    overflow-wrap:anywhere;
+  .battle-handle{
+    min-width:0;
+    flex:1;
     text-align:right;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    word-break:normal;
   }
   .battle-follow-btn{
     min-height:36px !important;
     padding:0 14px !important;
     border-radius:12px !important;
     font-size:13px !important;
-    white-space:nowrap;
     flex-shrink:0;
+    white-space:nowrap;
   }
   .community-link{
     justify-content:space-between;
-    flex-wrap:wrap;
-    gap:14px;
-  }
-  .community-main{
-    display:flex;
-    align-items:center;
-    gap:12px;
     min-width:0;
-    flex:1 1 260px;
   }
-  .community-copy{
+  .community-content{
+    flex:1;
     min-width:0;
-    display:flex;
-    flex-direction:column;
+  }
+  .community-content strong,
+  .community-content span{
+    display:block;
+  }
+  .community-content strong{
+    margin-bottom:4px;
+    font-size:15px;
+    white-space:normal;
+    word-break:break-word;
+  }
+  .community-content span{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.45;
+    white-space:normal;
+    word-break:break-word;
   }
   .community-action{
-    min-height:40px;
-    padding:0 16px;
-    border-radius:12px;
     display:inline-flex;
     align-items:center;
     justify-content:center;
+    min-height:36px;
+    padding:0 14px;
+    border-radius:12px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.10);
+    color:#fff;
     font-size:13px;
-    white-space:nowrap;
+    font-weight:700;
+    text-decoration:none;
     flex-shrink:0;
+    white-space:nowrap;
   }
-  .community-icon svg{
-    width:22px;
-    height:22px;
-    display:block;
-    fill:currentColor;
-  }
-  .community-icon.whatsapp{ color:#25D366; }
-  .community-icon.tiktok{ color:#ffffff; }
-  .community-icon.instagram{ color:#f77737; }
-  .community-icon.avisos{ color:#ffffff; }
   @media (max-width: 768px){
-    .battle-card strong{
-      display:block;
-      line-height:1.45;
-      overflow-wrap:anywhere;
+    .battle-card{
+      padding:16px !important;
     }
-    .battle-card p{
-      overflow-wrap:anywhere;
+    .battle-card strong{
+      font-size:15px !important;
+      line-height:1.45 !important;
+      word-break:break-word !important;
+    }
+    .battle-card-row{
+      grid-template-columns:1fr !important;
+      gap:10px !important;
     }
     .battle-card-row .section-item{
-      align-items:flex-start;
+      align-items:flex-start !important;
+      gap:10px !important;
+    }
+    .battle-card-row .section-item span:first-child{
+      flex:0 0 auto;
     }
     .battle-card-row .section-item span:last-child{
-      width:100%;
+      min-width:0;
+      flex:1;
       text-align:right;
+      word-break:break-word;
       overflow-wrap:anywhere;
+    }
+    .battle-follow-wrap{
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+    .battle-handle{
+      text-align:left;
+      overflow-wrap:anywhere;
+      white-space:normal;
       word-break:break-word;
     }
-    .battle-opponent-wrap{
-      justify-content:space-between;
-      align-items:flex-start;
-    }
-    .battle-opponent-handle{
-      text-align:left;
-      flex:1 1 100%;
-    }
     .battle-follow-btn{
-      width:100%;
-      justify-content:center;
+      min-width:78px;
     }
     .community-link{
-      align-items:stretch;
+      align-items:center;
+      gap:10px;
+      flex-wrap:nowrap;
+      padding:14px;
     }
-    .community-main{
-      align-items:flex-start;
-      flex:1 1 100%;
+    .community-icon{
+      width:42px;
+      height:42px;
+      font-size:20px;
     }
     .community-action{
-      width:100%;
+      min-width:74px;
+      padding:0 12px;
+    }
+    .profile-hero{
+      grid-template-columns:1fr !important;
+    }
+    .user-top-row{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+    .ranking-item{
+      align-items:center;
+    }
+    .ranking-name{
+      white-space:normal !important;
+      overflow:visible !important;
+      text-overflow:unset !important;
+      word-break:break-word !important;
     }
   }
 
@@ -1754,24 +1794,20 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
         <p style="margin:0;color:var(--muted);line-height:1.65;">Entre nos grupos para interagir, acompanhar avisos, atualizações, eventos e incentivos semanais.</p>
         <div class="community-links">
           <a class="community-link" href="https://chat.whatsapp.com/BJ1CK6rILwM1z3GWXJzsbi" target="_blank" rel="noopener noreferrer">
-            <div class="community-main">
-              <div class="community-icon whatsapp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.54 0 .24 5.3.24 11.82c0 2.08.54 4.1 1.57 5.88L0 24l6.49-1.7a11.8 11.8 0 0 0 5.57 1.42h.01c6.52 0 11.82-5.3 11.82-11.82 0-3.16-1.23-6.13-3.47-8.42Zm-8.46 18.2h-.01a9.8 9.8 0 0 1-5-1.37l-.36-.21-3.85 1.01 1.03-3.75-.24-.38a9.78 9.78 0 0 1-1.51-5.16C2.12 6.4 6.55 1.98 12.06 1.98c2.61 0 5.06 1.02 6.9 2.86a9.68 9.68 0 0 1 2.86 6.9c0 5.51-4.43 9.94-9.76 9.94Zm5.45-7.44c-.3-.15-1.76-.87-2.04-.97-.27-.1-.46-.15-.66.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.4-1.47-.88-.79-1.48-1.77-1.65-2.07-.17-.3-.02-.46.13-.6.13-.13.3-.34.44-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.58-.9-2.16-.24-.58-.48-.5-.66-.51h-.56c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.48.71.31 1.26.5 1.69.64.71.22 1.35.19 1.86.12.57-.08 1.76-.72 2.01-1.42.25-.69.25-1.28.17-1.42-.07-.13-.27-.2-.57-.35Z"/></svg></div>
-              <div class="community-copy">
-                <strong>Grupo geral da Apex Agency</strong>
-                <span>Pode acessar e interagir com todos da comunidade.</span>
-              </div>
+            <div class="community-icon">🟢</div>
+            <div class="community-content">
+              <strong>Grupo geral da Apex Agency</strong>
+              <span>Pode acessar e interagir com todos da comunidade.</span>
             </div>
-            <span class="btn btn-secondary community-action">Entrar</span>
+            <span class="community-action">Entrar</span>
           </a>
           <a class="community-link" href="https://chat.whatsapp.com/C0KzpnHLbhF52DQsrFkhCo" target="_blank" rel="noopener noreferrer">
-            <div class="community-main">
-              <div class="community-icon avisos" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V8h2v5Z"/></svg></div>
-              <div class="community-copy">
-                <strong>Grupo de avisos</strong>
-                <span>Mudanças, atualizações, eventos, incentivos semanais e ganhadores.</span>
-              </div>
+            <div class="community-icon">🟢</div>
+            <div class="community-content">
+              <strong>Grupo de avisos</strong>
+              <span>Mudanças, atualizações, eventos, incentivos semanais e ganhadores.</span>
             </div>
-            <span class="btn btn-secondary community-action">Entrar</span>
+            <span class="community-action">Entrar</span>
           </a>
         </div>
       </div>
@@ -1780,24 +1816,20 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
         <p style="margin:0;color:var(--muted);line-height:1.65;">Siga nossas redes sociais para acompanhar novidades, conteúdos e comunicações da agência.</p>
         <div class="community-links">
           <a class="community-link" href="https://www.tiktok.com/@agencia.apex?lang=pt-BR" target="_blank" rel="noopener noreferrer">
-            <div class="community-main">
-              <div class="community-icon tiktok" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.68h-3.13v12.7a2.9 2.9 0 1 1-2-2.75V8.79a6.03 6.03 0 1 0 5.14 5.96V8.31a7.9 7.9 0 0 0 4.77 1.6V6.69Z"/></svg></div>
-              <div class="community-copy">
-                <strong>TikTok oficial</strong>
-                <span>@agencia.apex</span>
-              </div>
+            <div class="community-icon">🎵</div>
+            <div class="community-content">
+              <strong>TikTok oficial</strong>
+              <span>@agencia.apex</span>
             </div>
-            <span class="btn btn-secondary community-action">Seguir</span>
+            <span class="community-action">Seguir</span>
           </a>
           <a class="community-link" href="https://www.instagram.com/ttk.apexagency?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
-            <div class="community-main">
-              <div class="community-icon instagram" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.8A3.95 3.95 0 0 0 3.8 7.75v8.5a3.95 3.95 0 0 0 3.95 3.95h8.5a3.95 3.95 0 0 0 3.95-3.95v-8.5a3.95 3.95 0 0 0-3.95-3.95h-8.5Zm8.95 1.35a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2ZM12 6.65A5.35 5.35 0 1 1 6.65 12 5.35 5.35 0 0 1 12 6.65Zm0 1.8A3.55 3.55 0 1 0 15.55 12 3.56 3.56 0 0 0 12 8.45Z"/></svg></div>
-              <div class="community-copy">
-                <strong>Instagram oficial</strong>
-                <span>@ttk.apexagency</span>
-              </div>
+            <div class="community-icon">📸</div>
+            <div class="community-content">
+              <strong>Instagram oficial</strong>
+              <span>@ttk.apexagency</span>
             </div>
-            <span class="btn btn-secondary community-action">Seguir</span>
+            <span class="community-action">Seguir</span>
           </a>
         </div>
       </div>
@@ -3125,6 +3157,148 @@ restoreSessionIfPossible();
     .season-badge img{max-width:270px;max-height:270px;}
   }
 
+
+  .battle-follow-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap:nowrap;
+    width:100%;
+    min-width:0;
+  }
+  .battle-handle{
+    min-width:0;
+    flex:1;
+    text-align:right;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    word-break:normal;
+  }
+  .battle-follow-btn{
+    min-height:36px !important;
+    padding:0 14px !important;
+    border-radius:12px !important;
+    font-size:13px !important;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+  .community-link{
+    justify-content:space-between;
+    min-width:0;
+  }
+  .community-content{
+    flex:1;
+    min-width:0;
+  }
+  .community-content strong,
+  .community-content span{
+    display:block;
+  }
+  .community-content strong{
+    margin-bottom:4px;
+    font-size:15px;
+    white-space:normal;
+    word-break:break-word;
+  }
+  .community-content span{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.45;
+    white-space:normal;
+    word-break:break-word;
+  }
+  .community-action{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:36px;
+    padding:0 14px;
+    border-radius:12px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.10);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    text-decoration:none;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+  @media (max-width: 768px){
+    .battle-card{
+      padding:16px !important;
+    }
+    .battle-card strong{
+      font-size:15px !important;
+      line-height:1.45 !important;
+      word-break:break-word !important;
+    }
+    .battle-card-row{
+      grid-template-columns:1fr !important;
+      gap:10px !important;
+    }
+    .battle-card-row .section-item{
+      align-items:flex-start !important;
+      gap:10px !important;
+    }
+    .battle-card-row .section-item span:first-child{
+      flex:0 0 auto;
+    }
+    .battle-card-row .section-item span:last-child{
+      min-width:0;
+      flex:1;
+      text-align:right;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+    .battle-follow-wrap{
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+    .battle-handle{
+      text-align:left;
+      overflow-wrap:anywhere;
+      white-space:normal;
+      word-break:break-word;
+    }
+    .battle-follow-btn{
+      min-width:78px;
+    }
+    .community-link{
+      align-items:center;
+      gap:10px;
+      flex-wrap:nowrap;
+      padding:14px;
+    }
+    .community-icon{
+      width:42px;
+      height:42px;
+      font-size:20px;
+    }
+    .community-action{
+      min-width:74px;
+      padding:0 12px;
+    }
+    .profile-hero{
+      grid-template-columns:1fr !important;
+    }
+    .user-top-row{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+    .ranking-item{
+      align-items:center;
+    }
+    .ranking-name{
+      white-space:normal !important;
+      overflow:visible !important;
+      text-overflow:unset !important;
+      word-break:break-word !important;
+    }
+  }
+
 </style>
 <script id="apex-patch-script-v023">
 (function(){
@@ -3420,14 +3594,18 @@ restoreSessionIfPossible();
     return raw;
   }
 
-  function formatBattleTime(value){
-    if (value === null || value === undefined) return "--:--";
-    const raw = String(value).trim();
-    if (!raw) return "--:--";
-    if (raw === "1899-12-30" || raw === "1899-12-31") return "--:--";
-    const hm = raw.match(/^(\d{1,2}):(\d{2})/);
-    if (hm) return `${hm[1].padStart(2, "0")}:${hm[2]}`;
-    const timeDate = new Date(raw);
+  function formatBattleTime(value, dateValue){
+    const dateRaw = String(dateValue || "").trim();
+    const raw = String(value === null || value === undefined ? "" : value).trim();
+
+    const candidate = raw || dateRaw;
+    if (!candidate) return "--:--";
+    if (candidate === "1899-12-30" || candidate === "1899-12-31") return "--:--";
+
+    const hm = candidate.match(/(?:\b|T)(\d{1,2}):(\d{2})(?::\d{2})?/);
+    if (hm) return `${String(hm[1]).padStart(2, "0")}:${hm[2]}`;
+
+    const timeDate = new Date(candidate);
     if (!Number.isNaN(timeDate.getTime())) {
       const h = String(timeDate.getHours()).padStart(2, "0");
       const m = String(timeDate.getMinutes()).padStart(2, "0");
@@ -3438,12 +3616,12 @@ restoreSessionIfPossible();
 
   function buildTikTokFollowButton(handleValue){
     const raw = String(handleValue || "").trim();
-    if (!raw || raw === "-") return "-";
+    if (!raw || raw === "-") return '<span class="battle-follow-wrap"><span class="battle-handle">-</span></span>';
     const handle = raw.replace(/^@+/, "").split(/[\s/?#]/)[0].trim();
-    if (!handle) return escapeHtml(raw);
+    if (!handle) return `<span class="battle-follow-wrap"><span class="battle-handle">${escapeHtml(raw)}</span></span>`;
     const safeHandle = escapeHtml(`@${handle}`);
     const href = `https://www.tiktok.com/@${encodeURIComponent(handle)}`;
-    return `<span class="battle-opponent-wrap"><span class="battle-opponent-handle">${safeHandle}</span><a class="btn btn-secondary battle-follow-btn" href="${href}" target="_blank" rel="noopener noreferrer">Seguir</a></span>`;
+    return `<span class="battle-follow-wrap"><span class="battle-handle">${safeHandle}</span><a class="btn btn-secondary battle-follow-btn" href="${href}" target="_blank" rel="noopener noreferrer">Seguir</a></span>`;
   }
 
   window.renderBattleHistory = async function(){
@@ -3470,7 +3648,7 @@ restoreSessionIfPossible();
       }
       battleHistoryList.innerHTML = items.map(item => {
         const dataBatalha = formatBattleDateBR(item.data_batalha || item.data || item.dataMarcada || item.data_marcada);
-        const horaBatalha = formatBattleTime(item.hora_batalha || item.hora || item.horario || item.horaMarcada);
+        const horaBatalha = formatBattleTime(item.hora_batalha || item.hora || item.horario || item.horaMarcada, item.data_batalha || item.data || item.dataMarcada);
         const linhaDataHora = horaBatalha && horaBatalha !== "--:--" ? `${dataBatalha} às ${horaBatalha}` : dataBatalha;
         return `
         <div class="battle-card">
