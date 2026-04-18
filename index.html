@@ -1,10 +1,22 @@
 
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVKE75C2QM"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-QVKE75C2QM');
+</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Connect - v1.1</title>
+<title>Apex Connect - v1.0</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
@@ -1433,79 +1445,6 @@ align-items:stretch; grid-template-columns:1fr; }
   }
 }
 
-
-
-/* ===== Apex Connect v1.1 ===== */
-.indicacao-note-card{padding:16px 18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
-.indicacao-note-card strong{display:block;margin-bottom:6px;font-size:16px;}
-.indicacao-note-card p{margin:0;color:var(--muted);line-height:1.6;font-size:14px;}
-.indicacao-copy-modal{width:min(100%,680px);}
-.indicacao-copy-alert{padding:14px 16px;border-radius:18px;background:rgba(255,211,111,.10);border:1px solid rgba(255,211,111,.24);color:#fff;line-height:1.6;font-size:14px;margin-bottom:14px;}
-.indicacao-copy-alert strong{color:var(--warn);}
-.indicacao-copy-textarea{min-height:230px;}
-.battle-panel-v11{padding:18px 18px 16px !important;}
-.battle-form-grid-v11{gap:12px !important;}
-.battle-field{display:grid;gap:8px;}
-.battle-field label{font-size:13px;font-weight:700;color:var(--muted);padding-left:2px;}
-.battle-field .input{height:50px;min-height:50px;border-radius:15px;}
-.battle-submit-btn{margin-top:4px;}
-.battle-helper{margin-top:12px;font-size:13px;line-height:1.5;}
-.ranking-card-soft-top3{padding:14px;}
-.ranking-card-soft-me{padding:18px;background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));}
-.ranking-list-v11{gap:14px;}
-.ranking-item{align-items:center;}
-.ranking-item-top3{position:relative;display:grid;grid-template-columns:44px 88px minmax(0,1fr) auto;gap:14px;padding:16px 16px 16px 14px;border-radius:22px;background:rgba(255,255,255,.055);}
-.ranking-medal-badge{width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font-weight:900;font-size:24px;color:#f6a623;background:linear-gradient(180deg,#fffdf7 0%, #f3f1ea 100%);border:3px solid #f0a21c;position:relative;box-shadow:0 8px 18px rgba(0,0,0,.18);}
-.ranking-medal-badge::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:20px;height:20px;background:linear-gradient(90deg,#f0a21c 0%,#ffbf47 100%);clip-path:polygon(0 0, 100% 0, 68% 100%, 50% 70%, 32% 100%);}
-.ranking-badge{width:74px;height:74px;border-radius:20px;padding:8px;}
-.ranking-item-top3 .ranking-badge{width:88px;height:88px;border-radius:24px;background:rgba(255,255,255,.045);}
-.ranking-badge.glow-purple{box-shadow:0 0 30px rgba(177,123,255,.42);}
-.ranking-badge.glow-silver{box-shadow:0 0 28px rgba(215,228,255,.38);}
-.ranking-badge.glow-blue{box-shadow:0 0 28px rgba(122,184,255,.35);}
-.ranking-item-top3 .ranking-name{font-size:18px;line-height:1.18;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ranking-item-top3 .ranking-level{font-size:14px;margin-top:6px;}
-.ranking-item-top3 .ranking-xp{font-size:16px;white-space:nowrap;}
-.ranking-item-me{display:grid;grid-template-columns:74px minmax(0,1fr) auto;gap:14px;padding:18px;border-radius:22px;background:rgba(255,255,255,.055);}
-.ranking-item-me .ranking-name{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ranking-item-me .ranking-level{font-size:14px;margin-top:6px;}
-.ranking-item-me .ranking-xp{font-size:16px;white-space:nowrap;}
-.ranking-pos{margin-bottom:14px;}
-#xpToTop3{font-size:15px;line-height:1.55;color:#fff;}
-@media (max-width:768px){
-  .indicacao-copy-modal{padding:16px;border-radius:20px;}
-  .indicacao-copy-textarea{min-height:210px;}
-  .battle-panel-v11{padding:16px !important;}
-  .battle-form-grid-v11{grid-template-columns:1fr 1fr !important;gap:10px !important;}
-  .battle-field.full{grid-column:1 / -1;}
-  .battle-field .input{height:48px;min-height:48px;font-size:15px;}
-  .battle-field label{font-size:12px;}
-  .ranking-card-soft-top3,.ranking-card-soft-me{padding:14px;}
-  .ranking-item-top3{grid-template-columns:34px 66px minmax(0,1fr) auto;gap:10px;padding:14px;border-radius:20px;}
-  .ranking-medal-badge{width:34px;height:34px;font-size:18px;border-width:2px;}
-  .ranking-medal-badge::after{width:14px;height:14px;bottom:-7px;}
-  .ranking-item-top3 .ranking-badge{width:66px;height:66px;border-radius:18px;padding:6px;}
-  .ranking-item-top3 .ranking-name{font-size:16px;}
-  .ranking-item-top3 .ranking-level{font-size:13px;}
-  .ranking-item-top3 .ranking-xp{font-size:15px;align-self:center;}
-  .ranking-item-me{grid-template-columns:64px minmax(0,1fr) auto;gap:10px;padding:14px;border-radius:20px;}
-  .ranking-item-me .ranking-badge{width:64px;height:64px;border-radius:18px;padding:6px;}
-  .ranking-item-me .ranking-name{font-size:16px;}
-  .ranking-item-me .ranking-level{font-size:13px;}
-  .ranking-item-me .ranking-xp{font-size:15px;}
-}
-@media (max-width:480px){
-  .battle-form-grid-v11{grid-template-columns:1fr !important;}
-  .ranking-item-top3{grid-template-columns:30px 58px minmax(0,1fr);grid-template-areas:"medal badge meta" "xp xp xp";align-items:center;}
-  .ranking-item-top3 .ranking-medal{grid-area:medal;}
-  .ranking-item-top3 .ranking-badge{grid-area:badge;width:58px;height:58px;}
-  .ranking-item-top3 .ranking-meta{grid-area:meta;}
-  .ranking-item-top3 .ranking-xp{grid-area:xp;text-align:left;padding-left:40px;margin-top:2px;}
-  .ranking-item-me{grid-template-columns:58px minmax(0,1fr);grid-template-areas:"badge meta" "xp xp";}
-  .ranking-item-me .ranking-badge{grid-area:badge;width:58px;height:58px;}
-  .ranking-item-me .ranking-meta{grid-area:meta;}
-  .ranking-item-me .ranking-xp{grid-area:xp;text-align:left;padding-left:72px;margin-top:0;}
-}
-
 </style>
 </head>
 <body>
@@ -1523,13 +1462,13 @@ align-items:stretch; grid-template-columns:1fr; }
   </div>
 
   <div class="menu-list">
-    <div class="menu-item active" data-view="perfil"><span class="menu-label">👤 Meu perfil</span><span>›</span></div>
+    <div class="menu-item active" data-view="perfil"><span class="menu-label">👤 Meu perfil <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
     <div class="menu-item" data-view="dados"><span>📊 Dados</span><span>›</span></div>
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
-    <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações</span><span>›</span></div>
-    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas</span><span>›</span></div>
+    <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
+    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
     <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon">EM BREVE</span></span><span>›</span></div>
-    <div class="menu-item" data-view="comunidade"><span class="menu-label">🌐 Comunidade</span><span>›</span></div>
+    <div class="menu-item" data-view="comunidade"><span class="menu-label">🌐 Comunidade <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
   </div>
 
   <div class="drawer-footer">
@@ -1627,12 +1566,12 @@ align-items:stretch; grid-template-columns:1fr; }
         <div class="section-card panel">
           <div class="section-head"><div><h4>Ranking da temporada atual</h4><p>Top 3 por XP, sua posição atual e quanto falta para entrar no top 3.</p></div></div>
           <div class="ranking-grid">
-            <div class="ranking-card-soft ranking-card-soft-top3">
-              <div class="ranking-list ranking-list-v11" id="seasonTopRanking"></div>
+            <div class="ranking-card-soft">
+              <div class="ranking-list" id="seasonTopRanking"></div>
             </div>
-            <div class="ranking-card-soft ranking-card-soft-me">
+            <div class="ranking-card-soft">
               <div class="ranking-pos" id="mySeasonPosition">#--</div>
-              <div class="ranking-item ranking-item-me" id="mySeasonRankingCard">
+              <div class="ranking-item" id="mySeasonRankingCard">
                 <div class="ranking-badge" id="mySeasonBadge"></div>
                 <div class="ranking-meta">
                   <div class="ranking-name" id="mySeasonName">@usuario</div>
@@ -1826,12 +1765,15 @@ align-items:stretch; grid-template-columns:1fr; }
 
               <div class="status-box" id="indicacaoStatus"></div>
 
-              <div class="indicacao-note-card">
-                <strong>Envio com confirmação</strong>
-                <p>Depois de tocar em <em>Enviar indicação</em>, vamos abrir um pop-up com a mensagem pronta para copiar e enviar ao seu amigo.</p>
-              </div>
+              <div class="section-card panel" style="padding:18px;">
+                <div class="section-head">
+                  <div>
+                    <h4>Mensagem pronta</h4>
+                    <p>Copie a mensagem e envie junto com o link de cadastro.</p>
+                  </div>
+                </div>
 
-              <textarea class="textarea hidden" id="indicacaoMensagem" readonly>Olá! Estou te enviando o acesso para se cadastrar na Apex Agency.
+                <textarea class="textarea" id="indicacaoMensagem" readonly>Olá! Estou te enviando o acesso para se cadastrar na Apex Agency.
 > A Apex é uma agência oficial do TikTok LIVE que ajuda criadores a crescerem dentro da plataforma com suporte, treinamentos e acompanhamento.
 
 *Para se cadastrar é só acessar o link abaixo e preencher seus dados:*
@@ -1841,30 +1783,10 @@ Após o cadastro, você entrará para análise e, sendo aprovado, receberá um c
 Na aba de notificações do sistema, você conseguirá visualizar esse convite e deverá aceitá-lo.
 
 A equipe de integração entrará em contato com você em breve, assim que essa análise for concluída.</textarea>
-            </div>
-          </div>
-        </div>
 
-        <div class="modal-backdrop" id="indicacaoCopyModalBackdrop">
-          <div class="indicacao-modal indicacao-copy-modal">
-            <div class="indicacao-modal-head">
-              <div>
-                <h4 style="margin:0;font-size:24px;">Copiar e enviar ao indicado</h4>
-                <p style="margin:8px 0 0;color:var(--muted);line-height:1.6;">A indicação foi registrada. Agora copie a mensagem abaixo e envie para o seu amigo. Ela só será validada quando ele se cadastrar pelo link enviado.</p>
-              </div>
-              <button class="indicacao-modal-close" id="fecharIndicacaoCopyModalBtn" type="button">✕</button>
-            </div>
-
-            <div class="indicacao-copy-body">
-              <div class="indicacao-copy-alert">
-                <strong>Importante:</strong> a indicação só conta quando o amigo concluir o cadastro pelo link que você enviar.
-              </div>
-
-              <textarea class="textarea indicacao-copy-textarea" id="indicacaoMensagemPopup" readonly></textarea>
-
-              <div class="copy-grid">
-                <button class="btn btn-primary" id="copiarMensagemPopupBtn" type="button">COPIAR MENSAGEM</button>
-                <a class="btn btn-secondary" id="enviarMensagemWhatsappBtn" href="#" target="_blank" rel="noopener noreferrer">ABRIR WHATSAPP</a>
+                <div class="copy-grid">
+                  <button class="btn btn-secondary" id="copiarMensagemBtn" type="button">COPIAR MENSAGEM</button>
+                </div>
               </div>
             </div>
           </div>
@@ -1873,32 +1795,17 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
 
 
 <div class="view-panel" id="view-batalhas">
-  <div class="panel battle-panel-v11">
+  <div class="panel">
     <div class="section-head"><div><h4>Batalhas</h4><p>Solicite sua batalha e acompanhe as atualizações abaixo.</p></div></div>
-    <div class="battle-form-grid battle-form-grid-v11">
-      <div class="battle-field">
-        <label for="battleDate">Data da batalha</label>
-        <input class="input" id="battleDate" type="date" />
-      </div>
-      <div class="battle-field">
-        <label for="battleTime">Horário</label>
-        <input class="input" id="battleTime" type="time" />
-      </div>
-      <div class="battle-field full">
-        <label for="battleGoal">Meta de diamantes</label>
-        <input class="input" id="battleGoal" type="text" placeholder="Meta de diamantes (ex.: 10K)" />
-      </div>
-      <div class="battle-field">
-        <label for="battleRounds">Rounds</label>
-        <select class="input" id="battleRounds"><option value="1">1 round</option><option value="3">3 rounds</option></select>
-      </div>
-      <div class="battle-field">
-        <label for="battleUrgency">Urgência</label>
-        <select class="input" id="battleUrgency"><option value="Não">Urgente: Não</option><option value="Sim">Urgente: Sim</option></select>
-      </div>
-      <button class="btn btn-primary full battle-submit-btn" type="button" id="sendBattleBtn">SOLICITAR BATALHA</button>
+    <div class="battle-form-grid">
+      <input class="input" id="battleDate" type="date" />
+      <input class="input" id="battleTime" type="time" />
+      <input class="input" id="battleGoal" type="text" placeholder="Meta de diamantes (ex.: 10K)" />
+      <select class="input" id="battleRounds"><option value="1">1 round</option><option value="3">3 rounds</option></select>
+      <select class="input full" id="battleUrgency"><option value="Não">Urgente: Não</option><option value="Sim">Urgente: Sim</option></select>
+      <button class="btn btn-primary full" type="button" id="sendBattleBtn">SOLICITAR BATALHA</button>
     </div>
-    <div class="helper battle-helper">O histórico abaixo mostra as batalhas solicitadas por você.</div>
+    <div class="helper">O histórico abaixo mostra as batalhas solicitadas por você.</div>
   </div>
   <div class="section-card panel">
     <div class="section-head"><div><h4>Batalhas solicitadas</h4><p>Status, adversário e dados das suas solicitações.</p></div></div>
@@ -2031,7 +1938,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v1.1</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v1.0</div>
   </div>
 </div>
 
@@ -2315,44 +2222,6 @@ async function handleCopyMensagem() {
   showIndicacaoStatus(copied ? "Mensagem copiada com sucesso." : "Não foi possível copiar a mensagem agora.", !copied);
 }
 
-const indicacaoCopyModalBackdrop = document.getElementById("indicacaoCopyModalBackdrop");
-const fecharIndicacaoCopyModalBtn = document.getElementById("fecharIndicacaoCopyModalBtn");
-const indicacaoMensagemPopup = document.getElementById("indicacaoMensagemPopup");
-const copiarMensagemPopupBtn = document.getElementById("copiarMensagemPopupBtn");
-const enviarMensagemWhatsappBtn = document.getElementById("enviarMensagemWhatsappBtn");
-
-function openIndicacaoCopyModal(whatsapp){
-  const mensagem = indicacaoMensagem ? indicacaoMensagem.value : "";
-  if (indicacaoMensagemPopup) indicacaoMensagemPopup.value = mensagem;
-  if (enviarMensagemWhatsappBtn){
-    const phone = String(whatsapp || "").replace(/\D+/g, "");
-    enviarMensagemWhatsappBtn.href = phone ? `https://wa.me/55${phone}?text=${encodeURIComponent(mensagem)}` : `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
-  }
-  if (indicacaoCopyModalBackdrop) indicacaoCopyModalBackdrop.classList.add("show");
-  document.body.style.overflow = "hidden";
-}
-
-function closeIndicacaoCopyModal(){
-  if (indicacaoCopyModalBackdrop) indicacaoCopyModalBackdrop.classList.remove("show");
-  document.body.style.overflow = "";
-}
-
-async function handleCopyMensagemPopup(){
-  const copied = await copyText(indicacaoMensagemPopup ? indicacaoMensagemPopup.value : (indicacaoMensagem ? indicacaoMensagem.value : ""));
-  if (copied){
-    if (copiarMensagemPopupBtn) copiarMensagemPopupBtn.textContent = "MENSAGEM COPIADA";
-    setTimeout(() => { if (copiarMensagemPopupBtn) copiarMensagemPopupBtn.textContent = "COPIAR MENSAGEM"; }, 1800);
-  }
-}
-
-if (fecharIndicacaoCopyModalBtn) fecharIndicacaoCopyModalBtn.addEventListener("click", closeIndicacaoCopyModal);
-if (indicacaoCopyModalBackdrop) {
-  indicacaoCopyModalBackdrop.addEventListener("click", (e) => {
-    if (e.target === indicacaoCopyModalBackdrop) closeIndicacaoCopyModal();
-  });
-}
-if (copiarMensagemPopupBtn) copiarMensagemPopupBtn.addEventListener("click", handleCopyMensagemPopup);
-
 async function enviarIndicacao() {
   clearIndicacaoStatus();
 
@@ -2405,12 +2274,12 @@ async function enviarIndicacao() {
       throw new Error(serverMessage);
     }
 
-    showIndicacaoStatus("Indicação registrada com sucesso. Agora envie a mensagem para o indicado.");
-    await loadMinhasIndicacoes(true);
-    const whatsappDestino = whatsapp;
-    closeIndicacaoModal();
-    openIndicacaoCopyModal(whatsappDestino);
+    showIndicacaoStatus(result.message || "✅ Envio concluído com sucesso.");
     clearIndicacaoFields();
+    await loadMinhasIndicacoes(true);
+    setTimeout(() => {
+      closeIndicacaoModal();
+    }, 700);
   } catch (error) {
     console.error("Erro ao enviar indicação:", error);
     showIndicacaoStatus(error.message || "Não foi possível enviar a indicação agora.", true);
@@ -2530,16 +2399,83 @@ function renderPerfilExtras(user) {
   }
 }
 
-function renderBattleHistory() {
+async function renderBattleHistory() {
   const battleHistoryList = document.getElementById("battleHistoryList");
   if (!battleHistoryList) return;
+
+  if (!currentUser) {
+    battleHistoryList.innerHTML = "";
+    return;
+  }
+
   battleHistoryList.innerHTML = `
     <div class="battle-card">
-      <strong>Histórico em breve</strong>
-      <p>Assim que a integração da aba Batalhas for ativada no Apps Script, suas solicitações aparecerão aqui.</p>
-      <div style="margin-top:10px;"><span class="status-pill">AGUARDANDO</span></div>
+      <strong>Carregando...</strong>
+      <p>Buscando suas batalhas.</p>
     </div>
   `;
+
+  try {
+    const login6 = String(currentUser.id || currentUser.login6 || "").replace(/\D+/g, "").slice(-6);
+
+    const response = await fetch(
+      `${APPS_SCRIPT_URL}?action=minhasbatalhas&idUsuario=${encodeURIComponent(login6)}&t=${Date.now()}`,
+      { method: "GET", mode: "cors", cache: "no-store" }
+    );
+
+    const data = await response.json();
+    const items = Array.isArray(data?.batalhas) ? data.batalhas : [];
+
+    if (!items.length) {
+      battleHistoryList.innerHTML = `
+        <div class="battle-card">
+          <strong>Nenhuma batalha cadastrada</strong>
+          <p>Quando você solicitar uma batalha, ela aparecerá aqui com status e adversário.</p>
+          <div style="margin-top:10px;"><span class="status-pill">AGUARDANDO</span></div>
+        </div>
+      `;
+      return;
+    }
+
+    battleHistoryList.innerHTML = items.map(item => {
+      const adversario = String(item.adversario || "").trim();
+      const tiktokLink = adversario
+        ? `https://www.tiktok.com/@${adversario.replace(/^@+/, "")}`
+        : "";
+
+      const dataBatalha = item.data_batalha || "--/--/----";
+      const horaBatalha = item.hora_batalha || "--:--";
+
+      return `
+        <div class="battle-card">
+          <strong>Batalha marcada para: ${dataBatalha} às ${horaBatalha}</strong>
+          <p>Meta de diamantes: <strong>${item.meta_diamantes || "0K"}</strong></p>
+
+          <div class="battle-card-row">
+            <div class="section-item"><span>Rounds</span><span>${item.rounds || "-"}</span></div>
+            <div class="section-item"><span>Urgência</span><span>${item.urgencia || "Não"}</span></div>
+            <div class="section-item"><span>Status</span><span>${item.status || "Aguardando"}</span></div>
+            <div class="section-item">
+              <span>Adversário</span>
+              <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span>${adversario || "-"}</span>
+                ${adversario ? `<span style="font-weight:700;">@${adversario.replace(/^@/,'')}</span>` : ""}
+${tiktokLink ? `<a class="btn btn-secondary" href="${tiktokLink}" target="_blank">Seguir</a>` : ""}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    battleHistoryList.innerHTML = `
+      <div class="battle-card">
+        <strong>Erro ao carregar</strong>
+        <p>${error?.message || "Não foi possível carregar as batalhas."}</p>
+      </div>
+    `;
+  }
 }
 
 
@@ -3518,79 +3454,6 @@ restoreSessionIfPossible();
   }
 }
 
-
-
-/* ===== Apex Connect v1.1 ===== */
-.indicacao-note-card{padding:16px 18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
-.indicacao-note-card strong{display:block;margin-bottom:6px;font-size:16px;}
-.indicacao-note-card p{margin:0;color:var(--muted);line-height:1.6;font-size:14px;}
-.indicacao-copy-modal{width:min(100%,680px);}
-.indicacao-copy-alert{padding:14px 16px;border-radius:18px;background:rgba(255,211,111,.10);border:1px solid rgba(255,211,111,.24);color:#fff;line-height:1.6;font-size:14px;margin-bottom:14px;}
-.indicacao-copy-alert strong{color:var(--warn);}
-.indicacao-copy-textarea{min-height:230px;}
-.battle-panel-v11{padding:18px 18px 16px !important;}
-.battle-form-grid-v11{gap:12px !important;}
-.battle-field{display:grid;gap:8px;}
-.battle-field label{font-size:13px;font-weight:700;color:var(--muted);padding-left:2px;}
-.battle-field .input{height:50px;min-height:50px;border-radius:15px;}
-.battle-submit-btn{margin-top:4px;}
-.battle-helper{margin-top:12px;font-size:13px;line-height:1.5;}
-.ranking-card-soft-top3{padding:14px;}
-.ranking-card-soft-me{padding:18px;background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));}
-.ranking-list-v11{gap:14px;}
-.ranking-item{align-items:center;}
-.ranking-item-top3{position:relative;display:grid;grid-template-columns:44px 88px minmax(0,1fr) auto;gap:14px;padding:16px 16px 16px 14px;border-radius:22px;background:rgba(255,255,255,.055);}
-.ranking-medal-badge{width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font-weight:900;font-size:24px;color:#f6a623;background:linear-gradient(180deg,#fffdf7 0%, #f3f1ea 100%);border:3px solid #f0a21c;position:relative;box-shadow:0 8px 18px rgba(0,0,0,.18);}
-.ranking-medal-badge::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:20px;height:20px;background:linear-gradient(90deg,#f0a21c 0%,#ffbf47 100%);clip-path:polygon(0 0, 100% 0, 68% 100%, 50% 70%, 32% 100%);}
-.ranking-badge{width:74px;height:74px;border-radius:20px;padding:8px;}
-.ranking-item-top3 .ranking-badge{width:88px;height:88px;border-radius:24px;background:rgba(255,255,255,.045);}
-.ranking-badge.glow-purple{box-shadow:0 0 30px rgba(177,123,255,.42);}
-.ranking-badge.glow-silver{box-shadow:0 0 28px rgba(215,228,255,.38);}
-.ranking-badge.glow-blue{box-shadow:0 0 28px rgba(122,184,255,.35);}
-.ranking-item-top3 .ranking-name{font-size:18px;line-height:1.18;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ranking-item-top3 .ranking-level{font-size:14px;margin-top:6px;}
-.ranking-item-top3 .ranking-xp{font-size:16px;white-space:nowrap;}
-.ranking-item-me{display:grid;grid-template-columns:74px minmax(0,1fr) auto;gap:14px;padding:18px;border-radius:22px;background:rgba(255,255,255,.055);}
-.ranking-item-me .ranking-name{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ranking-item-me .ranking-level{font-size:14px;margin-top:6px;}
-.ranking-item-me .ranking-xp{font-size:16px;white-space:nowrap;}
-.ranking-pos{margin-bottom:14px;}
-#xpToTop3{font-size:15px;line-height:1.55;color:#fff;}
-@media (max-width:768px){
-  .indicacao-copy-modal{padding:16px;border-radius:20px;}
-  .indicacao-copy-textarea{min-height:210px;}
-  .battle-panel-v11{padding:16px !important;}
-  .battle-form-grid-v11{grid-template-columns:1fr 1fr !important;gap:10px !important;}
-  .battle-field.full{grid-column:1 / -1;}
-  .battle-field .input{height:48px;min-height:48px;font-size:15px;}
-  .battle-field label{font-size:12px;}
-  .ranking-card-soft-top3,.ranking-card-soft-me{padding:14px;}
-  .ranking-item-top3{grid-template-columns:34px 66px minmax(0,1fr) auto;gap:10px;padding:14px;border-radius:20px;}
-  .ranking-medal-badge{width:34px;height:34px;font-size:18px;border-width:2px;}
-  .ranking-medal-badge::after{width:14px;height:14px;bottom:-7px;}
-  .ranking-item-top3 .ranking-badge{width:66px;height:66px;border-radius:18px;padding:6px;}
-  .ranking-item-top3 .ranking-name{font-size:16px;}
-  .ranking-item-top3 .ranking-level{font-size:13px;}
-  .ranking-item-top3 .ranking-xp{font-size:15px;align-self:center;}
-  .ranking-item-me{grid-template-columns:64px minmax(0,1fr) auto;gap:10px;padding:14px;border-radius:20px;}
-  .ranking-item-me .ranking-badge{width:64px;height:64px;border-radius:18px;padding:6px;}
-  .ranking-item-me .ranking-name{font-size:16px;}
-  .ranking-item-me .ranking-level{font-size:13px;}
-  .ranking-item-me .ranking-xp{font-size:15px;}
-}
-@media (max-width:480px){
-  .battle-form-grid-v11{grid-template-columns:1fr !important;}
-  .ranking-item-top3{grid-template-columns:30px 58px minmax(0,1fr);grid-template-areas:"medal badge meta" "xp xp xp";align-items:center;}
-  .ranking-item-top3 .ranking-medal{grid-area:medal;}
-  .ranking-item-top3 .ranking-badge{grid-area:badge;width:58px;height:58px;}
-  .ranking-item-top3 .ranking-meta{grid-area:meta;}
-  .ranking-item-top3 .ranking-xp{grid-area:xp;text-align:left;padding-left:40px;margin-top:2px;}
-  .ranking-item-me{grid-template-columns:58px minmax(0,1fr);grid-template-areas:"badge meta" "xp xp";}
-  .ranking-item-me .ranking-badge{grid-area:badge;width:58px;height:58px;}
-  .ranking-item-me .ranking-meta{grid-area:meta;}
-  .ranking-item-me .ranking-xp{grid-area:xp;text-align:left;padding-left:72px;margin-top:0;}
-}
-
 </style>
 <script id="apex-patch-script-v023">
 (function(){
@@ -3756,14 +3619,13 @@ restoreSessionIfPossible();
     if (!topContainer || !user) return;
 
     const ranking = getSeasonXpRanking();
-    const medals = ['1','2','3'];
-    const medalGlow = ['glow-purple','glow-silver','glow-blue'];
+    const medals = ['🥇','🥈','🥉'];
     const top3 = ranking.slice(0,3);
 
     topContainer.innerHTML = top3.length ? top3.map((item, index) => `
-      <div class="ranking-item ranking-item-top3">
-        <div class="ranking-medal"><div class="ranking-medal-badge">${medals[index] || `${index+1}`}</div></div>
-        <div class="ranking-badge ${medalGlow[index] || ''}"><img src="${item.badge}" alt="${item.level}"></div>
+      <div class="ranking-item">
+        <div class="ranking-medal">${medals[index] || `#${index+1}`}</div>
+        <div class="ranking-badge"><img src="${item.badge}" alt="${item.level}"></div>
         <div class="ranking-meta">
           <div class="ranking-name">${item.arroba}</div>
           <div class="ranking-level">${item.level}</div>
