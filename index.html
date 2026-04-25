@@ -1,10 +1,12 @@
 
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Connect - v1.0</title>
+<title>Apex Connect - v2.0</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
@@ -1270,7 +1272,7 @@ align-items:stretch; grid-template-columns:1fr; }
   }
 
 
-/* ===== v1.0 mobile + community fixes ===== */
+/* ===== v2.0 mobile + community fixes ===== */
 .community-text{min-width:0;}
 .community-link .btn{min-height:40px;padding:0 16px;white-space:nowrap;}
 .community-icon svg{display:block;}
@@ -1450,13 +1452,13 @@ align-items:stretch; grid-template-columns:1fr; }
   </div>
 
   <div class="menu-list">
-    <div class="menu-item active" data-view="perfil"><span class="menu-label">👤 Meu perfil <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
+    <div class="menu-item active" data-view="perfil"><span class="menu-label">👤 Meu perfil</span><span>›</span></div>
     <div class="menu-item" data-view="dados"><span>📊 Dados</span><span>›</span></div>
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
-    <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
-    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
+    <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações</span><span>›</span></div>
+    <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas</span><span>›</span></div>
     <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon">EM BREVE</span></span><span>›</span></div>
-    <div class="menu-item" data-view="comunidade"><span class="menu-label">🌐 Comunidade <span class="menu-badge-new">NOVO</span></span><span>›</span></div>
+    <div class="menu-item" data-view="comunidade"><span class="menu-label">🌐 Comunidade</span><span>›</span></div>
   </div>
 
   <div class="drawer-footer">
@@ -1643,6 +1645,18 @@ align-items:stretch; grid-template-columns:1fr; }
         <div class="section-card panel">
           <div class="section-head">
             <div>
+              <h4>Top Horas</h4>
+              <p>Ranking geral por horas em destaque.</p>
+            </div>
+            
+          </div>
+          <div class="top-hours-list" id="topHorasLista"></div>
+        </div>
+
+
+        <div class="section-card panel">
+          <div class="section-head">
+            <div>
               <h4>Resumo de batalhas</h4>
               <p>Dados separados do bloco principal, conforme solicitado.</p>
             </div>
@@ -1671,16 +1685,6 @@ align-items:stretch; grid-template-columns:1fr; }
           </div>
         </div>
 
-        <div class="section-card panel">
-          <div class="section-head">
-            <div>
-              <h4>Top Horas</h4>
-              <p>Ranking geral exibido em bloco separado.</p>
-            </div>
-            
-          </div>
-          <div class="top-hours-list" id="topHorasLista"></div>
-        </div>
       </div>
 
       <div class="view-panel" id="view-desenvolvimento">
@@ -1926,7 +1930,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v1.0</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v2.0</div>
   </div>
 </div>
 
@@ -1991,6 +1995,7 @@ const INDICACAO_STEPS = ["Em análise", "Dentro da agência", "Integrado", "Indi
 let appData = { periodo: "", criadores: [], top_horas: [], notificacoes: [], desenvolvimento: [], temporadas: [] };
 let currentUser = null;
 let minhasIndicacoesCache = [];
+let indicacaoMensagemCopiada = false;
 
 function formatDiamondsK(value) {
   if (value === null || value === undefined || value === "") return "0";
@@ -2207,7 +2212,8 @@ async function copyText(text) {
 
 async function handleCopyMensagem() {
   const copied = await copyText(indicacaoMensagem ? indicacaoMensagem.value : "");
-  showIndicacaoStatus(copied ? "Mensagem copiada com sucesso." : "Não foi possível copiar a mensagem agora.", !copied);
+  indicacaoMensagemCopiada = !!copied;
+  showIndicacaoStatus(copied ? "Mensagem copiada com sucesso. Agora você pode concluir a indicação." : "Não foi possível copiar a mensagem agora.", !copied);
 }
 
 async function enviarIndicacao() {
@@ -2232,6 +2238,12 @@ async function enviarIndicacao() {
     if (indicacaoWhatsapp) indicacaoWhatsapp.focus();
     return;
   }
+  if (!indicacaoMensagemCopiada) {
+    showIndicacaoStatus("Indicação não validada. Copie a mensagem para concluir o envio.", true);
+    if (copiarMensagemBtn) copiarMensagemBtn.focus();
+    return;
+  }
+
 
   const payload = {
     action: "novaIndicacao",
@@ -2792,6 +2804,7 @@ function fillUser(user) {
   if (preLoginHero) preLoginHero.style.display = "none";
   if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
   saveSession(user.id || user.login6 || "");
+  registrarAcessoUsuario(user);
 
   saldoValue.textContent = user.picos || "0 Ᵽ";
   diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
@@ -2846,6 +2859,25 @@ async function loadRemoteData() {
 }
 
 
+
+async function registrarAcessoUsuario(user) {
+  const login6 = normalizeLogin(user?.id || user?.login6 || "");
+  if (!login6 || login6.length !== 6) return;
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        action: "registrarAcesso",
+        id: login6
+      })
+    });
+  } catch (error) {
+    console.warn("Não foi possível registrar o acesso agora.", error);
+  }
+}
 async function restoreSessionIfPossible() {
   const savedLogin = getSavedSession();
   if (!savedLogin) return;
@@ -2930,11 +2962,15 @@ document.addEventListener("keydown", (event) => {
 if (indicacaoWhatsapp) {
   indicacaoWhatsapp.addEventListener("input", () => {
     indicacaoWhatsapp.value = normalizeWhatsapp(indicacaoWhatsapp.value).slice(0, 13);
+    indicacaoMensagemCopiada = false;
   });
 }
 if (indicacaoTikTok) {
   indicacaoTikTok.addEventListener("blur", () => {
     indicacaoTikTok.value = normalizeTikTokHandle(indicacaoTikTok.value);
+  });
+  indicacaoTikTok.addEventListener("input", () => {
+    indicacaoMensagemCopiada = false;
   });
 }
 openDrawer.addEventListener("click", openDrawerPanel);
@@ -3212,7 +3248,7 @@ restoreSessionIfPossible();
   }
 
 
-/* ===== v1.0 mobile + community fixes ===== */
+/* ===== v2.0 mobile + community fixes ===== */
 .community-text{min-width:0;}
 .community-link .btn{min-height:40px;padding:0 16px;white-space:nowrap;}
 .community-icon svg{display:block;}
@@ -3845,5 +3881,47 @@ restoreSessionIfPossible();
 })();
 </script>
 
+<style id="apex-connect-v2-visual-patch">
+/* Apex Connect 2.0 — ajustes solicitados sem trocar imagens */
+.ranking-badge{
+  width:82px !important;
+  height:82px !important;
+  padding:7px !important;
+  border-radius:20px !important;
+}
+.ranking-item{
+  gap:16px !important;
+  padding:16px 18px !important;
+}
+.ranking-medal{
+  width:42px !important;
+  font-size:28px !important;
+}
+.ranking-name{font-size:16px !important;}
+.ranking-level{font-size:14px !important;}
+.ranking-xp{font-size:16px !important;}
+.top-hours-list{gap:14px !important;}
+.top-hour-item{
+  padding:18px 20px !important;
+  border-radius:22px !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035)) !important;
+}
+.top-rank{
+  width:64px !important;
+  height:64px !important;
+  border-radius:18px !important;
+  padding:6px !important;
+}
+.top-hour-name{font-size:18px !important;max-width:360px !important;}
+.top-hour-time{font-size:15px !important;}
+@media (max-width:768px){
+  .ranking-item{gap:12px !important;padding:14px !important;}
+  .ranking-badge{width:74px !important;height:74px !important;}
+  .ranking-medal{width:34px !important;font-size:24px !important;}
+  .ranking-xp{font-size:14px !important;}
+  .top-rank{width:58px !important;height:58px !important;}
+  .top-hour-name{font-size:16px !important;max-width:100% !important;}
+}
+</style>
 </body>
 </html>
