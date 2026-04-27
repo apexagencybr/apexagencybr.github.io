@@ -13,16 +13,6 @@
 </script>
 
 
-  <!-- Google Analytics (GA4) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-AB12CD34EF"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-AB12CD34EF');
-  </script>
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Apex Connect - v2.0</title>
@@ -1456,10 +1446,78 @@ align-items:stretch; grid-template-columns:1fr; }
   }
 }
 
+
+
+/* ===== Pop-up obrigatório de aniversário ===== */
+.birthday-modal{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(10px);
+}
+.birthday-modal.show{display:flex;}
+.birthday-box{
+  width:min(100%,430px);
+  border-radius:26px;
+  padding:26px;
+  background:linear-gradient(180deg, rgba(18,18,18,.98), rgba(8,17,31,.98));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 24px 80px rgba(0,0,0,.55);
+  color:#fff;
+}
+.birthday-box h2{margin:0 0 10px;font-size:25px;line-height:1.15;}
+.birthday-box p{margin:0 0 18px;color:var(--muted);line-height:1.6;font-size:15px;}
+.birthday-box label{display:block;margin:0 0 8px;font-weight:800;font-size:14px;}
+.birthday-box input{
+  width:100%;
+  height:54px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:#0c0c0c;
+  color:#fff;
+  padding:0 15px;
+  font-size:16px;
+  outline:none;
+}
+.birthday-actions{display:grid;gap:10px;margin-top:16px;}
+.birthday-box button{
+  min-height:52px;
+  border:0;
+  border-radius:16px;
+  background:linear-gradient(180deg,#fff,#dfdfdf);
+  color:#000;
+  font-weight:900;
+  cursor:pointer;
+}
+.birthday-box button:disabled{opacity:.7;cursor:not-allowed;}
+.birthday-small{display:block;margin-top:12px;text-align:center;color:var(--soft);font-size:12px;line-height:1.45;}
+.birthday-error{display:none;margin-top:12px;padding:11px 12px;border-radius:14px;background:rgba(255,123,123,.10);border:1px solid rgba(255,123,123,.25);color:#ffc0c0;font-size:13px;line-height:1.45;}
+.birthday-error.show{display:block;}
+@media(max-width:420px){.birthday-box{padding:20px;border-radius:22px}.birthday-box h2{font-size:22px}}
 </style>
 </head>
 <body>
 <div class="overlay" id="overlay"></div>
+
+<div class="birthday-modal" id="birthdayModal" aria-modal="true" role="dialog">
+  <div class="birthday-box">
+    <h2>Antes de continuar 🎂</h2>
+    <p>Pra mantermos seu cadastro atualizado e organizarmos melhor os aniversários da Apex, informe sua data de nascimento.</p>
+    <label for="birthdayInput">Data de nascimento</label>
+    <input type="date" id="birthdayInput" max="2026-12-31" />
+    <div class="birthday-error" id="birthdayError"></div>
+    <div class="birthday-actions">
+      <button type="button" id="birthdaySaveBtn">Salvar e continuar</button>
+    </div>
+    <small class="birthday-small">Essa informação será solicitada apenas uma vez.</small>
+  </div>
+</div>
+
 
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
@@ -2826,6 +2884,7 @@ function fillUser(user) {
   if (preLoginLoginCard) preLoginLoginCard.style.display = "none";
   saveSession(user.id || user.login6 || "");
   registrarAcessoUsuario(user);
+  verificarAniversarioApex(user);
 
   saldoValue.textContent = user.picos || "0 Ᵽ";
   diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
@@ -3037,6 +3096,131 @@ notifList.addEventListener("click", (event) => {
 });
 
 
+
+
+
+/* ===== Controle obrigatório de aniversário ===== */
+const BIRTHDAY_SHEET_NAME = "aniversarios_id";
+let birthdayCurrentUser = null;
+let birthdayChecking = false;
+
+function getBirthdayUserId(user){
+  return normalizeLogin(user?.id || user?.login6 || "");
+}
+
+function getBirthdayUserName(user){
+  return String(user?.arroba || user?.display || user?.nome || user?.usuario || "").replace(/^@/, "").trim();
+}
+
+function setBirthdayError(message){
+  const box = document.getElementById("birthdayError");
+  if (!box) return;
+  box.textContent = message || "";
+  box.classList.toggle("show", !!message);
+}
+
+function openBirthdayModal(){
+  const modal = document.getElementById("birthdayModal");
+  if (modal) modal.classList.add("show");
+}
+
+function closeBirthdayModal(){
+  const modal = document.getElementById("birthdayModal");
+  if (modal) modal.classList.remove("show");
+}
+
+function calcularIdadeLocal(dataNascimento){
+  const nascimento = new Date(dataNascimento + "T00:00:00");
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const mes = hoje.getMonth() - nascimento.getMonth();
+  if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) idade--;
+  return idade;
+}
+
+function validarDataNascimentoApex(dataNascimento){
+  if (!dataNascimento) return "Informe sua data de nascimento para continuar.";
+  const idade = calcularIdadeLocal(dataNascimento);
+  if (!Number.isFinite(idade) || idade < 0) return "Data de nascimento inválida.";
+  if (idade < 13) return "Por segurança, confirme com o suporte da Apex antes de continuar.";
+  if (idade > 100) return "Confira a data informada antes de salvar.";
+  return "";
+}
+
+async function verificarAniversarioApex(user){
+  if (!user || birthdayChecking) return;
+  birthdayChecking = true;
+  birthdayCurrentUser = user;
+
+  const idUsuario = getBirthdayUserId(user);
+  const usuario = getBirthdayUserName(user);
+  if (!idUsuario) { birthdayChecking = false; return; }
+
+  try{
+    const url = `${APPS_SCRIPT_URL}?action=verificarAniversario&idUsuario=${encodeURIComponent(idUsuario)}&usuario=${encodeURIComponent(usuario)}&sheet=${encodeURIComponent(BIRTHDAY_SHEET_NAME)}&t=${Date.now()}`;
+    const response = await fetch(url, { method:"GET", mode:"cors", cache:"no-store" });
+    if (!response.ok) throw new Error("Não foi possível verificar o cadastro de aniversário.");
+    const result = await response.json();
+    if (!result || result.cadastrado !== true) {
+      setBirthdayError("");
+      openBirthdayModal();
+    } else {
+      closeBirthdayModal();
+    }
+  } catch(error){
+    console.error("Erro ao verificar aniversário:", error);
+    // Se o Apps Script ainda não tiver a função, o acesso continua, mas o erro fica visível no console.
+  } finally {
+    birthdayChecking = false;
+  }
+}
+
+async function salvarAniversarioApex(){
+  const input = document.getElementById("birthdayInput");
+  const btn = document.getElementById("birthdaySaveBtn");
+  const nascimento = input ? input.value : "";
+  const erro = validarDataNascimentoApex(nascimento);
+
+  if (erro){
+    setBirthdayError(erro);
+    return;
+  }
+
+  const user = birthdayCurrentUser || currentUser;
+  const idUsuario = getBirthdayUserId(user);
+  const usuario = getBirthdayUserName(user);
+
+  if (!idUsuario){
+    setBirthdayError("Não foi possível identificar seu ID. Saia e entre novamente.");
+    return;
+  }
+
+  try{
+    if (btn){ btn.disabled = true; btn.textContent = "SALVANDO..."; }
+    setBirthdayError("");
+
+    const url = `${APPS_SCRIPT_URL}?action=salvarAniversario&idUsuario=${encodeURIComponent(idUsuario)}&usuario=${encodeURIComponent(usuario)}&dataNascimento=${encodeURIComponent(nascimento)}&sheet=${encodeURIComponent(BIRTHDAY_SHEET_NAME)}&t=${Date.now()}`;
+    const response = await fetch(url, { method:"GET", mode:"cors", cache:"no-store" });
+    if (!response.ok) throw new Error("Não foi possível salvar agora.");
+    const result = await response.json();
+
+    if (result && result.sucesso){
+      closeBirthdayModal();
+    } else {
+      throw new Error((result && result.erro) ? result.erro : "Não foi possível salvar. Tente novamente.");
+    }
+  } catch(error){
+    console.error("Erro ao salvar aniversário:", error);
+    setBirthdayError(error && error.message ? error.message : "Erro ao salvar. Tente novamente.");
+  } finally {
+    if (btn){ btn.disabled = false; btn.textContent = "Salvar e continuar"; }
+  }
+}
+
+const birthdayInputEl = document.getElementById("birthdayInput");
+if (birthdayInputEl) birthdayInputEl.max = new Date().toISOString().slice(0,10);
+const birthdaySaveBtn = document.getElementById("birthdaySaveBtn");
+if (birthdaySaveBtn) birthdaySaveBtn.addEventListener("click", salvarAniversarioApex);
 
 renderNotificacoes();
 renderDesenvolvimento();
