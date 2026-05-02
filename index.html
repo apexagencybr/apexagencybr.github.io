@@ -4642,6 +4642,107 @@ restoreSessionIfPossible();
   }
   #seasonTopRanking .ranking-xp{font-size:14px !important;}
 }
+
+
+/* ===============================
+   OVERLAY TEMPORÁRIO DE MANUTENÇÃO
+   Mantém a base visual do Apex Connect e bloqueia o uso do sistema.
+   Para remover: apague este bloco CSS e o bloco HTML #manutencaoOverlay.
+================================ */
+#manutencaoOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+  padding:18px;
+}
+
+.manutencao-box{
+  max-width:460px;
+  width:100%;
+  padding:30px;
+  border-radius:24px;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
+  border:1px solid rgba(255,255,255,0.11);
+  text-align:center;
+  box-shadow:0 24px 70px rgba(0,0,0,.55);
+}
+
+.manutencao-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,211,111,.14);
+  border:1px solid rgba(255,211,111,.32);
+  color:#ffd36f;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.35px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+.manutencao-box h2{
+  font-size:34px;
+  line-height:1.05;
+  margin:0 0 10px;
+  letter-spacing:-.6px;
+}
+
+.manutencao-box p{
+  color:#bdbdbd;
+  line-height:1.65;
+  margin:0 0 20px;
+  font-size:15px;
+}
+
+.manutencao-time{
+  padding:17px 16px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.055);
+  border:1px solid rgba(255,255,255,0.09);
+  margin:0 0 18px;
+}
+
+.manutencao-time span{
+  display:block;
+  font-size:12px;
+  color:#8f8f8f;
+  margin-bottom:7px;
+}
+
+.manutencao-time strong{
+  display:block;
+  font-size:26px;
+  line-height:1.1;
+}
+
+.manutencao-footer{
+  font-size:13px !important;
+  color:#777 !important;
+  margin:0 !important;
+}
+
+@media (max-width:520px){
+  .manutencao-box{
+    padding:24px 18px;
+    border-radius:22px;
+  }
+  .manutencao-box h2{
+    font-size:28px;
+  }
+  .manutencao-time strong{
+    font-size:23px;
+  }
+}
+
 </style>
 
 
@@ -4950,6 +5051,31 @@ restoreSessionIfPossible();
   window.apexFechamentoMensal = { show: showFechamentoMensal, close: closeFechamentoMensal };
 })();
 </script>
+
+
+
+<!-- OVERLAY TEMPORÁRIO DE MANUTENÇÃO - APEX CONNECT -->
+<div id="manutencaoOverlay" aria-live="polite">
+  <div class="manutencao-box">
+    <div class="manutencao-badge">Sistema em manutenção</div>
+
+    <h2>Apex Connect</h2>
+
+    <p>
+      Estamos realizando uma atualização para liberar novas funcionalidades
+      como Picos, Apex Shop e melhorias no sistema.
+    </p>
+
+    <div class="manutencao-time">
+      <span>Previsão de retorno</span>
+      <strong>02/05 às 12h</strong>
+    </div>
+
+    <p class="manutencao-footer">
+      Apex Agency · Always aiming higher
+    </p>
+  </div>
+</div>
 
 </body>
 </html>
