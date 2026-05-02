@@ -4869,7 +4869,9 @@ restoreSessionIfPossible();
         diffHoras: Number(fromScript.diferenca_horas_num) || 0,
         pctHoras: Number(fromScript.percentual_horas) || 0,
         topHoras: fromScript.top_horas_posicao || null,
-        picos: (user && (user.picos || user.picos_atuais || user.picosAtuais)) || "0 Ᵽ",
+        picos: fromScript.picos_fechamento || (user && (user.picos || user.picos_atuais || user.picosAtuais)) || "0 Ᵽ",
+        diasValidos: fromScript.dias_validos_atual || "",
+        livesFeitas: fromScript.lives_atual || "",
         semDados: !!fromScript.sem_dados
       };
     }
@@ -4877,12 +4879,17 @@ restoreSessionIfPossible();
     const months = getCloseMonths();
     const closed = findSeasonForUser(user, months.closedKey, months.closedYear);
     const previous = findSeasonForUser(user, months.previousKey, months.previousYear);
-    const atualDiamantes = closed ? toNumber(closed.diamantes) : toNumber(user && user.diamantes);
-    const anteriorDiamantes = previous ? toNumber(previous.diamantes) : toNumber(user && user.diamantes_mes_passado);
+
+    // Correção: no pop-up de fechamento, nunca usar Base_Dados_Atual como fallback.
+    // Se Maio já foi enviado, Base_Dados_Atual vira Maio; o pop-up precisa continuar Abril fechado.
+    if (!closed || !previous) return { months, semDados: true };
+
+    const atualDiamantes = toNumber(closed.diamantes);
+    const anteriorDiamantes = toNumber(previous.diamantes);
     const diff = atualDiamantes - anteriorDiamantes;
     const pct = anteriorDiamantes > 0 ? (diff / anteriorDiamantes) * 100 : 0;
-    const horasAtual = (closed && (closed.duracao_live || closed.horas)) || (user && (user.duracao_live || user.horas)) || "0h";
-    const horasAnterior = (previous && (previous.duracao_live || previous.horas)) || (user && user.duracao_mes_passado) || "0h";
+    const horasAtual = (closed && (closed.duracao_live || closed.horas)) || "0h";
+    const horasAnterior = (previous && (previous.duracao_live || previous.horas)) || "0h";
     const diffHoras = parseHoursToNumber(horasAtual) - parseHoursToNumber(horasAnterior);
 
     return {
@@ -4894,8 +4901,9 @@ restoreSessionIfPossible();
       horasAtual,
       diffHoras,
       pctHoras: parseHoursToNumber(horasAnterior) > 0 ? (diffHoras / parseHoursToNumber(horasAnterior)) * 100 : 0,
-      topHoras: user && user.top_horas_posicao,
-      picos: (user && (user.picos || user.picos_atuais || user.picosAtuais)) || "0 Ᵽ"
+      topHoras: closed && (closed.top_horas_posicao || closed.top_horas || closed["Top Horas"]),
+      picos: (closed && (closed.picos_total_temporada || closed.picos_fechamento || closed["Total de Picos"])) ? `${formatInt(closed.picos_total_temporada || closed.picos_fechamento || closed["Total de Picos"])} Ᵽ` : "0 Ᵽ",
+      semDados: false
     };
   }
   function setText(id, value){ const el = document.getElementById(id); if (el) el.textContent = value; }
@@ -4919,7 +4927,7 @@ restoreSessionIfPossible();
     setText("apexFechamentoDiferenca", `${signedInt(data.diff)} 💎`);
     setText("apexFechamentoHoras", String(data.horasAtual || "0h"));
     setText("apexFechamentoDias", `${formatHoursDecimal(data.diffHoras)} (${formatPercent(data.pctHoras)})`);
-    setText("apexFechamentoBatalhas", data.topHoras ? `#${data.topHoras}` : "-");
+    setText("apexFechamentoBatalhas", data.topHoras ? (String(data.topHoras).startsWith("#") ? String(data.topHoras) : `#${data.topHoras}`) : "-");
     setText("apexFechamentoPicos", String(data.picos || "0 Ᵽ"));
 
     const variacao = document.getElementById("apexFechamentoVariacao");
