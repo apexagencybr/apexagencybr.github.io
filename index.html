@@ -1699,7 +1699,7 @@ body.birthday-locked{overflow:hidden;}
     <div class="menu-item" data-view="desenvolvimento"><span>🚀 Desenvolvimento</span><span>›</span></div>
     <div class="menu-item" data-view="indicacoes"><span class="menu-label">📨 Indicações</span><span>›</span></div>
     <div class="menu-item" data-view="batalhas"><span class="menu-label">⚔️ Batalhas</span><span>›</span></div>
-    <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon apex-shop-mini-timer" id="apexShopMiniTimer">--</span></span><span>›</span></div>
+    <div class="menu-item" data-view="shop"><span class="menu-label">🛍️ Apex Shop <span class="menu-badge-soon" id="apexShopMiniTimer">--</span></span><span>›</span></div>
     <div class="menu-item" data-view="comunidade"><span class="menu-label">🌐 Comunidade</span><span>›</span></div>
   </div>
 
@@ -2666,20 +2666,15 @@ function xpByTable(value, table) {
 }
 
 function calculateXpFromUser(user) {
-  user = user || {};
-  const parseNum = (value) => Number(String(value ?? "").replace(/[^\d,-]/g,'').replace(',', '.')) || 0;
-  const xpManual = parseNum(user.xp_total || user.bxp || user.BXP || user['BXP'] || user['XP'] || user['XP Total'] || user['Total XP'] || user['XP da temporada']);
-
-  const horas = parseHoursToNumber(user.duracao_live || user.horas || user['Duração da LIVE'] || user['Duracao da LIVE'] || user['Duração de LIVE'] || "0h");
-  const dias = Number(String(user.dias_validos || user.dias || user['Dias válidos de início de LIVE'] || user['Dias validos de inicio de LIVE'] || user['Dias de início de LIVE válidos'] || "0").replace(/\D+/g,'')) || 0;
-  const batalhas = Number(String(user.batalhas_total || user.batalhas || user.Batalhas || user['Batalhas'] || user.lives_feitas || user['Transmissões de LIVE'] || 0).replace(/\D+/g,'')) || 0;
-  const diamantes = Number(String(user.diamantes || user['Diamantes'] || "0").replace(/[^\d]/g,'')) || 0;
+  const horas = parseHoursToNumber(user.duracao_live || user.horas || "0h");
+  const dias = Number(String(user.dias_validos || user.dias || "0").replace(/\D+/g,'')) || 0;
+  const batalhas = Number(String(user.batalhas_total || user.batalhas || user.lives_feitas || 0).replace(/\D+/g,'')) || 0;
+  const diamantes = Number(String(user.diamantes || "0").replace(/[^\d]/g,'')) || 0;
   const horasXp = xpByTable(horas, [[10,1500],[20,3000],[30,4500],[40,6000],[50,7500],[60,9000],[80,12000],[100,15000],[120,18000],[150,22500],[180,27000],[200,30000],[250,40000]]);
   const diasXp = xpByTable(dias, [[1,250],[5,1250],[10,2500],[15,3750],[20,5000],[22,5500],[30,7500]]);
   const batalhasXp = xpByTable(batalhas, [[5,200],[10,400],[15,600],[20,800],[30,1200],[40,1600],[50,2000],[60,2400],[80,3200],[100,4000],[200,8000],[300,12000],[400,16000],[500,20000]]);
   const diamantesXp = xpByTable(diamantes, [[500,60],[1000,120],[2500,300],[5000,600],[10000,1200],[25000,3000],[50000,6000],[100000,12000],[250000,30000],[500000,60000],[1000000,120000],[1500000,150000],[2000000,200000]]);
-  const calculado = horasXp+diasXp+batalhasXp+diamantesXp;
-  return { horasXp, diasXp, batalhasXp, diamantesXp, total: xpManual > 0 ? xpManual : calculado };
+  return { horasXp, diasXp, batalhasXp, diamantesXp, total: horasXp+diasXp+batalhasXp+diamantesXp };
 }
 
 function getLevelData(user) {
@@ -4006,16 +4001,34 @@ restoreSessionIfPossible();
   function formatPeriodoHuman(value){
     const raw = String(value || "").trim();
     if (!raw) return "--/-- a --/--";
-    const matches = raw.match(/\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}/g);
-    if (matches && matches.length >= 2){
-      const start = parseDateLoose(matches[0]);
-      const end = parseDateLoose(matches[1]);
-      if (start && end){
-        const startTxt = `${start.getDate()} de ${monthNamePt(start.getMonth())}`;
-        const endTxt = `${end.getDate()} de ${monthNamePt(end.getMonth())}`;
-        return `${startTxt} a ${endTxt}`;
-      }
+
+    function two(n){ return String(n).padStart(2, "0"); }
+    function formatRange(start, end){
+      if (!start || !end) return raw;
+      const sd = two(start.getDate());
+      const ed = two(end.getDate());
+      const sm = monthNamePt(start.getMonth());
+      const em = monthNamePt(end.getMonth());
+      if (start.getTime() === end.getTime()) return `${sd} de ${em}`;
+      if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) return `${sd} a ${ed} de ${em}`;
+      return `${sd} de ${sm} a ${ed} de ${em}`;
     }
+
+    const completeMatches = raw.match(/\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}/g);
+    if (completeMatches && completeMatches.length >= 2){
+      const start = parseDateLoose(completeMatches[0]);
+      const end = parseDateLoose(completeMatches[1]);
+      if (start && end) return formatRange(start, end);
+    }
+
+    const shortMatches = raw.match(/\b\d{1,2}\/\d{1,2}\b/g);
+    if (shortMatches && shortMatches.length >= 2){
+      const year = new Date().getFullYear();
+      const [sd, sm] = shortMatches[0].split("/").map(Number);
+      const [ed, em] = shortMatches[1].split("/").map(Number);
+      return formatRange(new Date(year, sm - 1, sd), new Date(year, em - 1, ed));
+    }
+
     return raw.replace(/^Temporada\s+/i,"").replace(/\bMarco\b/g,"Março");
   }
   function humanizeSeasonName(name){
@@ -4668,8 +4681,8 @@ restoreSessionIfPossible();
       title: document.getElementById("apexShopCountdownTitle"),
       subtitle: document.getElementById("apexShopCountdownSubtitle"),
       openLabel: document.getElementById("apexShopOpenLabel"),
-      modal: document.getElementById("apexShopLaunchModal"),
-      mini: document.getElementById("apexShopMiniTimer")
+      miniTimer: document.getElementById("apexShopMiniTimer"),
+      modal: document.getElementById("apexShopLaunchModal")
     };
   }
 
@@ -4688,7 +4701,7 @@ restoreSessionIfPossible();
       if (els.title) els.title.textContent = "Apex Shop aberto!";
       if (els.subtitle) els.subtitle.innerHTML = "A janela de abertura da loja chegou. Confira as regras antes de solicitar seu resgate.";
       if (els.openLabel) els.openLabel.style.display = "inline-flex";
-      if (els.mini) els.mini.textContent = "ABERTO";
+      if (els.miniTimer) els.miniTimer.textContent = "Aberto";
       return;
     }
 
@@ -4702,7 +4715,7 @@ restoreSessionIfPossible();
     els.hours.textContent = pad(hours);
     els.minutes.textContent = pad(minutes);
     els.seconds.textContent = pad(seconds);
-    if (els.mini) els.mini.textContent = `${days}d ${hours}h`;
+    if (els.miniTimer) els.miniTimer.textContent = `${days}d ${hours}h`;
   }
 
   function closeApexShopLaunchPopup(){
@@ -4847,10 +4860,10 @@ restoreSessionIfPossible();
     if (fromScript) {
       return {
         months: {
-          closedLabel: fromScript.mes_fechado || "Temporada fechada",
-          closedYear: fromScript.ano_fechado || new Date().getFullYear(),
-          previousLabel: fromScript.mes_anterior || "Temporada anterior",
-          previousYear: fromScript.ano_anterior || new Date().getFullYear()
+          closedLabel: fromScript.mes_fechado || "Abril",
+          closedYear: fromScript.ano_fechado || 2026,
+          previousLabel: fromScript.mes_anterior || "Março",
+          previousYear: fromScript.ano_anterior || 2026
         },
         atualDiamantes: toNumber(fromScript.diamantes_atual),
         anteriorDiamantes: toNumber(fromScript.diamantes_anterior),
@@ -4860,27 +4873,19 @@ restoreSessionIfPossible();
         diffHoras: Number(fromScript.diferenca_horas_num) || 0,
         pctHoras: Number(fromScript.percentual_horas) || 0,
         topHoras: fromScript.top_horas_posicao || null,
-        picos: fromScript.picos_fechamento || (user && (user.picos || user.picos_atuais || user.picosAtuais)) || "0 Ᵽ",
-        diasValidos: fromScript.dias_validos_atual || "",
-        livesFeitas: fromScript.lives_atual || "",
-        semDados: !!fromScript.sem_dados
+        picos: fromScript.picos_fechamento || fromScript.picos_fechamento_total || (user && (user.picos || user.picos_atuais || user.picosAtuais)) || "0 Ᵽ"
       };
     }
 
     const months = getCloseMonths();
     const closed = findSeasonForUser(user, months.closedKey, months.closedYear);
     const previous = findSeasonForUser(user, months.previousKey, months.previousYear);
-
-    // Correção: no pop-up de fechamento, nunca usar Base_Dados_Atual como fallback.
-    // Se Maio já foi enviado, Base_Dados_Atual vira Maio; o pop-up precisa continuar Abril fechado.
-    if (!closed || !previous) return { months, semDados: true };
-
-    const atualDiamantes = toNumber(closed.diamantes);
-    const anteriorDiamantes = toNumber(previous.diamantes);
+    const atualDiamantes = closed ? toNumber(closed.diamantes) : toNumber(user && user.diamantes);
+    const anteriorDiamantes = previous ? toNumber(previous.diamantes) : toNumber(user && user.diamantes_mes_passado);
     const diff = atualDiamantes - anteriorDiamantes;
     const pct = anteriorDiamantes > 0 ? (diff / anteriorDiamantes) * 100 : 0;
-    const horasAtual = (closed && (closed.duracao_live || closed.horas)) || "0h";
-    const horasAnterior = (previous && (previous.duracao_live || previous.horas)) || "0h";
+    const horasAtual = (closed && (closed.duracao_live || closed.horas)) || (user && (user.duracao_live || user.horas)) || "0h";
+    const horasAnterior = (previous && (previous.duracao_live || previous.horas)) || (user && user.duracao_mes_passado) || "0h";
     const diffHoras = parseHoursToNumber(horasAtual) - parseHoursToNumber(horasAnterior);
 
     return {
@@ -4892,9 +4897,8 @@ restoreSessionIfPossible();
       horasAtual,
       diffHoras,
       pctHoras: parseHoursToNumber(horasAnterior) > 0 ? (diffHoras / parseHoursToNumber(horasAnterior)) * 100 : 0,
-      topHoras: closed && (closed.top_horas_posicao || closed.top_horas || closed["Top Horas"]),
-      picos: (closed && (closed.picos_total_temporada || closed.picos_fechamento || closed["Total de Picos"])) ? `${formatInt(closed.picos_total_temporada || closed.picos_fechamento || closed["Total de Picos"])} Ᵽ` : "0 Ᵽ",
-      semDados: false
+      topHoras: user && user.top_horas_posicao,
+      picos: (user && (user.picos || user.picos_atuais || user.picosAtuais)) || "0 Ᵽ"
     };
   }
   function setText(id, value){ const el = document.getElementById(id); if (el) el.textContent = value; }
@@ -4905,7 +4909,6 @@ restoreSessionIfPossible();
     if (!modal || !user) return;
 
     const data = getFechamentoData(user);
-    if (!data || data.semDados) return;
     const m = data.months;
 
     setText("apexFechamentoKicker", `📊 Fechamento de ${m.closedLabel} ${m.closedYear}`);
@@ -4918,7 +4921,7 @@ restoreSessionIfPossible();
     setText("apexFechamentoDiferenca", `${signedInt(data.diff)} 💎`);
     setText("apexFechamentoHoras", String(data.horasAtual || "0h"));
     setText("apexFechamentoDias", `${formatHoursDecimal(data.diffHoras)} (${formatPercent(data.pctHoras)})`);
-    setText("apexFechamentoBatalhas", data.topHoras ? (String(data.topHoras).startsWith("#") ? String(data.topHoras) : `#${data.topHoras}`) : "-");
+    setText("apexFechamentoBatalhas", data.topHoras ? `#${data.topHoras}` : "-");
     setText("apexFechamentoPicos", String(data.picos || "0 Ᵽ"));
 
     const variacao = document.getElementById("apexFechamentoVariacao");
