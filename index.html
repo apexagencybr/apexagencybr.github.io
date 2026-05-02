@@ -17,7 +17,7 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Apex Connect - v2.0</title>
+  <title>Apex Connect - v3.9.0</title>
 
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
@@ -1707,6 +1707,15 @@ body.birthday-locked{overflow:hidden;}
 .apex-season-ranking-row .ranking-badge{width:54px;height:54px;}
 @media(max-width:768px){.apex-inline-dropdown{width:100%;margin-left:0;}.apex-inline-dropdown summary{width:100%;justify-content:space-between;}.apex-inline-dropdown-body{left:0;right:auto;min-width:100%;}.apex-season-ranking-row{grid-template-columns:34px 44px minmax(0,1fr);}.apex-season-ranking-row .ranking-xp{grid-column:3;justify-self:start;font-size:13px;}.apex-season-ranking-row .ranking-badge{width:44px;height:44px;}.apex-ranking-box{padding:16px;border-radius:22px;}}
 
+
+
+/* ===== Movimento Top Horas ===== */
+.top-hour-trend{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:900;line-height:1;border:1px solid rgba(255,255,255,.10);}
+.top-hour-trend.up{color:var(--success);background:rgba(127,226,160,.14);border-color:rgba(127,226,160,.28);}
+.top-hour-trend.down{color:var(--danger);background:rgba(255,123,123,.14);border-color:rgba(255,123,123,.28);}
+.top-hour-trend.same{color:var(--muted);background:rgba(255,255,255,.06);}
+.top-hour-trend.new{color:#9fc7ff;background:rgba(120,170,255,.14);border-color:rgba(120,170,255,.28);}
+
 </style>
 </head>
 <body>
@@ -2305,7 +2314,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v2.1</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.0</div>
   </div>
 </div>
 
@@ -5086,7 +5095,7 @@ restoreSessionIfPossible();
     modal.innerHTML = `
       <div class="apex-ranking-box">
         <div class="apex-ranking-head">
-          <div><h3 id="apexSeasonRankingTitle">Ranking da temporada</h3><p id="apexSeasonRankingSub">Top 10 por XP</p></div>
+          <div><h3 id="apexSeasonRankingTitle">Ranking da temporada</h3><p id="apexSeasonRankingSub">Top 10</p></div>
           <button class="apex-ranking-close" type="button" id="apexSeasonRankingClose">×</button>
         </div>
         <div class="apex-season-ranking-list" id="apexSeasonRankingList"></div>
@@ -5115,7 +5124,7 @@ restoreSessionIfPossible();
     }
     const ranked = rankXpRows(group.rows).slice(0,10);
     title.textContent = `Ranking • ${group.label}`;
-    sub.textContent = 'Top 10 por XP da temporada selecionada.';
+    sub.textContent = 'Top 10';
     list.innerHTML = ranked.length ? ranked.map((item, idx) => `
       <div class="apex-season-ranking-row">
         <div class="ranking-medal">#${idx + 1}</div>
@@ -5133,7 +5142,7 @@ restoreSessionIfPossible();
   function buildSeasonDropdownHTML(){
     const groups = getSeasonGroups();
     if(!groups.length) return '<div class="apex-dropdown-empty">Nenhuma temporada anterior encontrada.</div>';
-    return groups.map(g => `<button class="apex-dropdown-btn" type="button" onclick="openSeasonRankingModal('${String(g.key).replace(/'/g,"\\'")}')"><span>${g.label}</span><small>Top 10 XP</small></button>`).join('');
+    return groups.map(g => `<button class="apex-dropdown-btn" type="button" onclick="openSeasonRankingModal('${String(g.key).replace(/'/g,"\\'")}')"><span>${g.label}</span><small>Top 10</small></button>`).join('');
   }
   function ensureSeasonControl(){
     const head = document.querySelector('#view-perfil .section-card .section-head');
@@ -5223,8 +5232,35 @@ restoreSessionIfPossible();
     });
   }
 
+
+  function renderTopHorasComMovimento(){
+    const list = document.getElementById('topHorasLista');
+    if(!list || !window.appData || !Array.isArray(window.appData.top_horas)) return false;
+    const items = window.appData.top_horas.slice(0,5);
+    if(!items.length) return false;
+    const icons = {};
+    // reaproveita o HTML original quando possível, mantendo o visual e só adicionando a variação.
+    list.innerHTML = items.map(item => {
+      const mov = item.movimento || {};
+      const tipo = mov.tipo === 'up' ? 'up' : mov.tipo === 'down' ? 'down' : mov.tipo === 'same' ? 'same' : 'new';
+      const label = mov.label || (tipo === 'new' ? 'novo' : '—');
+      return `
+        <div class="top-hour-item">
+          <div class="top-hour-left">
+            <div class="top-rank">${item.posicao || '-'}</div>
+            <div>
+              <div class="top-hour-name">Top ${item.posicao || '-'} • @${String(item.arroba || item.display || '-').replace(/^@+/,'')} <span class="top-hour-trend ${tipo}">${label}</span></div>
+              <div class="top-hour-time">${item.duracao_live || item.horas || '-'}</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    return true;
+  }
+
   function patchEverything(user){
     ensureSeasonControl();
+    renderTopHorasComMovimento();
     ensureTopHorasPreviousControl();
     if(user) repairSeasonGallery(user);
     patchCurrentPicosLabels();
@@ -5241,6 +5277,7 @@ restoreSessionIfPossible();
   if(typeof originalRenderTopHoras === 'function'){
     window.renderTopHoras = function(){
       originalRenderTopHoras();
+      renderTopHorasComMovimento();
       ensureTopHorasPreviousControl();
     };
   }
