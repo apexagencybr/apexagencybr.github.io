@@ -167,6 +167,25 @@
   }
   .big-saldo span { display:block; color:var(--muted); font-size:13px; margin-bottom:8px; }
   .big-saldo strong { font-size:36px; line-height:1; }
+
+  .picos-mini-extrato{ margin-top:12px; }
+  .picos-mini-extrato summary{
+    list-style:none; cursor:pointer; user-select:none;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 12px; border-radius:14px;
+    background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.08);
+    color:var(--muted); font-size:13px; font-weight:800;
+  }
+  .picos-mini-extrato summary::-webkit-details-marker{display:none;}
+  .picos-mini-extrato summary::after{content:"⌄"; color:#fff; transition:.2s ease;}
+  .picos-mini-extrato[open] summary::after{transform:rotate(180deg);}
+  .picos-mini-list{display:grid;gap:8px;margin-top:10px;}
+  .picos-mini-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted);}
+  .picos-mini-row strong{font-size:13px;line-height:1;font-weight:900;white-space:nowrap;}
+  .picos-plus{color:var(--success)!important;}
+  .picos-minus{color:var(--danger)!important;}
+  .picos-empty{color:var(--soft);font-size:13px;line-height:1.45;}
+
   .stats {
     display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px;
   }
@@ -1921,6 +1940,12 @@ body.birthday-locked{overflow:hidden;}
             <div class="big-saldo">
               <span>Saldo atual</span>
               <strong id="saldoValue">0 Ᵽ</strong>
+              <details class="picos-mini-extrato" id="picosMiniExtrato">
+                <summary>Extrato dos Picos</summary>
+                <div class="picos-mini-list" id="picosMovimentosList">
+                  <div class="picos-empty">Nenhum movimento encontrado.</div>
+                </div>
+              </details>
             </div>
           </div>
 
@@ -3113,6 +3138,42 @@ function renderLevel(user) {
   if (progressFill) progressFill.style.width = `${level.progress}%`;
 }
 
+
+function formatPicosMovementValue(value, explicit) {
+  if (explicit) return explicit;
+  const num = Number(value || 0);
+  const abs = Math.abs(Math.round(num));
+  const formatted = String(abs).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${num >= 0 ? "+" : "-"}${formatted}`;
+}
+
+function renderPicosMovimentos(user) {
+  const list = document.getElementById("picosMovimentosList");
+  if (!list) return;
+
+  const movimentos = Array.isArray(user.picos_movimentos)
+    ? user.picos_movimentos
+    : (Array.isArray(user.picos_extrato) ? user.picos_extrato : []);
+
+  if (!movimentos.length) {
+    list.innerHTML = '<div class="picos-empty">Nenhum movimento encontrado.</div>';
+    return;
+  }
+
+  list.innerHTML = movimentos.map((mov) => {
+    const value = Number(mov.valor || 0);
+    const isResgate = (mov.tipo || "").toLowerCase().includes("resgate") || value < 0;
+    const label = mov.label || (isResgate ? `Resgate${mov.item ? ` (${mov.item})` : ""}` : "Picos do mês");
+    const valueText = formatPicosMovementValue(value, mov.valor_formatado);
+    return `
+      <div class="picos-mini-row">
+        <span>${label}</span>
+        <strong class="${isResgate ? "picos-minus" : "picos-plus"}">${valueText}</strong>
+      </div>
+    `;
+  }).join("");
+}
+
 function fillUser(user) {
   currentUser = user;
   mainApp.style.display = "block";
@@ -3133,6 +3194,7 @@ function fillUser(user) {
   verificarAniversarioApex(user);
 
   saldoValue.textContent = user.picos || "0 Ᵽ";
+  renderPicosMovimentos(user);
   diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
   horasValue.textContent = user.duracao_live || user.horas || "0h 0m 0s";
   diasValue.textContent = user.dias_validos || user.dias || "0";
