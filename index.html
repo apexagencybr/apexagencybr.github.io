@@ -324,18 +324,6 @@ min-height:320px;
   .menu-label{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .menu-badge-new{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:999px;background:rgba(127,226,160,.18);border:1px solid rgba(127,226,160,.35);color:var(--success);font-size:11px;font-weight:800;letter-spacing:.4px;line-height:1;text-transform:uppercase;line-height:1;}
   .menu-badge-soon{display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border-radius:999px;background:rgba(255,211,111,.18);border:1px solid rgba(255,211,111,.35);color:var(--warn);font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;line-height:1;}
-  .apex-shop-mini-timer{
-    min-width:54px;
-    padding:4px 8px;
-    background:linear-gradient(180deg,#ffe66b 0%,#ffd33d 100%) !important;
-    border:1px solid rgba(255,255,255,.24) !important;
-    color:#151000 !important;
-    box-shadow:0 2px 8px rgba(255,211,61,.22);
-    letter-spacing:-.2px !important;
-    text-transform:none !important;
-    font-size:11px !important;
-    font-weight:950 !important;
-  }
   .copy-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px; }
   .indicacoes-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
 
@@ -1589,7 +1577,7 @@ body.birthday-locked{overflow:hidden;}
 }
 
 
-/* Fechamento Mensal - automático por temporadas */
+/* Fechamento Mensal - Temporada Abril 2026 */
 .apex-fechamento-modal{
   position:fixed;
   inset:0;
@@ -2678,15 +2666,20 @@ function xpByTable(value, table) {
 }
 
 function calculateXpFromUser(user) {
-  const horas = parseHoursToNumber(user.duracao_live || user.horas || "0h");
-  const dias = Number(String(user.dias_validos || user.dias || "0").replace(/\D+/g,'')) || 0;
-  const batalhas = Number(String(user.batalhas_total || user.batalhas || user.lives_feitas || 0).replace(/\D+/g,'')) || 0;
-  const diamantes = Number(String(user.diamantes || "0").replace(/[^\d]/g,'')) || 0;
+  user = user || {};
+  const parseNum = (value) => Number(String(value ?? "").replace(/[^\d,-]/g,'').replace(',', '.')) || 0;
+  const xpManual = parseNum(user.xp_total || user.bxp || user.BXP || user['BXP'] || user['XP'] || user['XP Total'] || user['Total XP'] || user['XP da temporada']);
+
+  const horas = parseHoursToNumber(user.duracao_live || user.horas || user['Duração da LIVE'] || user['Duracao da LIVE'] || user['Duração de LIVE'] || "0h");
+  const dias = Number(String(user.dias_validos || user.dias || user['Dias válidos de início de LIVE'] || user['Dias validos de inicio de LIVE'] || user['Dias de início de LIVE válidos'] || "0").replace(/\D+/g,'')) || 0;
+  const batalhas = Number(String(user.batalhas_total || user.batalhas || user.Batalhas || user['Batalhas'] || user.lives_feitas || user['Transmissões de LIVE'] || 0).replace(/\D+/g,'')) || 0;
+  const diamantes = Number(String(user.diamantes || user['Diamantes'] || "0").replace(/[^\d]/g,'')) || 0;
   const horasXp = xpByTable(horas, [[10,1500],[20,3000],[30,4500],[40,6000],[50,7500],[60,9000],[80,12000],[100,15000],[120,18000],[150,22500],[180,27000],[200,30000],[250,40000]]);
   const diasXp = xpByTable(dias, [[1,250],[5,1250],[10,2500],[15,3750],[20,5000],[22,5500],[30,7500]]);
   const batalhasXp = xpByTable(batalhas, [[5,200],[10,400],[15,600],[20,800],[30,1200],[40,1600],[50,2000],[60,2400],[80,3200],[100,4000],[200,8000],[300,12000],[400,16000],[500,20000]]);
   const diamantesXp = xpByTable(diamantes, [[500,60],[1000,120],[2500,300],[5000,600],[10000,1200],[25000,3000],[50000,6000],[100000,12000],[250000,30000],[500000,60000],[1000000,120000],[1500000,150000],[2000000,200000]]);
-  return { horasXp, diasXp, batalhasXp, diamantesXp, total: horasXp+diasXp+batalhasXp+diamantesXp };
+  const calculado = horasXp+diasXp+batalhasXp+diamantesXp;
+  return { horasXp, diasXp, batalhasXp, diamantesXp, total: xpManual > 0 ? xpManual : calculado };
 }
 
 function getLevelData(user) {
@@ -3163,7 +3156,9 @@ function renderPicosMovimentos(user) {
   const list = document.getElementById("picosMovimentosList");
   if (!list) return;
 
-  const movimentos = normalizePicosMovimentos(user);
+  const movimentos = Array.isArray(user.picos_movimentos)
+    ? user.picos_movimentos
+    : (Array.isArray(user.picos_extrato) ? user.picos_extrato : []);
 
   if (!movimentos.length) {
     list.innerHTML = '<div class="picos-empty">Nenhum movimento encontrado.</div>';
@@ -3184,93 +3179,6 @@ function renderPicosMovimentos(user) {
   }).join("");
 }
 
-
-function getPicosNumber(value) {
-  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
-  const raw = String(value || "")
-    .replace(/[^\d,.-]/g, "")
-    .replace(/\.(?=\d{3}(\D|$))/g, "")
-    .replace(",", ".");
-  const num = Number(raw);
-  return Number.isFinite(num) ? num : 0;
-}
-
-function formatPicosSaldo(value) {
-  const n = Math.round(getPicosNumber(value));
-  return `${n.toLocaleString("pt-BR")} Ᵽ`;
-}
-
-function normalizePicosMovement(mov) {
-  if (!mov || typeof mov !== "object") return null;
-  const valor = getPicosNumber(mov.valor ?? mov.picos ?? mov.quantidade ?? mov.total);
-  const tipo = String(mov.tipo || mov.categoria || "").toLowerCase();
-  const item = mov.item || mov.premio || mov.descricao || "";
-  const isResgate = tipo.includes("resgate") || valor < 0;
-  return {
-    ...mov,
-    valor: isResgate && valor > 0 ? -valor : valor,
-    tipo: isResgate ? "resgate" : (mov.tipo || "credito"),
-    item
-  };
-}
-
-function normalizePicosMovimentos(user) {
-  const raw = Array.isArray(user?.picos_movimentos)
-    ? user.picos_movimentos
-    : (Array.isArray(user?.picos_extrato) ? user.picos_extrato : []);
-  return raw.map(normalizePicosMovement).filter(Boolean);
-}
-
-function getSaldoPicosFinal(user) {
-  const direct = user?.picos_total ?? user?.total_picos ?? user?.saldo_picos ?? user?.saldoAtual ?? user?.saldo_atual;
-  if (direct !== undefined && direct !== null && String(direct).trim() !== "") return getPicosNumber(direct);
-
-  const picosBase = getPicosNumber(user?.picos ?? user?.picos_mes_01 ?? user?.picos_mes_atual ?? 0);
-  const movimentos = normalizePicosMovimentos(user);
-  if (!movimentos.length) return picosBase;
-
-  const somaMovimentos = movimentos.reduce((acc, mov) => acc + getPicosNumber(mov.valor), 0);
-  return somaMovimentos || picosBase;
-}
-
-async function registrarResgatePicos(payload) {
-  const body = {
-    action: "registrarResgatePicos",
-    idUsuario: normalizeLogin(payload?.idUsuario || payload?.id || currentUser?.id || currentUser?.login6 || ""),
-    usuario: String(payload?.usuario || currentUser?.arroba || currentUser?.display || "").replace(/^@+/, ""),
-    item: payload?.item || "Resgate Apex Shop",
-    valor: -Math.abs(getPicosNumber(payload?.valor || payload?.picos || 0)),
-    origem: "Apex Shop",
-    observacao: payload?.observacao || "Resgate solicitado pelo Apex Connect"
-  };
-
-  if (!body.idUsuario || !body.valor) {
-    throw new Error("Resgate sem ID ou valor de Picos válido.");
-  }
-
-  const response = await fetch(APPS_SCRIPT_URL, {
-    method: "POST",
-    mode: "cors",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(body)
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok || result.ok === false || result.sucesso === false) {
-    throw new Error(result.message || result.erro || "Não foi possível registrar o resgate.");
-  }
-
-  if (currentUser) {
-    currentUser.picos = formatPicosSaldo(result.saldoAtual ?? result.saldo_atual ?? getSaldoPicosFinal(currentUser) + body.valor);
-    const movimentos = normalizePicosMovimentos(currentUser);
-    movimentos.push({ tipo:"resgate", item:body.item, valor:body.valor, label:`Resgate (${body.item})` });
-    currentUser.picos_movimentos = movimentos;
-    saldoValue.textContent = currentUser.picos;
-    renderPicosMovimentos(currentUser);
-  }
-  return result;
-}
-window.registrarResgatePicos = registrarResgatePicos;
-
 function fillUser(user) {
   currentUser = user;
   mainApp.style.display = "block";
@@ -3290,7 +3198,7 @@ function fillUser(user) {
   registrarAcessoUsuario(user);
   verificarAniversarioApex(user);
 
-  saldoValue.textContent = formatPicosSaldo(getSaldoPicosFinal(user));
+  saldoValue.textContent = user.picos || "0 Ᵽ";
   renderPicosMovimentos(user);
   diamantesValue.textContent = formatDiamondsK(user.diamantes || "0");
   horasValue.textContent = user.duracao_live || user.horas || "0h 0m 0s";
@@ -4746,42 +4654,125 @@ restoreSessionIfPossible();
 (function(){
   const SHOP_OPEN_DATE = new Date("2026-05-10T00:00:00-03:00");
   const SHOP_POPUP_ENABLED = true;
-  function pad(value){ return String(Math.max(0, Number(value) || 0)).padStart(2, "0"); }
-  function getApexShopRemainingTime(){
-    const diff = SHOP_OPEN_DATE.getTime() - new Date().getTime();
-    if (diff <= 0) return { total:0, days:0, hours:0, minutes:0, seconds:0, isOpen:true };
-    const totalSeconds = Math.floor(diff / 1000);
-    return { total:diff, days:Math.floor(totalSeconds / 86400), hours:Math.floor((totalSeconds % 86400) / 3600), minutes:Math.floor((totalSeconds % 3600) / 60), seconds:totalSeconds % 60, isOpen:false };
+
+  function pad(value){
+    return String(Math.max(0, Number(value) || 0)).padStart(2, "0");
   }
-  window.getApexShopRemainingTime = getApexShopRemainingTime;
+
   function getShopElements(){
-    return { days:document.getElementById("apexShopDays"), hours:document.getElementById("apexShopHours"), minutes:document.getElementById("apexShopMinutes"), seconds:document.getElementById("apexShopSeconds"), mini:document.getElementById("apexShopMiniTimer"), title:document.getElementById("apexShopCountdownTitle"), subtitle:document.getElementById("apexShopCountdownSubtitle"), openLabel:document.getElementById("apexShopOpenLabel"), modal:document.getElementById("apexShopLaunchModal") };
+    return {
+      days: document.getElementById("apexShopDays"),
+      hours: document.getElementById("apexShopHours"),
+      minutes: document.getElementById("apexShopMinutes"),
+      seconds: document.getElementById("apexShopSeconds"),
+      title: document.getElementById("apexShopCountdownTitle"),
+      subtitle: document.getElementById("apexShopCountdownSubtitle"),
+      openLabel: document.getElementById("apexShopOpenLabel"),
+      modal: document.getElementById("apexShopLaunchModal"),
+      mini: document.getElementById("apexShopMiniTimer")
+    };
   }
+
   function updateApexShopCountdown(){
     const els = getShopElements();
-    const time = getApexShopRemainingTime();
-    if (els.days) els.days.textContent = pad(time.days);
-    if (els.hours) els.hours.textContent = pad(time.hours);
-    if (els.minutes) els.minutes.textContent = pad(time.minutes);
-    if (els.seconds) els.seconds.textContent = pad(time.seconds);
-    if (els.mini) { els.mini.textContent = time.isOpen ? "aberto" : `${time.days}d ${time.hours}h`; els.mini.setAttribute("title", time.isOpen ? "Apex Shop aberto" : `Apex Shop abre em ${time.days} dias e ${time.hours} horas`); }
-    if (time.isOpen) {
+    if (!els.days || !els.hours || !els.minutes || !els.seconds) return;
+
+    const now = new Date();
+    let diff = SHOP_OPEN_DATE.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      els.days.textContent = "00";
+      els.hours.textContent = "00";
+      els.minutes.textContent = "00";
+      els.seconds.textContent = "00";
       if (els.title) els.title.textContent = "Apex Shop aberto!";
       if (els.subtitle) els.subtitle.innerHTML = "A janela de abertura da loja chegou. Confira as regras antes de solicitar seu resgate.";
       if (els.openLabel) els.openLabel.style.display = "inline-flex";
-    } else {
-      if (els.title) els.title.textContent = "Apex Shop abre em";
-      if (els.subtitle) els.subtitle.innerHTML = "A abertura está programada para <strong>10/05</strong>.";
-      if (els.openLabel) els.openLabel.style.display = "none";
+      if (els.mini) els.mini.textContent = "ABERTO";
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    els.days.textContent = pad(days);
+    els.hours.textContent = pad(hours);
+    els.minutes.textContent = pad(minutes);
+    els.seconds.textContent = pad(seconds);
+    if (els.mini) els.mini.textContent = `${days}d ${hours}h`;
+  }
+
+  function closeApexShopLaunchPopup(){
+    const modal = document.getElementById("apexShopLaunchModal");
+    if (modal) modal.classList.remove("show");
+    if (!document.body.classList.contains("birthday-locked")) document.body.style.overflow = "";
+  }
+
+  function goToApexShopFromPopup(){
+    closeApexShopLaunchPopup();
+    if (typeof closePanels === "function") closePanels();
+    if (typeof setView === "function") setView("shop");
+    const mainAppEl = document.getElementById("mainApp");
+    const shopView = document.getElementById("view-shop");
+    if (mainAppEl) mainAppEl.style.display = "block";
+    setTimeout(function(){
+      if (shopView) shopView.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
+
+  function showApexShopLaunchPopup(){
+    if (!SHOP_POPUP_ENABLED) return;
+    if (new Date().getTime() >= SHOP_OPEN_DATE.getTime()) return;
+    const modal = document.getElementById("apexShopLaunchModal");
+    if (!modal) return;
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+
+  function bindApexShopPopup(){
+    const closeBtn = document.getElementById("apexShopLaunchClose");
+    const imageBtn = document.getElementById("apexShopLaunchImageBtn");
+    const goBtn = document.getElementById("apexShopLaunchGoBtn");
+    const modal = document.getElementById("apexShopLaunchModal");
+
+    if (closeBtn) closeBtn.addEventListener("click", closeApexShopLaunchPopup);
+    if (imageBtn) imageBtn.addEventListener("click", goToApexShopFromPopup);
+    if (goBtn) goBtn.addEventListener("click", goToApexShopFromPopup);
+    if (modal) {
+      modal.addEventListener("click", function(event){
+        if (event.target === modal) closeApexShopLaunchPopup();
+      });
     }
   }
-  function closeApexShopLaunchPopup(){ const modal = document.getElementById("apexShopLaunchModal"); if (modal) modal.classList.remove("show"); if (!document.body.classList.contains("birthday-locked")) document.body.style.overflow = ""; }
-  function goToApexShopFromPopup(){ closeApexShopLaunchPopup(); if (typeof closePanels === "function") closePanels(); if (typeof setView === "function") setView("shop"); const mainAppEl = document.getElementById("mainApp"); const shopView = document.getElementById("view-shop"); if (mainAppEl) mainAppEl.style.display = "block"; setTimeout(function(){ if (shopView) shopView.scrollIntoView({ behavior:"smooth", block:"start" }); }, 80); }
-  function showApexShopLaunchPopup(){ if (!SHOP_POPUP_ENABLED) return; if (new Date().getTime() >= SHOP_OPEN_DATE.getTime()) return; const modal = document.getElementById("apexShopLaunchModal"); if (!modal) return; modal.classList.add("show"); document.body.style.overflow = "hidden"; }
-  function bindApexShopPopup(){ const closeBtn = document.getElementById("apexShopLaunchClose"); const imageBtn = document.getElementById("apexShopLaunchImageBtn"); const goBtn = document.getElementById("apexShopLaunchGoBtn"); const modal = document.getElementById("apexShopLaunchModal"); if (closeBtn) closeBtn.addEventListener("click", closeApexShopLaunchPopup); if (imageBtn) imageBtn.addEventListener("click", goToApexShopFromPopup); if (goBtn) goBtn.addEventListener("click", goToApexShopFromPopup); if (modal) modal.addEventListener("click", function(event){ if (event.target === modal) closeApexShopLaunchPopup(); }); }
-  function wrapFillUserForShopPopup(){ if (typeof fillUser !== "function" || fillUser.__apexShopWrapped) return; const originalFillUser = fillUser; fillUser = function(user){ const result = originalFillUser.apply(this, arguments); setTimeout(function(){ updateApexShopCountdown(); showApexShopLaunchPopup(); }, 500); return result; }; fillUser.__apexShopWrapped = true; }
-  document.addEventListener("DOMContentLoaded", function(){ bindApexShopPopup(); updateApexShopCountdown(); setInterval(updateApexShopCountdown, 1000); wrapFillUserForShopPopup(); });
-  window.addEventListener("load", function(){ updateApexShopCountdown(); wrapFillUserForShopPopup(); });
+
+  function wrapFillUserForShopPopup(){
+    if (typeof fillUser !== "function" || fillUser.__apexShopWrapped) return;
+    const originalFillUser = fillUser;
+    fillUser = function(user){
+      const result = originalFillUser.apply(this, arguments);
+      setTimeout(function(){
+        updateApexShopCountdown();
+        showApexShopLaunchPopup();
+      }, 500);
+      return result;
+    };
+    fillUser.__apexShopWrapped = true;
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    bindApexShopPopup();
+    updateApexShopCountdown();
+    setInterval(updateApexShopCountdown, 1000);
+    wrapFillUserForShopPopup();
+  });
+
+  window.addEventListener("load", function(){
+    updateApexShopCountdown();
+    wrapFillUserForShopPopup();
+  });
 })();
 </script>
 
