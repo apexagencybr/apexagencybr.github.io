@@ -1677,6 +1677,36 @@ body.birthday-locked{overflow:hidden;}
   .apex-fechamento-grid{grid-template-columns:1fr;}
 }
 
+
+
+/* ===== Incrementos pontuais: dropdowns compactos de ranking/temporadas ===== */
+.apex-inline-dropdown{position:relative;display:inline-block;margin-left:auto;z-index:5;}
+.apex-inline-dropdown summary{list-style:none;cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);font-size:12px;font-weight:900;color:#fff;line-height:1;}
+.apex-inline-dropdown summary::-webkit-details-marker{display:none;}
+.apex-inline-dropdown summary::after{content:"⌄";font-size:13px;opacity:.85;transition:.2s ease;}
+.apex-inline-dropdown[open] summary::after{transform:rotate(180deg);}
+.apex-inline-dropdown-body{position:absolute;right:0;top:calc(100% + 8px);min-width:240px;max-width:min(82vw,320px);max-height:330px;overflow:auto;padding:10px;border-radius:18px;background:linear-gradient(180deg,rgba(5,5,5,.98),rgba(8,17,31,.98));border:1px solid rgba(255,255,255,.10);box-shadow:0 20px 50px rgba(0,0,0,.45);display:grid;gap:8px;}
+.apex-dropdown-btn{width:100%;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.055);color:#fff;border-radius:14px;padding:11px 12px;text-align:left;font-weight:850;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center;}
+.apex-dropdown-btn small{color:var(--muted);font-size:11px;font-weight:800;}
+.apex-dropdown-empty{padding:12px;border-radius:14px;color:var(--muted);font-size:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+.apex-mini-top-list{display:grid;gap:8px;}
+.apex-mini-top-item{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);}
+.apex-mini-top-rank{width:34px;height:34px;border-radius:12px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:900;}
+.apex-mini-top-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.apex-mini-top-meta{color:var(--muted);font-size:12px;margin-top:2px;}
+.apex-mini-top-prize{font-weight:900;color:var(--success);font-size:13px;white-space:nowrap;}
+.apex-ranking-modal{position:fixed;inset:0;z-index:999998;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);}
+.apex-ranking-modal.show{display:flex;}
+.apex-ranking-box{width:min(100%,720px);max-height:88vh;overflow:auto;padding:20px;border-radius:24px;background:linear-gradient(180deg,rgba(5,5,5,.98),rgba(8,17,31,.98) 46%,rgba(12,28,54,.98));border:1px solid rgba(255,255,255,.10);box-shadow:0 24px 70px rgba(0,0,0,.55);}
+.apex-ranking-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.apex-ranking-head h3{margin:0;font-size:22px;line-height:1.15;}
+.apex-ranking-head p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45;}
+.apex-ranking-close{width:44px;height:44px;border-radius:15px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font-size:20px;flex-shrink:0;}
+.apex-season-ranking-list{display:grid;gap:10px;}
+.apex-season-ranking-row{display:grid;grid-template-columns:42px 54px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);}
+.apex-season-ranking-row .ranking-badge{width:54px;height:54px;}
+@media(max-width:768px){.apex-inline-dropdown{width:100%;margin-left:0;}.apex-inline-dropdown summary{width:100%;justify-content:space-between;}.apex-inline-dropdown-body{left:0;right:auto;min-width:100%;}.apex-season-ranking-row{grid-template-columns:34px 44px minmax(0,1fr);}.apex-season-ranking-row .ranking-xp{grid-column:3;justify-self:start;font-size:13px;}.apex-season-ranking-row .ranking-badge{width:44px;height:44px;}.apex-ranking-box{padding:16px;border-radius:22px;}}
+
 </style>
 </head>
 <body>
@@ -1824,7 +1854,7 @@ body.birthday-locked{overflow:hidden;}
         <div class="pill" style="margin-bottom:14px;">Programa interno</div>
         <h2>Entre com os <span>6 últimos dígitos</span> do seu ID</h2>
         <p>
-          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>Dados</strong>, <strong>Desenvolvimento</strong> e <strong>Indicações</strong>, além do <strong>Apex Shop disponível em breve</strong>.
+          O acesso ao site é controlado pelo seu ID. Depois de entrar, você pode abrir o menu lateral, navegar entre <strong>dados</strong>, <strong>desenvolvimento</strong> e <strong>indicações</strong>, além do <strong>apex shop disponível em breve</strong>.
         </p>
       </div>
 
@@ -4969,6 +4999,271 @@ restoreSessionIfPossible();
   document.addEventListener("DOMContentLoaded", function(){ bindFechamento(); wrapFillUserForFechamento(); });
   window.addEventListener("load", wrapFillUserForFechamento);
   window.apexFechamentoMensal = { show: showFechamentoMensal, close: closeFechamentoMensal };
+})();
+</script>
+
+
+
+<script>
+/* ===== Incrementos pontuais preservando layout original ===== */
+(function(){
+  const MONTH_ORDER = {janeiro:1, fevereiro:2, marco:3, março:3, abril:4, maio:5, junho:6, julho:7, agosto:8, setembro:9, outubro:10, novembro:11, dezembro:12};
+  const PRIZES_TOP_HORAS = [200,150,100];
+
+  function norm(s){ return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+  function pick(obj, keys){
+    if(!obj) return '';
+    for(const k of keys){ if(obj[k] !== undefined && obj[k] !== null && obj[k] !== '') return obj[k]; }
+    const map = {};
+    Object.keys(obj).forEach(k => map[norm(k)] = k);
+    for(const k of keys){ const found = map[norm(k)]; if(found && obj[found] !== undefined && obj[found] !== null && obj[found] !== '') return obj[found]; }
+    return '';
+  }
+  function only6(v){ return String(v || '').replace(/\D+/g,'').slice(-6); }
+  function humanSeasonName(name){
+    const raw = String(name || '').replace(/^Temporada[_\s-]*/i,'').replace(/_/g,' ').trim();
+    return raw.replace(/\bMarco\b/g,'Março').replace(/\b([a-záéíóúãõç])/gi, m => m.toUpperCase());
+  }
+  function seasonSortValue(item){
+    const txt = String(item?.temporada_nome || item?.nome || item?.temporada_aba || '');
+    const year = Number((txt.match(/(20\d{2})/) || [0,0])[1] || item?.temporada_ano || 0);
+    const monthRaw = String(item?.temporada_mes || item?.temporada_mes_key || (txt.match(/Janeiro|Fevereiro|Marco|Março|Abril|Maio|Junho|Julho|Agosto|Setembro|Outubro|Novembro|Dezembro/i)||[''])[0]).toLowerCase();
+    const month = MONTH_ORDER[monthRaw.normalize('NFD').replace(/[\u0300-\u036f]/g,'')] || 0;
+    return year * 100 + month;
+  }
+  function normalizeSeasonUser(row){
+    const out = Object.assign({}, row || {});
+    out.id = only6(out.id || out.login6 || pick(row, ['ID do criador','ID','Id','id']));
+    out.login6 = out.id;
+    out.arroba = String(out.arroba || out.usuario || pick(row, ['Nome do criador','Usuário','Usuario','usuario']) || '').replace(/^@+/, '');
+    out.diamantes = pick(row, ['Diamantes','diamantes']);
+    out.duracao_live = pick(row, ['Duração da LIVE','Duracao da LIVE','Duração de LIVE','horas','duracao_live']);
+    out.horas = out.duracao_live;
+    out.dias_validos = pick(row, ['Dias válidos de início de LIVE','Dias validos de inicio de LIVE','Dias de início de LIVE válidos','dias_validos']);
+    out.lives_feitas = pick(row, ['Transmissões de LIVE','Transmissoes de LIVE','lives_feitas']);
+    out.batalhas_total = pick(row, ['Batalhas','Total de batalhas','Quantidade de batalhas','batalhas_total','batalhas']);
+    out.batalhas = out.batalhas_total;
+    out.diamantes_batalhas = pick(row, ['Diamantes obtidos de batalhas','Diamantes em batalhas','Diamantes de batalhas','diamantes_batalhas']);
+    return out;
+  }
+  function getLevelForRow(row){
+    const u = normalizeSeasonUser(row);
+    if (typeof getLevelDataPatched === 'function') return getLevelDataPatched(u);
+    if (typeof getLevelData === 'function') return getLevelData(u);
+    return { current:{title:'Trilheiro Bronze I', avatar:''}, xp:{total:0}, progress:0 };
+  }
+  function getSeasonGroups(){
+    const seasons = Array.isArray(window.appData?.temporadas) ? window.appData.temporadas : (Array.isArray(appData?.temporadas) ? appData.temporadas : []);
+    const groups = {};
+    seasons.forEach(row => {
+      const key = String(row?.temporada_aba || row?.temporada_nome || row?.nome || '').trim();
+      if(!key) return;
+      if(!groups[key]) groups[key] = { key, label: humanSeasonName(row?.temporada_nome || row?.nome || key), sort: seasonSortValue(row), rows: [] };
+      groups[key].rows.push(row);
+    });
+    return Object.values(groups).sort((a,b) => b.sort - a.sort);
+  }
+  function rankXpRows(rows){
+    return (Array.isArray(rows) ? rows : []).map(row => {
+      const u = normalizeSeasonUser(row);
+      const d = getLevelForRow(u);
+      return { user:u, xp:Number(d.xp?.total || 0), level:d.current?.title || 'Trilheiro Bronze I', badge:d.current?.avatar || '', arroba:u.arroba || '@usuario' };
+    }).sort((a,b) => b.xp - a.xp);
+  }
+  function topHorasRows(rows, limit=3){
+    return (Array.isArray(rows) ? rows : []).map(row => {
+      const u = normalizeSeasonUser(row);
+      return { user:u, arroba:u.arroba || '@usuario', horas:u.duracao_live || '0h', horasNum:parseHoursToNumber(u.duracao_live || '0h') };
+    }).filter(x => x.horasNum > 0).sort((a,b) => b.horasNum - a.horasNum).slice(0,limit);
+  }
+
+  function ensureRankingModal(){
+    let modal = document.getElementById('apexSeasonRankingModal');
+    if(modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'apexSeasonRankingModal';
+    modal.className = 'apex-ranking-modal';
+    modal.innerHTML = `
+      <div class="apex-ranking-box">
+        <div class="apex-ranking-head">
+          <div><h3 id="apexSeasonRankingTitle">Ranking da temporada</h3><p id="apexSeasonRankingSub">Top 10 por XP</p></div>
+          <button class="apex-ranking-close" type="button" id="apexSeasonRankingClose">×</button>
+        </div>
+        <div class="apex-season-ranking-list" id="apexSeasonRankingList"></div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeSeasonRankingModal(); });
+    modal.querySelector('#apexSeasonRankingClose').addEventListener('click', closeSeasonRankingModal);
+    return modal;
+  }
+  function closeSeasonRankingModal(){
+    const modal = document.getElementById('apexSeasonRankingModal');
+    if(modal) modal.classList.remove('show');
+  }
+  window.openSeasonRankingModal = function(seasonKey){
+    const group = getSeasonGroups().find(g => g.key === seasonKey);
+    const modal = ensureRankingModal();
+    const title = modal.querySelector('#apexSeasonRankingTitle');
+    const sub = modal.querySelector('#apexSeasonRankingSub');
+    const list = modal.querySelector('#apexSeasonRankingList');
+    if(!group){
+      title.textContent = 'Ranking da temporada';
+      sub.textContent = 'Nenhum dado encontrado.';
+      list.innerHTML = '<div class="apex-dropdown-empty">Nenhum ranking disponível.</div>';
+      modal.classList.add('show');
+      return;
+    }
+    const ranked = rankXpRows(group.rows).slice(0,10);
+    title.textContent = `Ranking • ${group.label}`;
+    sub.textContent = 'Top 10 por XP da temporada selecionada.';
+    list.innerHTML = ranked.length ? ranked.map((item, idx) => `
+      <div class="apex-season-ranking-row">
+        <div class="ranking-medal">#${idx + 1}</div>
+        <div class="ranking-badge">${item.badge ? `<img src="${item.badge}" alt="${item.level}">` : ''}</div>
+        <div class="ranking-meta">
+          <div class="ranking-name">@${String(item.arroba).replace(/^@+/,'')}</div>
+          <div class="ranking-level">${item.level}</div>
+        </div>
+        <div class="ranking-xp">${item.xp.toLocaleString('pt-BR')} XP</div>
+      </div>
+    `).join('') : '<div class="apex-dropdown-empty">Nenhum ranking disponível para esta temporada.</div>';
+    modal.classList.add('show');
+  };
+
+  function buildSeasonDropdownHTML(){
+    const groups = getSeasonGroups();
+    if(!groups.length) return '<div class="apex-dropdown-empty">Nenhuma temporada anterior encontrada.</div>';
+    return groups.map(g => `<button class="apex-dropdown-btn" type="button" onclick="openSeasonRankingModal('${String(g.key).replace(/'/g,"\\'")}')"><span>${g.label}</span><small>Top 10 XP</small></button>`).join('');
+  }
+  function ensureSeasonControl(){
+    const head = document.querySelector('#view-perfil .section-card .section-head');
+    // O primeiro section-card do perfil é o ranking da temporada atual.
+    const rankingHead = Array.from(document.querySelectorAll('#view-perfil .section-card .section-head')).find(h => h.textContent.includes('Ranking da temporada atual'));
+    if(!rankingHead) return;
+    let dd = document.getElementById('seasonHistoryDropdown');
+    if(!dd){
+      dd = document.createElement('details');
+      dd.id = 'seasonHistoryDropdown';
+      dd.className = 'apex-inline-dropdown';
+      dd.innerHTML = `<summary>Temporadas anteriores</summary><div class="apex-inline-dropdown-body" id="seasonHistoryDropdownBody"></div>`;
+      rankingHead.appendChild(dd);
+    }
+    const body = document.getElementById('seasonHistoryDropdownBody');
+    if(body) body.innerHTML = buildSeasonDropdownHTML();
+  }
+
+  function getFechadaSeasonGroup(){
+    const cfg = window.appData?.fechamento_config || appData?.fechamento_config || {};
+    const groups = getSeasonGroups();
+    if(cfg.aba_fechada) {
+      const found = groups.find(g => String(g.key).toLowerCase() === String(cfg.aba_fechada).toLowerCase());
+      if(found) return found;
+    }
+    return groups[0] || null;
+  }
+  function ensureTopHorasPreviousControl(){
+    const head = Array.from(document.querySelectorAll('#view-dados .section-card .section-head')).find(h => h.textContent.includes('Top Horas'));
+    if(!head) return;
+    let dd = document.getElementById('topHorasAnteriorDropdown');
+    if(!dd){
+      dd = document.createElement('details');
+      dd.id = 'topHorasAnteriorDropdown';
+      dd.className = 'apex-inline-dropdown';
+      dd.innerHTML = `<summary>Mês anterior</summary><div class="apex-inline-dropdown-body"><div class="apex-mini-top-list" id="topHorasAnteriorLista"></div></div>`;
+      head.appendChild(dd);
+    }
+    const list = document.getElementById('topHorasAnteriorLista');
+    const group = getFechadaSeasonGroup();
+    if(!list) return;
+    if(!group){
+      list.innerHTML = '<div class="apex-dropdown-empty">Nenhuma temporada anterior encontrada.</div>';
+      return;
+    }
+    const top = topHorasRows(group.rows, 3);
+    list.innerHTML = top.length ? top.map((item, idx) => `
+      <div class="apex-mini-top-item">
+        <div class="apex-mini-top-rank">${idx + 1}</div>
+        <div><div class="apex-mini-top-name">@${String(item.arroba).replace(/^@+/,'')}</div><div class="apex-mini-top-meta">${item.horas}</div></div>
+        <div class="apex-mini-top-prize">R$ ${PRIZES_TOP_HORAS[idx]}</div>
+      </div>
+    `).join('') : '<div class="apex-dropdown-empty">Nenhum Top Horas encontrado.</div>';
+  }
+
+  function repairSeasonGallery(user){
+    const temporadasList = document.getElementById('temporadasList');
+    if(!temporadasList || !user) return;
+    const myLogin = only6(user.login6 || user.id);
+    const seasons = (Array.isArray(window.appData?.temporadas) ? window.appData.temporadas : (Array.isArray(appData?.temporadas) ? appData.temporadas : []))
+      .filter(item => only6(item.login6 || item.id || pick(item, ['ID do criador','ID','Id','id'])) === myLogin)
+      .sort((a,b) => seasonSortValue(b) - seasonSortValue(a));
+    if(!seasons.length) return;
+    temporadasList.innerHTML = seasons.map(row => {
+      const u = normalizeSeasonUser(row);
+      const d = getLevelForRow(u);
+      const nivel = d.current?.title || 'Trilheiro Bronze I';
+      const xp = Number(d.xp?.total || 0);
+      const avatar = d.current?.avatar || '';
+      const glowClass = (typeof getGlowClassByNivel === 'function') ? getGlowClassByNivel(nivel) : '';
+      const levelKey = (typeof getLevelKey === 'function') ? getLevelKey(nivel, xp) : '';
+      return `
+        <div class="season-card ${glowClass}">
+          <div class="season-badge"><div class="badge-wrap-level level-${levelKey} ${glowClass}">${avatar ? `<img class="badge-img-level" src="${avatar}" alt="${nivel}">` : ''}</div></div>
+          <div class="season-name">${humanSeasonName(row.temporada_nome || row.nome || row.temporada_aba || 'Temporada')}</div>
+          <div class="season-rank">${nivel}</div>
+          <div class="season-xp">${xp.toLocaleString('pt-BR')} XP</div>
+        </div>`;
+    }).join('');
+  }
+
+  function patchCurrentPicosLabels(){
+    const list = document.getElementById('picosMovimentosList');
+    if(!list) return;
+    list.querySelectorAll('.picos-mini-row span').forEach(span => {
+      span.textContent = String(span.textContent || '').replace(/Picos de 01/i, 'Picos Abril').replace(/Picos de 02/i, 'Picos Maio').replace(/Picos de 03/i, 'Picos Junho').replace(/Picos de 04/i, 'Picos Julho');
+    });
+  }
+
+  function patchEverything(user){
+    ensureSeasonControl();
+    ensureTopHorasPreviousControl();
+    if(user) repairSeasonGallery(user);
+    patchCurrentPicosLabels();
+  }
+
+  const originalRenderPerfilExtras = window.renderPerfilExtras;
+  if(typeof originalRenderPerfilExtras === 'function'){
+    window.renderPerfilExtras = function(user){
+      originalRenderPerfilExtras(user);
+      patchEverything(user);
+    };
+  }
+  const originalRenderTopHoras = window.renderTopHoras;
+  if(typeof originalRenderTopHoras === 'function'){
+    window.renderTopHoras = function(){
+      originalRenderTopHoras();
+      ensureTopHorasPreviousControl();
+    };
+  }
+  const originalRenderPicosMovimentos = window.renderPicosMovimentos;
+  if(typeof originalRenderPicosMovimentos === 'function'){
+    window.renderPicosMovimentos = function(user){
+      originalRenderPicosMovimentos(user);
+      patchCurrentPicosLabels();
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const lead = document.querySelector('#preLoginHero p');
+    if(lead){
+      lead.innerHTML = lead.innerHTML
+        .replace(/<strong>Dados<\/strong>/g, '<strong>dados</strong>')
+        .replace(/<strong>Desenvolvimento<\/strong>/g, '<strong>desenvolvimento</strong>')
+        .replace(/<strong>Indicações<\/strong>/g, '<strong>indicações</strong>')
+        .replace(/<strong>Apex Shop disponível em breve<\/strong>/g, '<strong>apex shop disponível em breve</strong>');
+    }
+    setTimeout(() => patchEverything(window.currentUser || null), 350);
+  });
+  setInterval(() => patchEverything(window.currentUser || null), 2500);
 })();
 </script>
 
