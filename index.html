@@ -5049,7 +5049,7 @@ restoreSessionIfPossible();
 
 <script id="apex-fechamento-mensal-v2">
 (function(){
-  const FECHAMENTO_POPUP_DIAS = [1, 2, 3];
+  const FECHAMENTO_POPUP_DIAS = [1, 2, 3, 4];
   const MONTHS = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
   const MONTH_LABELS = {janeiro:"Janeiro",fevereiro:"Fevereiro",marco:"Março",março:"Março",abril:"Abril",maio:"Maio",junho:"Junho",julho:"Julho",agosto:"Agosto",setembro:"Setembro",outubro:"Outubro",novembro:"Novembro",dezembro:"Dezembro"};
 
@@ -5544,7 +5544,7 @@ restoreSessionIfPossible();
 </body>
 </html>
 <style>
-/* ===== v3.9.6 Top Horas: nome completo + setinha sempre visível ===== */
+/* ===== v3.9.7 Top Horas: nome completo + setinha sempre visível ===== */
 #topHorasLista .top-hour-item{
   display:flex!important;
   align-items:center!important;
@@ -5586,7 +5586,7 @@ restoreSessionIfPossible();
 }
 </style>
 <script>
-/* ===== v3.9.6 override: render Top Horas com usuário completo e variação à direita ===== */
+/* ===== v3.9.7 override: render Top Horas com usuário completo e variação à direita ===== */
 (function(){
   function movimentoInfoTopHorasV396(item){
     const mov = item.movimento || item.variacao || item.trend || {};
