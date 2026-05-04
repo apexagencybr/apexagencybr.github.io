@@ -17,7 +17,7 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Apex Connect - v3.9.2</title>
+  <title>Apex Connect - v3.9.9</title>
 
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
@@ -1786,6 +1786,56 @@ body.birthday-locked{overflow:hidden;}
 }
 
 </style>
+
+<style id="apex-fechamento-compacto-mobile-v399">
+/* v3.9.9 — popup de fechamento compacto, mantendo o site completo */
+.apex-fechamento-card{
+  width:min(94vw,520px) !important;
+  max-height:88vh !important;
+  overflow:auto !important;
+}
+.apex-fechamento-head{padding:22px 22px 12px !important;}
+.apex-fechamento-head h2{font-size:28px !important;line-height:1.08 !important;margin-right:36px !important;}
+.apex-fechamento-head p{font-size:15px !important;line-height:1.35 !important;}
+.apex-fechamento-body{padding:0 22px 22px !important;gap:10px !important;}
+.apex-fechamento-highlight{
+  padding:18px !important;
+  grid-template-columns:1fr auto !important;
+  align-items:center !important;
+}
+.apex-fechamento-highlight strong{font-size:38px !important;}
+.apex-fechamento-result{font-size:28px !important;text-align:right !important;}
+.apex-fechamento-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:10px !important;}
+.apex-fechamento-metric{padding:14px !important;border-radius:18px !important;}
+.apex-fechamento-metric span{font-size:11px !important;margin-bottom:6px !important;}
+.apex-fechamento-metric strong{font-size:18px !important;}
+.apex-fechamento-footer{padding-top:4px !important;}
+@media (max-width:520px){
+  .apex-fechamento-modal{align-items:center !important;padding:12px !important;}
+  .apex-fechamento-card{width:100% !important;border-radius:22px !important;max-height:86vh !important;}
+  .apex-fechamento-close{width:38px !important;height:38px !important;right:14px !important;top:14px !important;}
+  .apex-fechamento-head{padding:20px 16px 10px !important;}
+  .apex-fechamento-head h2{font-size:25px !important;margin-right:42px !important;}
+  .apex-fechamento-kicker{font-size:11px !important;margin-bottom:10px !important;}
+  .apex-fechamento-body{padding:0 16px 16px !important;gap:9px !important;}
+  .apex-fechamento-highlight{padding:16px !important;border-radius:20px !important;}
+  .apex-fechamento-highlight span{font-size:12px !important;}
+  .apex-fechamento-highlight strong{font-size:34px !important;}
+  .apex-fechamento-result{font-size:26px !important;}
+  .apex-fechamento-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:8px !important;}
+  .apex-fechamento-metric{padding:12px !important;border-radius:16px !important;min-height:76px !important;}
+  .apex-fechamento-metric span{font-size:10px !important;letter-spacing:.35px !important;}
+  .apex-fechamento-metric strong{font-size:16px !important;line-height:1.18 !important;}
+  .apex-fechamento-footer{gap:8px !important;}
+  .apex-fechamento-footer .btn{min-height:46px !important;flex:1 1 100% !important;}
+}
+@media (max-width:380px){
+  .apex-fechamento-head h2{font-size:22px !important;}
+  .apex-fechamento-highlight{grid-template-columns:1fr !important;}
+  .apex-fechamento-result{text-align:left !important;}
+  .apex-fechamento-grid{grid-template-columns:1fr !important;}
+}
+</style>
 </head>
 <body>
 <div class="overlay" id="overlay"></div>
@@ -2414,7 +2464,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.5</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.9</div>
   </div>
 </div>
 
@@ -5544,7 +5594,7 @@ restoreSessionIfPossible();
 </body>
 </html>
 <style>
-/* ===== v3.9.7 Top Horas: nome completo + setinha sempre visível ===== */
+/* ===== v3.9.6 Top Horas: nome completo + setinha sempre visível ===== */
 #topHorasLista .top-hour-item{
   display:flex!important;
   align-items:center!important;
@@ -5586,7 +5636,7 @@ restoreSessionIfPossible();
 }
 </style>
 <script>
-/* ===== v3.9.7 override: render Top Horas com usuário completo e variação à direita ===== */
+/* ===== v3.9.6 override: render Top Horas com usuário completo e variação à direita ===== */
 (function(){
   function movimentoInfoTopHorasV396(item){
     const mov = item.movimento || item.variacao || item.trend || {};
