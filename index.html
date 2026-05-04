@@ -1768,6 +1768,23 @@ body.birthday-locked{overflow:hidden;}
 .top-hour-trend.same{color:var(--muted);background:rgba(255,255,255,.06);}
 .top-hour-trend.new{color:#9fc7ff;background:rgba(120,170,255,.14);border-color:rgba(120,170,255,.28);}
 
+
+/* ===== v3.9.5 Top Horas movement + mobile ranking fix ===== */
+.top-hour-trend{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:900;line-height:1;border:1px solid rgba(255,255,255,.10);white-space:nowrap;vertical-align:middle;}
+.top-hour-trend.up{color:var(--success);background:rgba(127,226,160,.14);border-color:rgba(127,226,160,.28);}
+.top-hour-trend.down{color:var(--danger);background:rgba(255,123,123,.14);border-color:rgba(255,123,123,.28);}
+.top-hour-trend.same{color:var(--muted);background:rgba(255,255,255,.06);}
+.top-hour-trend.new{color:#9fc7ff;background:rgba(120,170,255,.14);border-color:rgba(120,170,255,.28);}
+@media (max-width: 768px){
+  .ranking-item{display:grid!important;grid-template-columns:auto auto minmax(0,1fr) auto!important;gap:10px!important;align-items:center!important;overflow:hidden!important;}
+  .ranking-meta{min-width:0!important;overflow:hidden!important;}
+  .ranking-name{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important;}
+  .ranking-level{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important;}
+  .ranking-xp{white-space:nowrap!important;font-size:14px!important;}
+  .top-hour-name{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;white-space:normal!important;}
+  .top-hour-trend{margin-left:0!important;}
+}
+
 </style>
 </head>
 <body>
@@ -2397,7 +2414,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.4</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.5</div>
   </div>
 </div>
 
@@ -3490,12 +3507,14 @@ async function loadRemoteData() {
   const data = await response.json();
   appData = {
     periodo: data.periodo || "",
+    fechamento_config: data.fechamento_config || {},
     criadores: Array.isArray(data.criadores) ? data.criadores : [],
     top_horas: Array.isArray(data.top_horas) ? data.top_horas : [],
     notificacoes: Array.isArray(data.notificacoes) ? data.notificacoes : [],
     desenvolvimento: Array.isArray(data.desenvolvimento) ? data.desenvolvimento : [],
     temporadas: Array.isArray(data.temporadas) ? data.temporadas : []
   };
+  window.appData = appData;
   renderTopHoras();
   renderNotificacoes();
   renderDesenvolvimento();
@@ -4784,7 +4803,7 @@ restoreSessionIfPossible();
 }
 
 
-/* ===== v3.9.4 - ajuste mobile ranking temporada + cards sem corte ===== */
+/* ===== v3.9.5 - ajuste mobile ranking temporada + cards sem corte ===== */
 @media (max-width: 768px){
   #view-perfil,
   #view-perfil .panel,
@@ -5440,21 +5459,34 @@ restoreSessionIfPossible();
 
   function renderTopHorasComMovimento(){
     const list = document.getElementById('topHorasLista');
-    if(!list || !window.appData || !Array.isArray(window.appData.top_horas)) return false;
-    const items = window.appData.top_horas.slice(0,5);
+    const source = (window.appData && Array.isArray(window.appData.top_horas))
+      ? window.appData
+      : (typeof appData !== "undefined" && appData && Array.isArray(appData.top_horas) ? appData : null);
+    if(!list || !source) return false;
+    const items = source.top_horas.slice(0,5);
     if(!items.length) return false;
-    const icons = {};
-    // reaproveita o HTML original quando possível, mantendo o visual e só adicionando a variação.
+
+    function movimentoInfo(item){
+      const mov = item.movimento || item.variacao || item.trend || {};
+      if (typeof mov === 'number') {
+        if (mov > 0) return {tipo:'up', label:'▲ +' + mov};
+        if (mov < 0) return {tipo:'down', label:'▼ -' + Math.abs(mov)};
+        return {tipo:'same', label:'—'};
+      }
+      const tipo = mov.tipo === 'up' ? 'up' : mov.tipo === 'down' ? 'down' : mov.tipo === 'same' ? 'same' : mov.tipo === 'novo' || mov.tipo === 'new' ? 'new' : 'same';
+      const label = mov.label || (tipo === 'up' ? '▲ +' + Math.abs(mov.delta || 1) : tipo === 'down' ? '▼ -' + Math.abs(mov.delta || 1) : tipo === 'new' ? 'novo' : '—');
+      return {tipo, label};
+    }
+
     list.innerHTML = items.map(item => {
-      const mov = item.movimento || {};
-      const tipo = mov.tipo === 'up' ? 'up' : mov.tipo === 'down' ? 'down' : mov.tipo === 'same' ? 'same' : 'new';
-      const label = mov.label || (tipo === 'new' ? 'novo' : '—');
+      const m = movimentoInfo(item);
+      const nome = String(item.arroba || item.display || item.usuario || '-').replace(/^@+/, '');
       return `
         <div class="top-hour-item">
           <div class="top-hour-left">
             <div class="top-rank">${item.posicao || '-'}</div>
             <div>
-              <div class="top-hour-name">Top ${item.posicao || '-'} • @${String(item.arroba || item.display || '-').replace(/^@+/,'')} <span class="top-hour-trend ${tipo}">${label}</span></div>
+              <div class="top-hour-name">Top ${item.posicao || '-'} • @${nome} <span class="top-hour-trend ${m.tipo}">${m.label}</span></div>
               <div class="top-hour-time">${item.duracao_live || item.horas || '-'}</div>
             </div>
           </div>
