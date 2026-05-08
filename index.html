@@ -1728,17 +1728,9 @@ body.birthday-locked{overflow:hidden;}
 }
 .guardians-card::before,
 .guardians-card::after{
-  content:"🐉";
-  position:absolute;
-  z-index:0;
-  pointer-events:none;
-  opacity:.12;
-  filter:drop-shadow(0 0 18px rgba(255,135,36,.28));
-  transform-origin:center center;
-  animation:guardianDragonFlight 18s ease-in-out infinite, guardianWingBeat 1.15s ease-in-out infinite;
+  content:none !important;
+  display:none !important;
 }
-.guardians-card::before{font-size:88px;left:-120px;top:64px;}
-.guardians-card::after{font-size:62px;left:-150px;bottom:48px;animation-duration:24s,1.35s;animation-delay:4s,.25s;opacity:.085;}
 .guardians-inner{position:relative;z-index:2;display:block;max-width:820px;}
 .guardians-eyebrow{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:7px 11px;border-radius:999px;background:rgba(127,226,160,.12);border:1px solid rgba(127,226,160,.28);color:var(--success);font-weight:900;font-size:12px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:12px;}
 .guardians-title{margin:0 0 12px;font-size:32px;line-height:1.05;letter-spacing:-.4px;}
@@ -1783,6 +1775,230 @@ body.birthday-locked{overflow:hidden;}
   .ranking-xp{white-space:nowrap!important;font-size:14px!important;}
   .top-hour-name{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;white-space:normal!important;}
   .top-hour-trend{margin-left:0!important;}
+}
+
+
+
+/* ===== Apex Guardian: trailer inicial + fundo animado + inscrições ===== */
+.guardian-trailer-modal{position:fixed;inset:0;z-index:999999;background:#000;display:none;overflow:hidden;}
+.guardian-trailer-modal.show{display:block;}
+.guardian-trailer-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;}
+.guardian-trailer-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.45));pointer-events:none;}
+.guardian-trailer-sound{position:absolute;top:22px;right:22px;z-index:3;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font-weight:900;padding:10px 14px;backdrop-filter:blur(10px);cursor:pointer;}
+.guardian-trailer-close-top{position:absolute;top:22px;left:22px;z-index:3;display:none;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(0,0,0,.45);color:#fff;font-weight:950;padding:10px 14px;backdrop-filter:blur(10px);cursor:pointer;}
+.guardian-trailer-actions{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);z-index:3;display:none;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;width:min(92vw,720px);}
+.guardian-trailer-actions.show{display:flex;}
+.guardian-trailer-actions button{border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(17,17,24,.78);color:#fff;font-weight:950;letter-spacing:.2px;padding:14px 22px;backdrop-filter:blur(12px);box-shadow:0 18px 60px rgba(0,0,0,.42);cursor:pointer;transition:.22s ease;}
+.guardian-trailer-actions button:first-child{background:linear-gradient(135deg,#ff7a18,#ffd36f);color:#1b1008;border-color:rgba(255,211,111,.5);}
+.guardian-trailer-actions button:hover{transform:translateY(-2px) scale(1.03);}
+.guardians-card{isolation:isolate;}
+.guardian-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.82;filter:brightness(.48) saturate(1.35) blur(.15px);z-index:0;pointer-events:none;}
+.guardian-bg-overlay{position:absolute;inset:0;background:radial-gradient(circle at 72% 16%,rgba(255,122,24,.18),transparent 36%),linear-gradient(180deg,rgba(0,0,0,.34),rgba(0,0,0,.72));z-index:1;pointer-events:none;}
+.guardians-inner{position:relative;z-index:3;}
+.guardian-stats-row{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0;}
+.guardian-stat-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font-weight:900;color:#fff;}
+.guardian-action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center;}
+.guardian-action-row .btn{min-height:44px;}
+.guardian-status-text{display:none!important;}
+.guardians-coming.guardian-open{background:rgba(127,226,160,.14);border-color:rgba(127,226,160,.32);color:var(--success);}
+.guardians-coming.guardian-closed{background:rgba(255,211,111,.13);border-color:rgba(255,211,111,.28);color:var(--warn);}
+.guardian-countdown{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:10px 13px;border-radius:999px;background:rgba(255,211,111,.13);border:1px solid rgba(255,211,111,.28);color:var(--warn);font-weight:950;box-shadow:none;}
+#view-guardians{position:relative;overflow:hidden;min-height:calc(100vh - 120px);}
+#view-guardians .panel{position:relative;z-index:2;min-height:calc(100vh - 150px);background:transparent!important;box-shadow:none!important;}
+#view-guardians .guardians-card{min-height:calc(100vh - 205px);background:rgba(8,10,18,.18)!important;border-color:rgba(255,255,255,.10)!important;box-shadow:none!important;}
+
+.guardian-panel-full{padding:0!important;}
+#guardianSignupBtn:disabled{display:none!important;}
+#view-guardians .section-head{display:none!important;}
+#view-guardians .guardian-bg-video,
+#view-guardians .guardian-bg-overlay{border-radius:0;}
+#view-guardians .guardians-card{display:flex;align-items:flex-start;}
+#view-guardians .guardians-inner{width:min(100%,860px);padding:26px 0;}
+#view-guardians .guardian-action-row .btn{background:rgba(10,13,22,.52);backdrop-filter:blur(12px);}
+#seasonTopRanking .top-rank,
+.apex-season-ranking-row .top-rank{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.08);font-size:19px;font-weight:900;flex-shrink:0;color:#fff;border:1px solid rgba(255,255,255,.08);}
+@media(max-width:720px){.guardian-trailer-sound{top:14px;right:14px;font-size:12px;padding:9px 11px;}.guardian-trailer-close-top{top:14px;left:14px;font-size:12px;padding:9px 11px;}.guardian-trailer-actions{bottom:5%;}.guardian-trailer-actions button{width:100%;}.guardians-title{font-size:28px;}.guardians-card{min-height:calc(100vh - 165px)!important;padding:18px!important;border-radius:22px!important;}.guardian-bg-video{opacity:.88;filter:brightness(.42) saturate(1.25)!important;}#view-guardians .guardians-inner{padding:10px 0 0;} .guardian-action-row .btn{width:100%;justify-content:center;} .guardian-countdown{width:100%;justify-content:center;text-align:center;border-radius:18px;} .guardian-stats-row{display:grid;grid-template-columns:1fr;gap:8px}.guardian-stat-pill{justify-content:center}}
+
+
+/* ===== APEX CONNECT BETA v3.9.24 - trailer cinema limpo ===== */
+.guardian-trailer-modal{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:999999 !important;
+  display:none !important;
+  overflow:hidden !important;
+  background:#020712 !important;
+  padding:max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom)) !important;
+  box-sizing:border-box !important;
+}
+
+.guardian-trailer-modal.show{
+  display:grid !important;
+  grid-template-rows:minmax(74px,1fr) auto minmax(74px,1fr) !important;
+  align-items:center !important;
+  justify-items:center !important;
+}
+
+.guardian-trailer-modal::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  pointer-events:none !important;
+  z-index:0 !important;
+  background:
+    radial-gradient(circle at 50% 9%, rgba(255,196,105,.18), transparent 27%),
+    radial-gradient(circle at 50% 91%, rgba(255,126,42,.14), transparent 30%),
+    linear-gradient(to bottom, rgba(3,7,18,.96), rgba(3,7,18,.68) 23%, transparent 40%, transparent 60%, rgba(3,7,18,.68) 77%, rgba(3,7,18,.96)) !important;
+}
+
+.guardian-trailer-video{
+  grid-row:2 !important;
+  position:relative !important;
+  z-index:2 !important;
+  display:block !important;
+  width:min(94vw,1120px) !important;
+  height:auto !important;
+  max-height:58svh !important;
+  aspect-ratio:16/9 !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  background:#000 !important;
+  margin:0 auto !important;
+  border-radius:0 !important;
+  box-shadow:0 0 90px rgba(255,168,68,.12), 0 24px 90px rgba(0,0,0,.62) !important;
+  transform:none !important;
+}
+
+.guardian-trailer-shade{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:1 !important;
+  pointer-events:none !important;
+  background:transparent !important;
+}
+
+.guardian-trailer-sound{
+  position:fixed !important;
+  top:max(18px, env(safe-area-inset-top)) !important;
+  left:max(18px, env(safe-area-inset-left)) !important;
+  z-index:5 !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  border-radius:999px !important;
+  background:rgba(0,0,0,.46) !important;
+  color:#fff !important;
+  font-weight:900 !important;
+  padding:10px 14px !important;
+  backdrop-filter:blur(10px) !important;
+  cursor:pointer !important;
+}
+
+.guardian-trailer-close-top{
+  position:fixed !important;
+  top:max(18px, env(safe-area-inset-top)) !important;
+  right:max(18px, env(safe-area-inset-right)) !important;
+  left:auto !important;
+  z-index:5 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:52px !important;
+  height:52px !important;
+  padding:0 !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  border-radius:999px !important;
+  background:rgba(0,0,0,.46) !important;
+  color:#fff !important;
+  font-weight:950 !important;
+  font-size:24px !important;
+  backdrop-filter:blur(10px) !important;
+  cursor:pointer !important;
+}
+
+.guardian-trailer-actions{
+  position:fixed !important;
+  left:50% !important;
+  bottom:max(22px, env(safe-area-inset-bottom)) !important;
+  transform:translateX(-50%) !important;
+  z-index:5 !important;
+}
+
+.guardian-trailer-actions.show{
+  display:flex !important;
+}
+
+/* Replay manual não precisa prender ninguém */
+.guardian-trailer-modal.manual-mode .guardian-trailer-close-top{
+  display:inline-flex !important;
+}
+
+/* Contador Guardian mais limpo */
+.guardian-stat-pill:first-child{
+  font-weight:900 !important;
+}
+
+#guardianStatusBadge{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:4px !important;
+  text-align:center !important;
+  line-height:1.2 !important;
+}
+
+#guardianStatusBadge .guardian-countdown-label{
+  display:block !important;
+  font-weight:800 !important;
+}
+
+#guardianStatusBadge .guardian-countdown-time{
+  display:block !important;
+  font-weight:950 !important;
+  color:#ffe29a !important;
+}
+
+/* Botão de áudio do Guardian em ícone simples */
+#guardianAudioBtn{
+  width:48px !important;
+  min-width:48px !important;
+  height:48px !important;
+  padding:0 !important;
+  font-size:0 !important;
+  border-radius:999px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+#guardianAudioBtn::before{
+  content:"🔊" !important;
+  font-size:22px !important;
+}
+
+#guardianAudioBtn.guardian-muted::before{
+  content:"🔇" !important;
+}
+
+@media(max-width:768px){
+  .guardian-trailer-modal.show{
+    grid-template-rows:minmax(86px,1fr) auto minmax(86px,1fr) !important;
+  }
+  .guardian-trailer-video{
+    width:94vw !important;
+    max-height:52svh !important;
+  }
+  .guardian-trailer-sound{
+    top:max(14px, env(safe-area-inset-top)) !important;
+    left:max(14px, env(safe-area-inset-left)) !important;
+    padding:9px 12px !important;
+    font-size:12px !important;
+  }
+  .guardian-trailer-close-top{
+    top:max(14px, env(safe-area-inset-top)) !important;
+    right:max(14px, env(safe-area-inset-right)) !important;
+    width:48px !important;
+    height:48px !important;
+  }
 }
 
 </style>
@@ -1839,6 +2055,19 @@ body.birthday-locked{overflow:hidden;}
 </head>
 <body>
 <div class="overlay" id="overlay"></div>
+<div id="guardianTrailerModal" class="guardian-trailer-modal" aria-hidden="true">
+  <video id="guardianTrailerVideo" class="guardian-trailer-video" playsinline preload="auto">
+    <source src="https://res.cloudinary.com/dcf47fhfr/video/upload/f_mp4/v1778200904/APEX_FINAL_me3d0r.mp4" type="video/mp4">
+    <source src="https://res.cloudinary.com/dcf47fhfr/video/upload/v1778200904/APEX_FINAL_me3d0r.mov" type="video/quicktime">
+  </video>
+  <div class="guardian-trailer-shade"></div>
+  <button id="guardianTrailerCloseTopBtn" class="guardian-trailer-close-top" type="button" aria-label="Fechar trailer">✕</button>
+  <button id="guardianTrailerSoundBtn" class="guardian-trailer-sound" type="button">Silenciar</button>
+  <div id="guardianTrailerActions" class="guardian-trailer-actions">
+    <button id="guardianTrailerOpenBtn" type="button">Ver Apex Guardian</button>
+    <button id="guardianTrailerCloseBtn" type="button">Fechar</button>
+  </div>
+</div>
 
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
@@ -2297,26 +2526,35 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
 
 
 <div class="view-panel" id="view-guardians">
-  <div class="panel">
-    <div class="section-head">
-      <div>
-        <h4>Apex Guardians: Autumn</h4>
-        <p>O torneio sazonal da Apex Agency chega em junho.</p>
-      </div>
-    </div>
-    <div class="guardians-card">
+  <video class="guardian-bg-video" autoplay muted loop playsinline preload="metadata">
+    <source src="https://res.cloudinary.com/dcf47fhfr/video/upload/0505-c%C3%B3pia-c%C3%B3pia_vn7puz.mp4" type="video/mp4">
+  </video>
+  <audio id="guardianMusic" loop preload="metadata">
+    <source src="https://res.cloudinary.com/dcf47fhfr/video/upload/v1778116481/0505-c%C3%B3pia-c%C3%B3pia_doetck.mp3" type="audio/mpeg">
+  </audio>
+  <div class="guardian-bg-overlay"></div>
+  <div class="panel guardian-panel-full">
+    <div class="guardians-card" id="apexGuardian">
       <div class="guardians-inner">
         <div>
           <div class="guardians-eyebrow">Nova edição</div>
-          <h3 class="guardians-title">Bem-vindos ao Apex Guardians</h3>
+          <h3 class="guardians-title">Apex Guardian: Autumn Dragon</h3>
           <div class="guardians-copy">
-            <p>O <strong>Apex Guardians</strong> é o torneio que acontece a cada estação do ano. Em cada edição, um dragão representa a estação.</p>
-            <p>Com itens personalizados e exclusivos da Apex Agency, criadores entram em embates <strong>1 vs 1</strong>, divididos entre <strong>Novatos</strong> e <strong>Veteranos</strong>.</p>
-            <p>Os participantes disputam o título de <strong>Apex Guardian</strong> e podem conquistar uma placa personalizada de acordo com a estação do torneio.</p>
-            <p>Nesta edição de <strong>junho</strong>, o torneio será representado pelo <strong>dragão outonal</strong>.</p>
-            <p>A cada estação, uma nova identidade, um novo desafio e uma nova conquista.</p>
+            <p>O <strong>Apex Guardians</strong> é o torneio sazonal da Apex Agency. Nesta edição, o <strong>dragão outonal</strong> desperta para marcar a fase final do outono.</p>
+            <p>Criadores entram em embates <strong>1 vs 1</strong>, divididos entre <strong>Novatos</strong> e <strong>Veteranos</strong>, disputando o título de <strong>Apex Guardian</strong>.</p>
+            <p>O vencedor conquista a placa exclusiva <strong>Apex Guardian - Autumn Dragon</strong>.</p>
           </div>
-          <div class="guardians-coming">🔥 As inscrições se iniciam em breve.</div>
+          <div class="guardian-stats-row">
+            <div class="guardian-stat-pill">🔥 <span id="guardianInscritosCount">0</span> inscritos</div>
+            <div class="guardian-stat-pill">🐉 Junho 2026</div>
+          </div>
+          <div id="guardianStatusBadge" class="guardian-countdown guardian-closed">🔥 As inscrições começam em <span id="guardianCountdown">--D --H --M --S</span></div>
+          <div class="guardian-action-row">
+            <button id="guardianAudioBtn" class="btn btn-secondary" type="button">🔊 Ativar experiência</button>
+            <button id="guardianReplayTrailerBtn" class="btn btn-secondary" type="button">▶️ Assistir clipe de novo</button>
+            <button id="guardianSignupBtn" class="btn" type="button" disabled>Quero participar</button>
+            <span id="guardianSignupStatus" class="guardian-status-text"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -2464,13 +2702,17 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.10</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect Beta v3.9.24</div>
   </div>
 </div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvlk2vnH5sbv3FsovV1BgTLx3oxLVkBxlk5QCU8GbLfVu2HHpcQ7JKJWTRGq-Z4aUb/exec";
 const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9rNurGbqvTtRSw5n-Fy6qsSM2IyY3cVoHfXXDNZhhQ-OFLqbC_vxxdGtmbJHsP_c/exec";
+const GUARDIAN_RELEASE_DATE = new Date("2026-05-11T00:00:00-03:00");
+const GUARDIAN_TEMPORADA = "Autumn Dragon • Junho 2026";
+const GUARDIAN_TRAILER_STORAGE_KEY = "apex_guardian_trailer_seen_v2";
+let guardianTrailerMode = "auto";
 
 const loginInput = document.getElementById("loginInput");
 const enterBtn = document.getElementById("enterBtn");
@@ -2531,7 +2773,7 @@ const fecharIndicacaoModalBtn = document.getElementById("fecharIndicacaoModalBtn
 const INDICACAO_LINK = "https://www.tiktok.com/t/ZMSjcemBa/";
 const INDICACAO_STEPS = ["Em análise", "Dentro da agência", "Integrado", "Indicação paga"];
 
-let appData = { periodo: "", criadores: [], top_horas: [], notificacoes: [], desenvolvimento: [], temporadas: [] };
+let appData = { periodo: "", criadores: [], top_horas: [], notificacoes: [], desenvolvimento: [], temporadas: [], guardian_inscritos_total: 0, guardian_inscrito: false };
 let currentUser = null;
 let minhasIndicacoesCache = [];
 let indicacaoMensagemCopiada = false;
@@ -3145,6 +3387,252 @@ function openNotifPanel() {
   overlay.classList.add("show");
 }
 
+
+function getGuardianCountdownText() {
+  const diff = GUARDIAN_RELEASE_DATE.getTime() - Date.now();
+  if (diff <= 0) return "00D 00H 00M 00S";
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(days)}D ${pad(hours)}H ${pad(minutes)}M ${pad(seconds)}S`;
+}
+
+function atualizarGuardianCountdown() {
+  const el = document.getElementById("guardianCountdown");
+  if (el) el.textContent = getGuardianCountdownText();
+  const btn = document.getElementById("guardianSignupBtn");
+  if (isGuardianOpen() && btn && btn.disabled && !(appData && appData.guardian_inscrito)) renderGuardianUI();
+}
+
+function isGuardianOpen() {
+  return Date.now() >= GUARDIAN_RELEASE_DATE.getTime();
+}
+
+function getGuardianUserPayload() {
+  const user = currentUser || {};
+  return {
+    idUsuario: String(user.id || user.login6 || user.id_usuario || "").replace(/\D+/g, "").slice(-6).padStart(6, "0"),
+    nome: String(user.nome || user.display || user.arroba || user.usuario || "").replace(/^@+/, ""),
+    usuario: String(user.arroba || user.usuario || user.display || user.nome || "").replace(/^@+/, ""),
+    temporada: GUARDIAN_TEMPORADA
+  };
+}
+
+function renderGuardianUI(extraStatus) {
+  const countEl = document.getElementById("guardianInscritosCount");
+  const badge = document.getElementById("guardianStatusBadge");
+  const btn = document.getElementById("guardianSignupBtn");
+  const status = document.getElementById("guardianSignupStatus");
+  const total = Number(appData?.guardian_inscritos_total || 0);
+  const open = isGuardianOpen();
+  const already = appData?.guardian_inscrito === true;
+
+  if (countEl) countEl.textContent = String(total);
+
+  if (badge) {
+    badge.classList.toggle("guardian-open", open);
+    badge.classList.toggle("guardian-closed", !open);
+
+    if (open) {
+      badge.textContent = "Inscrições abertas para o Apex Guardian.";
+    } else {
+      badge.innerHTML =
+        '<span class="guardian-countdown-label">As inscrições começam em</span>' +
+        '<span id="guardianCountdown" class="guardian-countdown-time">' + getGuardianCountdownText() + '</span>';
+    }
+  }
+
+  if (btn) {
+    btn.disabled = !open || already;
+    btn.textContent = already ? "Você já está inscrito" : (open ? "Quero participar" : "Inscrições em breve");
+  }
+
+  if (status) status.textContent = extraStatus || (already ? "Sua inscrição já foi registrada." : "");
+}
+
+async function carregarGuardianStatus() {
+  if (!currentUser) return;
+  try {
+    const payload = getGuardianUserPayload();
+    const response = await fetch(`${APPS_SCRIPT_URL}?action=guardianStatus&idUsuario=${encodeURIComponent(payload.idUsuario)}&t=${Date.now()}`, {
+      method: "GET",
+      mode: "cors",
+      cache: "no-store"
+    });
+    const result = await response.json().catch(() => ({}));
+    if (result && result.ok !== false) {
+      appData.guardian_inscritos_total = Number(result.total || result.guardian_inscritos_total || appData.guardian_inscritos_total || 0);
+      appData.guardian_inscrito = result.inscrito === true;
+      appData.guardian_trailer_assistido = result.trailer_assistido === true || result.guardian_trailer_assistido === true;
+    }
+  } catch (error) {
+    console.error("Erro ao carregar status do Guardian:", error);
+  }
+  renderGuardianUI();
+}
+
+async function registrarGuardianInscricao() {
+  if (!currentUser) return;
+  if (!isGuardianOpen()) {
+    renderGuardianUI("As inscrições abrem em 11/05.");
+    return;
+  }
+  const btn = document.getElementById("guardianSignupBtn");
+  const oldText = btn ? btn.textContent : "Quero participar";
+  try {
+    if (btn) { btn.disabled = true; btn.textContent = "Registrando..."; }
+    const payload = getGuardianUserPayload();
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "guardianInscrever", ...payload })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.ok === false) throw new Error(result.message || result.erro || "Não foi possível registrar a inscrição.");
+    appData.guardian_inscritos_total = Number(result.total || appData.guardian_inscritos_total || 0);
+    appData.guardian_inscrito = true;
+    renderGuardianUI(result.duplicado ? "Você já estava inscrito." : "Inscrição confirmada. Que comece a caçada.");
+  } catch (error) {
+    renderGuardianUI(error?.message || "Erro ao registrar inscrição.");
+    if (btn) { btn.disabled = false; btn.textContent = oldText; }
+  }
+}
+
+function isGuardianViewActive() {
+  const panel = document.getElementById("view-guardians");
+  return !!(panel && panel.classList.contains("active"));
+}
+
+function ativarGuardianAudio() {
+  const audio = document.getElementById("guardianMusic");
+  const btn = document.getElementById("guardianAudioBtn");
+  if (!audio || !isGuardianViewActive()) return;
+
+  audio.volume = 0.42;
+  audio.play().then(() => {
+    if (btn) btn.classList.remove("guardian-muted");
+  }).catch(() => {
+    if (btn) btn.classList.add("guardian-muted");
+  });
+}
+
+function pararGuardianAudio() {
+  const audio = document.getElementById("guardianMusic");
+  const btn = document.getElementById("guardianAudioBtn");
+  if (!audio) return;
+
+  audio.pause();
+  if (btn) btn.classList.add("guardian-muted");
+}
+
+function getGuardianTrailerSeenKey() {
+  const payload = getGuardianUserPayload();
+  const id = payload.idUsuario || "sem_id";
+  return `${GUARDIAN_TRAILER_STORAGE_KEY}_${id}`;
+}
+
+function jaAssistiuGuardianTrailer() {
+  if (appData && appData.guardian_trailer_assistido === true) return true;
+  try {
+    return localStorage.getItem(getGuardianTrailerSeenKey()) === "1";
+  } catch (error) {
+    return false;
+  }
+}
+
+async function marcarGuardianTrailerAssistido() {
+  try {
+    localStorage.setItem(getGuardianTrailerSeenKey(), "1");
+  } catch (error) {}
+  appData.guardian_trailer_assistido = true;
+  try {
+    const payload = getGuardianUserPayload();
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "guardianTrailerAssistido", ...payload })
+    });
+  } catch (error) {
+    console.error("Erro ao registrar trailer assistido:", error);
+  }
+}
+
+function abrirGuardianTrailer(options = {}) {
+  const modal = document.getElementById("guardianTrailerModal");
+  const video = document.getElementById("guardianTrailerVideo");
+  const actions = document.getElementById("guardianTrailerActions");
+  const soundBtn = document.getElementById("guardianTrailerSoundBtn");
+  const topCloseBtn = document.getElementById("guardianTrailerCloseTopBtn");
+  if (!modal || !video || !actions) return;
+
+  guardianTrailerMode = options.manual ? "manual" : "auto";
+
+  actions.classList.remove("show");
+  modal.classList.add("show");
+  modal.classList.toggle("manual-mode", !!options.manual);
+  modal.setAttribute("aria-hidden", "false");
+
+  if (topCloseBtn) topCloseBtn.style.display = "inline-flex";
+  if (soundBtn) {
+    soundBtn.style.display = "inline-flex";
+    soundBtn.textContent = "Silenciar";
+  }
+
+  try { video.pause(); } catch (error) {}
+  try { video.currentTime = 0; } catch (error) {}
+
+  video.playsInline = true;
+  video.controls = false;
+  video.muted = false;
+  video.volume = 1;
+
+  const promise = video.play();
+
+  if (promise && typeof promise.catch === "function") {
+    promise.catch(() => {
+      video.muted = true;
+      if (soundBtn) soundBtn.textContent = "Ativar som";
+      video.play().catch(() => {
+        actions.classList.add("show");
+      });
+    });
+  }
+}
+
+function fecharGuardianTrailer() {
+  const modal = document.getElementById("guardianTrailerModal");
+  const video = document.getElementById("guardianTrailerVideo");
+  const actions = document.getElementById("guardianTrailerActions");
+  const topCloseBtn = document.getElementById("guardianTrailerCloseTopBtn");
+
+  if (video) {
+    try { video.pause(); } catch (error) {}
+  }
+
+  if (actions) actions.classList.remove("show");
+  if (topCloseBtn) topCloseBtn.style.display = "inline-flex";
+
+  if (modal) {
+    modal.classList.remove("show");
+    modal.classList.remove("manual-mode");
+    modal.setAttribute("aria-hidden", "true");
+  }
+}
+
+function abrirApexGuardianDoTrailer() {
+  fecharGuardianTrailer();
+  setView("guardians");
+  ativarGuardianAudio();
+  carregarGuardianStatus();
+  const guardian = document.getElementById("apexGuardian");
+  if (guardian) guardian.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function setView(viewName) {
   document.querySelectorAll(".view-panel").forEach(el => el.classList.remove("active"));
   const panel = document.getElementById(`view-${viewName}`);
@@ -3152,8 +3640,16 @@ function setView(viewName) {
   document.querySelectorAll(".menu-item").forEach(el => {
     el.classList.toggle("active", el.dataset.view === viewName);
   });
+
   if (viewName === "indicacoes") {
     loadMinhasIndicacoes(true);
+  }
+
+  if (viewName === "guardians") {
+    ativarGuardianAudio();
+    carregarGuardianStatus();
+  } else {
+    pararGuardianAudio();
   }
 }
 
@@ -3644,12 +4140,20 @@ async function loadRemoteData() {
     top_horas: Array.isArray(data.top_horas) ? data.top_horas : [],
     notificacoes: Array.isArray(data.notificacoes) ? data.notificacoes : [],
     desenvolvimento: Array.isArray(data.desenvolvimento) ? data.desenvolvimento : [],
-    temporadas: Array.isArray(data.temporadas) ? data.temporadas : []
+    temporadas: Array.isArray(data.temporadas) ? data.temporadas : [],
+    guardian_inscritos_total: Number(data.guardian_inscritos_total || 0),
+    guardian_inscrito: data.guardian_inscrito === true,
+    guardian_trailer_assistido: data.guardian_trailer_assistido === true
   };
   window.appData = appData;
   renderTopHoras();
   renderNotificacoes();
   renderDesenvolvimento();
+  renderGuardianUI();
+  await carregarGuardianStatus();
+  if (!jaAssistiuGuardianTrailer()) {
+    abrirGuardianTrailer({ manual: false });
+  }
 }
 
 
@@ -3771,6 +4275,49 @@ closeDrawer.addEventListener("click", closePanels);
 openNotif.addEventListener("click", openNotifPanel);
 closeNotif.addEventListener("click", closePanels);
 overlay.addEventListener("click", closePanels);
+
+const guardianTrailerVideo = document.getElementById("guardianTrailerVideo");
+const guardianTrailerActions = document.getElementById("guardianTrailerActions");
+const guardianTrailerSoundBtn = document.getElementById("guardianTrailerSoundBtn");
+const guardianTrailerOpenBtn = document.getElementById("guardianTrailerOpenBtn");
+const guardianTrailerCloseBtn = document.getElementById("guardianTrailerCloseBtn");
+const guardianTrailerCloseTopBtn = document.getElementById("guardianTrailerCloseTopBtn");
+const guardianSignupBtn = document.getElementById("guardianSignupBtn");
+const guardianAudioBtn = document.getElementById("guardianAudioBtn");
+const guardianReplayTrailerBtn = document.getElementById("guardianReplayTrailerBtn");
+if (guardianTrailerVideo && guardianTrailerActions) {
+  guardianTrailerVideo.addEventListener("ended", async () => {
+    if (guardianTrailerMode === "auto") {
+      await marcarGuardianTrailerAssistido();
+    }
+    fecharGuardianTrailer();
+  });
+}
+
+if (guardianTrailerSoundBtn && guardianTrailerVideo) {
+  guardianTrailerSoundBtn.addEventListener("click", () => {
+    guardianTrailerVideo.muted = !guardianTrailerVideo.muted;
+    guardianTrailerSoundBtn.textContent = guardianTrailerVideo.muted ? "Ativar som" : "Silenciar";
+    guardianTrailerVideo.play().catch(() => {});
+  });
+}
+
+if (guardianTrailerOpenBtn) guardianTrailerOpenBtn.addEventListener("click", abrirApexGuardianDoTrailer);
+if (guardianTrailerCloseBtn) guardianTrailerCloseBtn.addEventListener("click", fecharGuardianTrailer);
+if (guardianTrailerCloseTopBtn) guardianTrailerCloseTopBtn.addEventListener("click", fecharGuardianTrailer);
+if (guardianSignupBtn) guardianSignupBtn.addEventListener("click", registrarGuardianInscricao);
+if (guardianAudioBtn) guardianAudioBtn.addEventListener("click", () => {
+  const audio = document.getElementById("guardianMusic");
+  if (!audio) return;
+  if (audio.paused) ativarGuardianAudio();
+  else pararGuardianAudio();
+});
+if (guardianReplayTrailerBtn) guardianReplayTrailerBtn.addEventListener("click", () => abrirGuardianTrailer({ manual: true }));
+
+setInterval(() => {
+  atualizarGuardianCountdown();
+  if (!isGuardianViewActive()) pararGuardianAudio();
+}, 1000);
 
 document.querySelectorAll(".menu-item").forEach(item => {
   item.addEventListener("click", () => {
@@ -4396,12 +4943,11 @@ restoreSessionIfPossible();
     if (!topContainer || !user) return;
 
     const ranking = getSeasonXpRanking();
-    const medals = ['🥇','🥈','🥉'];
     const top3 = ranking.slice(0,3);
 
     topContainer.innerHTML = top3.length ? top3.map((item, index) => `
       <div class="ranking-item season-rank-item top-${index + 1}">
-        <div class="ranking-medal">${medals[index] || `#${index+1}`}</div>
+        <div class="top-rank">${index + 1}</div>
         <div class="ranking-badge"><img src="${item.badge}" alt="${item.level}"></div>
         <div class="ranking-meta">
           <div class="ranking-name">${item.arroba}</div>
@@ -5492,7 +6038,7 @@ restoreSessionIfPossible();
     sub.textContent = 'Top 10';
     list.innerHTML = ranked.length ? ranked.map((item, idx) => `
       <div class="apex-season-ranking-row">
-        <div class="ranking-medal">#${idx + 1}</div>
+        <div class="top-rank">${idx + 1}</div>
         <div class="ranking-badge">${item.badge ? `<img src="${item.badge}" alt="${item.level}">` : ''}</div>
         <div class="ranking-meta">
           <div class="ranking-name">@${String(item.arroba).replace(/^@+/,'')}</div>
@@ -5844,6 +6390,24 @@ restoreSessionIfPossible();
 })();
 </script>
 <!-- ===== FIM POP-UP PDF DE INCENTIVOS MENSAL - APEX ===== -->
+
+
+<script>
+/* ===== Segurança beta limpa: não prender trailer e pausar áudio fora do Guardian ===== */
+(function(){
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && typeof pararGuardianAudio === "function") pararGuardianAudio();
+  });
+
+  document.addEventListener("click", () => {
+    setTimeout(() => {
+      if (typeof isGuardianViewActive === "function" && !isGuardianViewActive() && typeof pararGuardianAudio === "function") {
+        pararGuardianAudio();
+      }
+    }, 80);
+  }, true);
+})();
+</script>
 
 </body>
 </html>
