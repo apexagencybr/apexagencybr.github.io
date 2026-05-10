@@ -2995,6 +2995,119 @@ body.birthday-locked{overflow:hidden;}
   display: inline-flex !important;
 }
 
+
+/* ===== APEX CONNECT OFICIAL v3.9.37 - fix trailer mobile/audio ===== */
+
+/* Preserva a arte inteira no mobile e evita texto cortado */
+.guardian-trailer-modal {
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Troca grid problemático por layout estável só quando o modal está aberto */
+.guardian-trailer-modal.show {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 22px !important;
+  padding: max(72px, env(safe-area-inset-top)) 18px max(32px, env(safe-area-inset-bottom)) !important;
+}
+
+/* Vídeo centralizado, menor no mobile para não empurrar a mensagem */
+.guardian-trailer-video {
+  position: relative !important;
+  z-index: 2 !important;
+  width: min(84vw, 920px) !important;
+  max-height: 38svh !important;
+  aspect-ratio: 16 / 9 !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  margin: 0 auto !important;
+  background: #000 !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 90px rgba(255,124,44,.16), 0 28px 90px rgba(0,0,0,.56) !important;
+}
+
+/* Botão de som sempre clicável */
+.guardian-trailer-sound {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 2147483647 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  touch-action: manipulation !important;
+}
+
+/* No trailer obrigatório, esconde só o X, não o som */
+.guardian-trailer-modal.guardian-required .guardian-trailer-close-top {
+  display: none !important;
+}
+
+.guardian-trailer-modal.guardian-required .guardian-trailer-sound {
+  display: inline-flex !important;
+}
+
+/* Se existir texto HTML extra, não deixa cortar */
+.guardian-trailer-bottom-text,
+.guardian-trailer-auto-text,
+.guardian-trailer-bottom-hint {
+  width: 100% !important;
+  max-width: 680px !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  padding: 0 16px !important;
+  margin: 0 auto !important;
+  overflow: visible !important;
+}
+
+/* Mobile: imagem inteira e vídeo menor */
+@media (max-width: 768px) {
+  .guardian-trailer-modal {
+    background-size: contain !important;
+    background-position: center center !important;
+    background-color: #020712 !important;
+  }
+
+  .guardian-trailer-modal.show {
+    justify-content: center !important;
+    gap: 18px !important;
+    padding: max(78px, env(safe-area-inset-top)) 14px max(24px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .guardian-trailer-video {
+    width: 86vw !important;
+    max-height: 32svh !important;
+  }
+
+  .guardian-trailer-sound {
+    top: max(14px, env(safe-area-inset-top)) !important;
+    left: max(14px, env(safe-area-inset-left)) !important;
+    right: auto !important;
+  }
+
+  .guardian-trailer-close-top {
+    top: max(14px, env(safe-area-inset-top)) !important;
+    right: max(14px, env(safe-area-inset-right)) !important;
+    left: auto !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .guardian-trailer-video {
+    width: 88vw !important;
+    max-height: 30svh !important;
+  }
+
+  .guardian-trailer-modal.show {
+    gap: 16px !important;
+  }
+}
+
 </style>
 
 <style id="apex-fechamento-compacto-mobile-v399">
@@ -3686,7 +3799,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.35</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.37</div>
   </div>
 </div>
 
@@ -8328,6 +8441,174 @@ restoreSessionIfPossible();
     const m = modal();
     if (m && m.classList.contains("show")) {
       forceBindSoundButton();
+      syncSoundButton();
+    }
+  }, 1000);
+})();
+</script>
+
+
+<script>
+/* ===== APEX CONNECT OFICIAL v3.9.37 - fix áudio trailer real ===== */
+(function(){
+  function trailerModal(){
+    return document.getElementById("guardianTrailerModal");
+  }
+
+  function trailerVideo(){
+    return document.getElementById("guardianTrailerVideo");
+  }
+
+  function soundButton(){
+    return document.getElementById("guardianTrailerSoundBtn");
+  }
+
+  function syncSoundButton(){
+    const video = trailerVideo();
+    const btn = soundButton();
+    if (!video || !btn) return;
+
+    btn.style.display = "inline-flex";
+    btn.style.pointerEvents = "auto";
+    btn.disabled = false;
+    btn.textContent = video.muted ? "Ativar som" : "Silenciar";
+  }
+
+  function playMutedFallback(){
+    const video = trailerVideo();
+    if (!video) return;
+
+    video.playsInline = true;
+    video.controls = false;
+    video.muted = true;
+    video.defaultMuted = true;
+
+    video.play().catch(function(){});
+    syncSoundButton();
+  }
+
+  window.apexTrailerPlayWithSound = function(){
+    const video = trailerVideo();
+    if (!video) return;
+
+    video.playsInline = true;
+    video.controls = false;
+    video.volume = 1;
+    video.muted = false;
+    video.defaultMuted = false;
+
+    const p = video.play();
+
+    if (p && typeof p.then === "function") {
+      p.then(function(){
+        syncSoundButton();
+      }).catch(function(){
+        playMutedFallback();
+      });
+    } else {
+      syncSoundButton();
+    }
+  };
+
+  function bindSoundButton(){
+    const btn = soundButton();
+    const video = trailerVideo();
+    if (!btn || !video) return;
+
+    btn.onclick = function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      video.volume = 1;
+
+      if (video.muted) {
+        video.muted = false;
+        video.defaultMuted = false;
+        const p = video.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(function(){
+            video.muted = true;
+            video.defaultMuted = true;
+          }).finally(syncSoundButton);
+        } else {
+          syncSoundButton();
+        }
+      } else {
+        video.muted = true;
+        video.defaultMuted = true;
+        syncSoundButton();
+      }
+
+      return false;
+    };
+
+    syncSoundButton();
+  }
+
+  // Envolve a função original de abrir trailer, sem alterar o resto do site
+  const originalAbrirGuardianTrailer = window.abrirGuardianTrailer;
+  window.abrirGuardianTrailer = function(options){
+    const result = typeof originalAbrirGuardianTrailer === "function"
+      ? originalAbrirGuardianTrailer.apply(this, arguments)
+      : undefined;
+
+    setTimeout(function(){
+      bindSoundButton();
+      const modal = trailerModal();
+      if (modal && modal.classList.contains("show")) {
+        window.apexTrailerPlayWithSound();
+      }
+    }, 90);
+
+    return result;
+  };
+
+  // Observa quando o modal abrir por qualquer fluxo interno antigo
+  const observer = new MutationObserver(function(){
+    const modal = trailerModal();
+    if (modal && modal.classList.contains("show")) {
+      bindSoundButton();
+
+      const video = trailerVideo();
+      if (video && video.paused) {
+        window.apexTrailerPlayWithSound();
+      } else {
+        syncSoundButton();
+      }
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function(){
+    bindSoundButton();
+
+    const modal = trailerModal();
+    if (modal) {
+      observer.observe(modal, {
+        attributes: true,
+        attributeFilter: ["class", "style", "aria-hidden"]
+      });
+    }
+
+    setTimeout(bindSoundButton, 500);
+    setTimeout(bindSoundButton, 1500);
+  });
+
+  ["pointerdown","touchstart","click","keydown"].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      const modal = trailerModal();
+      const video = trailerVideo();
+
+      if (modal && modal.classList.contains("show") && video && video.muted) {
+        // O primeiro toque do usuário libera o áudio se o navegador permitir.
+        setTimeout(window.apexTrailerPlayWithSound, 0);
+      }
+    }, true);
+  });
+
+  setInterval(function(){
+    const modal = trailerModal();
+    if (modal && modal.classList.contains("show")) {
+      bindSoundButton();
       syncSoundButton();
     }
   }, 1000);
