@@ -2984,6 +2984,17 @@ body.birthday-locked{overflow:hidden;}
   }
 }
 
+
+/* ===== APEX CONNECT OFICIAL v3.9.35 - botão de som trailer ===== */
+.guardian-trailer-sound {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 2147483647 !important;
+}
+.guardian-trailer-modal.show .guardian-trailer-sound {
+  display: inline-flex !important;
+}
+
 </style>
 
 <style id="apex-fechamento-compacto-mobile-v399">
@@ -3675,7 +3686,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
       </div>
     </section>
 
-    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.34</div>
+    <div class="footer-note">© Apex Agency • Todos os direitos reservados<br>Apex Connect v3.9.35</div>
   </div>
 </div>
 
@@ -8170,6 +8181,156 @@ restoreSessionIfPossible();
       if (shop && shop.classList.contains("active")) renderShop();
     }, 4000);
   });
+})();
+</script>
+
+
+<script>
+/* ===== APEX CONNECT OFICIAL v3.9.35 - restaura áudio do trailer ===== */
+(function(){
+  let apexLastUserGestureAt = 0;
+
+  function markUserGesture(){
+    apexLastUserGestureAt = Date.now();
+  }
+
+  document.addEventListener("pointerdown", markUserGesture, true);
+  document.addEventListener("click", markUserGesture, true);
+  document.addEventListener("keydown", markUserGesture, true);
+
+  function trailerVideo(){
+    return document.getElementById("guardianTrailerVideo");
+  }
+
+  function soundButton(){
+    return document.getElementById("guardianTrailerSoundBtn");
+  }
+
+  function modal(){
+    return document.getElementById("guardianTrailerModal");
+  }
+
+  function syncSoundButton(){
+    const video = trailerVideo();
+    const btn = soundButton();
+    if (!video || !btn) return;
+    btn.textContent = video.muted ? "Ativar som" : "Silenciar";
+    btn.style.display = "inline-flex";
+    btn.style.pointerEvents = "auto";
+  }
+
+  window.apexPlayTrailerWithSound = function(){
+    const video = trailerVideo();
+    const btn = soundButton();
+
+    if (!video) return;
+
+    video.playsInline = true;
+    video.controls = false;
+    video.volume = 1;
+    video.muted = false;
+    video.defaultMuted = false;
+
+    const p = video.play();
+
+    if (p && typeof p.then === "function") {
+      p.then(() => {
+        syncSoundButton();
+      }).catch(() => {
+        // Se o navegador bloquear som automático, o vídeo segue mutado
+        // e o botão libera o som no toque.
+        video.muted = true;
+        video.defaultMuted = true;
+        if (btn) btn.textContent = "Ativar som";
+        video.play().catch(() => {});
+      });
+    } else {
+      syncSoundButton();
+    }
+  };
+
+  function forceBindSoundButton(){
+    const btn = soundButton();
+    const video = trailerVideo();
+    if (!btn || !video) return;
+
+    btn.onclick = function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      video.volume = 1;
+
+      if (video.muted) {
+        video.muted = false;
+        video.defaultMuted = false;
+        btn.textContent = "Silenciar";
+      } else {
+        video.muted = true;
+        video.defaultMuted = true;
+        btn.textContent = "Ativar som";
+      }
+
+      video.play().catch(() => {});
+      return false;
+    };
+
+    syncSoundButton();
+  }
+
+  const originalAbrir = window.abrirGuardianTrailer;
+  window.abrirGuardianTrailer = function(options = {}) {
+    const result = typeof originalAbrir === "function"
+      ? originalAbrir.apply(this, arguments)
+      : undefined;
+
+    setTimeout(() => {
+      forceBindSoundButton();
+
+      const m = modal();
+      if (m && m.classList.contains("show")) {
+        window.apexPlayTrailerWithSound();
+      }
+    }, 80);
+
+    return result;
+  };
+
+  const observer = new MutationObserver(() => {
+    const m = modal();
+    if (m && m.classList.contains("show")) {
+      forceBindSoundButton();
+
+      const video = trailerVideo();
+      if (video && video.paused) {
+        window.apexPlayTrailerWithSound();
+      } else {
+        syncSoundButton();
+      }
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    forceBindSoundButton();
+
+    const m = modal();
+    if (m) {
+      observer.observe(m, {
+        attributes: true,
+        attributeFilter: ["class", "style", "aria-hidden"]
+      });
+    }
+
+    setTimeout(forceBindSoundButton, 500);
+    setTimeout(forceBindSoundButton, 1500);
+  });
+
+  setInterval(() => {
+    const m = modal();
+    if (m && m.classList.contains("show")) {
+      forceBindSoundButton();
+      syncSoundButton();
+    }
+  }, 1000);
 })();
 </script>
 
