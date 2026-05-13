@@ -6277,13 +6277,17 @@ restoreSessionIfPossible();
       return;
     }
     const body = {
-      action: "novaBatalha",
+      action: "registrarBatalha",
       idUsuario: String(currentUser.id || currentUser.login6 || ""),
       usuario: currentUser.arroba || currentUser.display || "",
+      data: battleDate.value,
       dataBatalha: battleDate.value,
+      horario: battleTime.value,
       horaBatalha: battleTime.value,
+      meta: meta,
       metaDiamantes: meta,
       rounds: battleRounds?.value || "1",
+      urgente: battleUrgency?.value || "Não",
       urgencia: battleUrgency?.value || "Não"
     };
     const oldText = sendBattleBtn?.textContent || "SOLICITAR BATALHA";
@@ -6296,7 +6300,7 @@ restoreSessionIfPossible();
         body: JSON.stringify(body)
       });
       const result = await response.json();
-      if (!result?.ok && !result?.success) throw new Error(result?.message || "Não foi possível enviar a batalha.");
+      if (!result?.ok && !result?.success) throw new Error(result?.message || result?.erro || "Não foi possível enviar a batalha.");
       if (battleGoal) battleGoal.value = "";
       if (battleDate) battleDate.value = "";
       if (battleTime) battleTime.value = "";
