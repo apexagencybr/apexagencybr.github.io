@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -3806,7 +3807,7 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvlk2vnH5sbv3FsovV1BgTLx3oxLVkBxlk5QCU8GbLfVu2HHpcQ7JKJWTRGq-Z4aUb/exec";
 const REFERRAL_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvlk2vnH5sbv3FsovV1BgTLx3oxLVkBxlk5QCU8GbLfVu2HHpcQ7JKJWTRGq-Z4aUb/exec";
-const GUARDIAN_RELEASE_DATE = new Date("2026-05-12T00:00:00-03:00");
+const GUARDIAN_RELEASE_DATE = new Date("2026-05-14T00:00:00-03:00");
 const GUARDIAN_TEMPORADA = "Autumn Dragon • Junho 2026";
 const GUARDIAN_TRAILER_STORAGE_KEY = "apex_guardian_trailer_seen_v2";
 let guardianTrailerMode = "auto";
@@ -4574,7 +4575,7 @@ async function carregarGuardianStatus() {
 async function registrarGuardianInscricao() {
   if (!currentUser) return;
   if (!isGuardianOpen()) {
-    renderGuardianUI("As inscrições abrem em 11/05.");
+    renderGuardianUI("As inscrições abrem em 14/05 à meia-noite.");
     return;
   }
   const btn = document.getElementById("guardianSignupBtn");
@@ -8163,6 +8164,21 @@ restoreSessionIfPossible();
     const user = getUser();
     if (pill) pill.textContent = `${fmt(user.saldo)} Ᵽ`;
 
+    const shopClosed = Date.now() > APEX_SHOP_CLOSE_DATE.getTime();
+    if (shopClosed) {
+      grid.innerHTML = `
+        <article class="apex-shop-item-card" style="grid-column:1/-1; text-align:center; align-items:center; padding:24px;">
+          <div class="apex-shop-item-icon">🔒</div>
+          <div>
+            <h5>Apex Shop encerrada</h5>
+            <p>A janela atual de resgates foi finalizada. Os itens ficarão bloqueados até a próxima abertura oficial.</p>
+          </div>
+          <div class="apex-shop-item-status off">Resgates indisponíveis no momento</div>
+        </article>
+      `;
+      return;
+    }
+
     grid.innerHTML = APEX_SHOP_ITEMS.map((item, index) => {
       const ok = user.saldo >= item.cost;
       const status = ok ? "Disponível para seu saldo" : `Faltam ${fmt(item.cost - user.saldo)} Ᵽicos`;
@@ -8612,6 +8628,221 @@ restoreSessionIfPossible();
       syncSoundButton();
     }
   }, 1000);
+})();
+</script>
+
+
+<style>
+/* ===== v3.9.38 - Shop 10/06 + CTA Guardian pós-trailer ===== */
+.guardian-trailer-modal.guardian-ended .guardian-trailer-shade{
+  background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.78));
+}
+.guardian-trailer-modal.guardian-ended .guardian-trailer-actions{
+  width:min(92vw,760px);
+  bottom:8%;
+  padding:20px;
+  border-radius:28px;
+  background:linear-gradient(180deg,rgba(10,10,16,.82),rgba(5,5,8,.92));
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 26px 90px rgba(0,0,0,.60);
+  backdrop-filter:blur(16px);
+}
+.guardian-trailer-modal.guardian-ended .guardian-trailer-actions::before{
+  content:'Apex Guardian • Autumn Dragon';
+  flex-basis:100%;
+  color:#ffd36f;
+  text-transform:uppercase;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.8px;
+  text-align:center;
+}
+.guardian-trailer-modal.guardian-ended .guardian-trailer-actions::after{
+  content:'O trailer acabou. Agora é sua vez de entrar na disputa pelo título de Guardião.';
+  flex-basis:100%;
+  color:rgba(255,255,255,.82);
+  font-size:15px;
+  line-height:1.45;
+  text-align:center;
+  margin:-2px 0 4px;
+}
+.guardian-trailer-modal.guardian-ended #guardianTrailerOpenBtn{
+  min-width:min(100%,320px);
+  font-size:15px;
+  background:linear-gradient(135deg,#ff7a18,#ffd36f)!important;
+  color:#1b1008!important;
+}
+.guardian-trailer-modal.guardian-ended #guardianTrailerCloseBtn{
+  background:rgba(255,255,255,.10)!important;
+}
+.apex-shop-next-open-card{
+  grid-column:1/-1;
+  text-align:center;
+  align-items:center;
+  padding:26px!important;
+}
+.apex-shop-next-open-timer{
+  margin-top:12px;
+  display:inline-flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.apex-shop-next-open-timer span{
+  padding:9px 12px;
+  border-radius:999px;
+  background:rgba(255,211,111,.12);
+  border:1px solid rgba(255,211,111,.25);
+  color:#ffd36f;
+  font-weight:950;
+}
+@media(max-width:720px){
+  .guardian-trailer-modal.guardian-ended .guardian-trailer-actions{bottom:4%;padding:16px;border-radius:22px;}
+}
+</style>
+<script>
+/* ===== APEX CONNECT v3.9.38 - PexShop 10/06 + CTA pós-trailer ===== */
+(function(){
+  const PEXSHOP_NEXT_OPEN_DATE = new Date("2026-06-10T00:00:00-03:00");
+
+  function pad(n){ return String(Math.max(0, Number(n)||0)).padStart(2,"0"); }
+  function remainingParts(){
+    const diff = Math.max(0, PEXSHOP_NEXT_OPEN_DATE.getTime() - Date.now());
+    const total = Math.floor(diff / 1000);
+    return {
+      d: Math.floor(total / 86400),
+      h: Math.floor((total % 86400) / 3600),
+      m: Math.floor((total % 3600) / 60),
+      s: total % 60,
+      open: diff <= 0
+    };
+  }
+  function shortTimer(){
+    const t = remainingParts();
+    if (t.open) return "Aberta";
+    return `${t.d}d ${pad(t.h)}h ${pad(t.m)}m`;
+  }
+  function longTimerHTML(){
+    const t = remainingParts();
+    if (t.open) return `<span>00d</span><span>00h</span><span>00m</span><span>00s</span>`;
+    return `<span>${t.d}d</span><span>${pad(t.h)}h</span><span>${pad(t.m)}m</span><span>${pad(t.s)}s</span>`;
+  }
+  function userSaldo(){
+    try {
+      const u = window.currentUser || (typeof currentUser !== "undefined" ? currentUser : {}) || {};
+      const raw = u.picos_total !== undefined ? u.picos_total : String(u.picos || "0").replace(/[^\d,.-]/g,"").replace(/\.(?=\d{3}(\D|$))/g,"").replace(",",".");
+      return new Intl.NumberFormat("pt-BR").format(Number(raw)||0) + " Ᵽ";
+    } catch(e){ return "0 Ᵽ"; }
+  }
+  function renderPexShopCountdown(){
+    const mini = document.getElementById("apexShopMiniTimer");
+    const strip = document.getElementById("apexShopCloseStrip");
+    const inline = document.getElementById("apexShopCloseInline");
+    const grid = document.getElementById("apexShopItemsGrid");
+    const balance = document.getElementById("apexShopBalancePill");
+    const headTitle = document.querySelector("#view-shop .section-head h4");
+    const headText = document.querySelector("#view-shop .section-head p");
+    if (mini) mini.textContent = shortTimer();
+    if (strip) {
+      const label = strip.querySelector("span");
+      if (label) label.textContent = "Próxima abertura em:";
+    }
+    if (inline) inline.textContent = shortTimer();
+    if (balance) balance.textContent = userSaldo();
+    if (headTitle) headTitle.textContent = "PexShop";
+    if (headText) headText.textContent = "A próxima janela de resgates abre em 10/06.";
+    if (!grid) return;
+    if (remainingParts().open) return;
+    grid.innerHTML = `
+      <article class="apex-shop-item-card apex-shop-next-open-card">
+        <div class="apex-shop-item-icon">🔒</div>
+        <div>
+          <h5>PexShop abre em 10/06</h5>
+          <p>Os resgates estão fechados por enquanto. O catálogo será liberado automaticamente na próxima abertura oficial.</p>
+          <div class="apex-shop-next-open-timer" id="pexShopNextOpenTimer">${longTimerHTML()}</div>
+        </div>
+        <div class="apex-shop-item-status off">Resgates indisponíveis no momento</div>
+      </article>
+    `;
+  }
+
+  function showGuardianEndedCTA(){
+    const modal = document.getElementById("guardianTrailerModal");
+    const actions = document.getElementById("guardianTrailerActions");
+    const openBtn = document.getElementById("guardianTrailerOpenBtn");
+    const closeBtn = document.getElementById("guardianTrailerCloseBtn");
+    const topClose = document.getElementById("guardianTrailerCloseTopBtn");
+    const video = document.getElementById("guardianTrailerVideo");
+    if (video) { try { video.pause(); } catch(e){} }
+    if (modal) {
+      modal.classList.add("show", "guardian-ended");
+      modal.classList.remove("guardian-required");
+      modal.style.display = "grid";
+      modal.style.pointerEvents = "auto";
+      modal.setAttribute("aria-hidden", "false");
+    }
+    if (actions) actions.classList.add("show");
+    if (topClose) topClose.style.display = "inline-flex";
+    if (openBtn) openBtn.textContent = "Quero participar do Apex Guardian";
+    if (closeBtn) closeBtn.textContent = "Agora não";
+  }
+
+  function goGuardianFromCTA(ev){
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    const modal = document.getElementById("guardianTrailerModal");
+    if (modal) modal.classList.remove("show", "guardian-ended", "guardian-required", "manual-mode");
+    if (typeof setView === "function") setView("guardians");
+    if (typeof carregarGuardianStatus === "function") carregarGuardianStatus();
+    const guardian = document.getElementById("apexGuardian");
+    setTimeout(() => guardian && guardian.scrollIntoView({behavior:"smooth", block:"start"}), 80);
+    return false;
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    renderPexShopCountdown();
+    setInterval(renderPexShopCountdown, 1000);
+
+    const openBtn = document.getElementById("guardianTrailerOpenBtn");
+    const closeBtn = document.getElementById("guardianTrailerCloseBtn");
+    const topClose = document.getElementById("guardianTrailerCloseTopBtn");
+    if (openBtn) openBtn.onclick = goGuardianFromCTA;
+    if (closeBtn) closeBtn.addEventListener("click", function(){
+      const modal = document.getElementById("guardianTrailerModal");
+      if (modal && modal.classList.contains("guardian-ended")) {
+        modal.classList.remove("show", "guardian-ended", "guardian-required", "manual-mode");
+        modal.setAttribute("aria-hidden", "true");
+      }
+    }, true);
+    if (topClose) topClose.addEventListener("click", function(){
+      const modal = document.getElementById("guardianTrailerModal");
+      if (modal && modal.classList.contains("guardian-ended")) {
+        modal.classList.remove("show", "guardian-ended", "guardian-required", "manual-mode");
+        modal.setAttribute("aria-hidden", "true");
+      }
+    }, true);
+
+    const video = document.getElementById("guardianTrailerVideo");
+    if (video) {
+      video.addEventListener("ended", async function(ev){
+        ev.stopImmediatePropagation();
+        try {
+          if (typeof registrarAssistidoNaPlanilha === "function") await registrarAssistidoNaPlanilha();
+          else if (typeof marcarGuardianTrailerAssistido === "function") await marcarGuardianTrailerAssistido();
+        } catch(e){}
+        showGuardianEndedCTA();
+      }, true);
+    }
+  });
+
+  const oldSetView = window.setView;
+  if (typeof oldSetView === "function" && !oldSetView.__pexShop1006) {
+    window.setView = function(viewName){
+      const result = oldSetView.apply(this, arguments);
+      if (viewName === "shop") setTimeout(renderPexShopCountdown, 80);
+      return result;
+    };
+    window.setView.__pexShop1006 = true;
+  }
 })();
 </script>
 
