@@ -3160,21 +3160,41 @@ body.birthday-locked{overflow:hidden;}
   .apex-fechamento-grid{grid-template-columns:1fr !important;}
 }
 </style>
+
+<style id="apex-guardian-image-popup-css">
+/* ===== APEX GUARDIAN - POPUP DE IMAGEM SEM VÍDEO ===== */
+#guardianTrailerModal.guardian-image-popup{
+  position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;
+  align-items:center!important;justify-content:center!important;padding:18px!important;background:transparent!important;
+  background-image:none!important;overflow:hidden!important;box-sizing:border-box!important;pointer-events:auto!important;
+}
+#guardianTrailerModal.guardian-image-popup.show{display:flex!important;visibility:visible!important;opacity:1!important;}
+#guardianTrailerModal.guardian-image-popup::before,#guardianTrailerModal.guardian-image-popup::after{display:none!important;content:none!important;}
+.guardian-popup-backdrop{position:absolute!important;inset:0!important;background:rgba(0,0,0,.86)!important;backdrop-filter:blur(6px)!important;}
+.guardian-popup-card{position:relative!important;z-index:2!important;width:min(1040px,96vw)!important;max-height:92svh!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;animation:guardianImagePop .28s ease both!important;}
+.guardian-announcement-image{width:100%!important;max-height:calc(92svh - 82px)!important;object-fit:contain!important;border-radius:24px!important;display:block!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:0 26px 90px rgba(0,0,0,.72),0 0 42px rgba(255,132,28,.16)!important;background:#050505!important;}
+#guardianTrailerCloseTopBtn.guardian-popup-x{display:inline-flex!important;position:absolute!important;top:12px!important;right:12px!important;width:44px!important;height:44px!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(255,255,255,.22)!important;border-radius:999px!important;background:rgba(0,0,0,.72)!important;color:#fff!important;font-size:22px!important;font-weight:900!important;z-index:5!important;cursor:pointer!important;backdrop-filter:blur(8px)!important;}
+#guardianTrailerActions.guardian-popup-actions{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;z-index:4!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;margin-top:14px!important;width:100%!important;background:transparent!important;padding:0!important;}
+#guardianTrailerOpenBtn.guardian-popup-signup-btn{border:none!important;border-radius:999px!important;padding:16px 28px!important;min-width:240px!important;background:linear-gradient(180deg,#ffd67a 0%,#ff9d2e 48%,#b94b00 100%)!important;color:#1d0b00!important;font-weight:1000!important;letter-spacing:.7px!important;text-transform:uppercase!important;box-shadow:0 14px 36px rgba(255,130,20,.35)!important;cursor:pointer!important;}
+#guardianTrailerCloseBtn.guardian-popup-later-btn{border:1px solid rgba(255,255,255,.16)!important;border-radius:999px!important;padding:14px 22px!important;background:rgba(255,255,255,.08)!important;color:#fff!important;font-weight:800!important;cursor:pointer!important;}
+#guardianTrailerSoundBtn{display:none!important;}
+@keyframes guardianImagePop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:760px){#guardianTrailerModal.guardian-image-popup{padding:12px!important}.guardian-popup-card{width:100%!important;max-height:94svh!important}.guardian-announcement-image{border-radius:18px!important;max-height:calc(94svh - 120px)!important}#guardianTrailerCloseTopBtn.guardian-popup-x{top:8px!important;right:8px!important;width:40px!important;height:40px!important}#guardianTrailerActions.guardian-popup-actions{flex-direction:column!important;gap:9px!important;margin-top:12px!important}#guardianTrailerOpenBtn.guardian-popup-signup-btn,#guardianTrailerCloseBtn.guardian-popup-later-btn{width:100%!important;max-width:360px!important}}
+</style>
 </head>
 <body>
 <div class="overlay" id="overlay"></div>
-<div id="guardianTrailerModal" class="guardian-trailer-modal" aria-hidden="true">
-  <video id="guardianTrailerVideo" class="guardian-trailer-video" playsinline preload="auto">
-    <source src="https://res.cloudinary.com/dcf47fhfr/video/upload/f_mp4/v1778200904/APEX_FINAL_me3d0r.mp4" type="video/mp4">
-    <source src="https://res.cloudinary.com/dcf47fhfr/video/upload/v1778200904/APEX_FINAL_me3d0r.mov" type="video/quicktime">
-  </video>
-  <div class="guardian-trailer-shade"></div>
-  <button id="guardianTrailerCloseTopBtn" class="guardian-trailer-close-top" type="button" aria-label="Fechar trailer">✕</button>
-  <button id="guardianTrailerSoundBtn" class="guardian-trailer-sound" type="button">Silenciar</button>
-  <div id="guardianTrailerActions" class="guardian-trailer-actions">
-    <button id="guardianTrailerOpenBtn" type="button">Ver Apex Guardian</button>
-    <button id="guardianTrailerCloseBtn" type="button">Fechar</button>
+<div id="guardianTrailerModal" class="guardian-trailer-modal guardian-image-popup" aria-hidden="true">
+  <div class="guardian-popup-backdrop" aria-hidden="true"></div>
+  <div class="guardian-popup-card" role="dialog" aria-modal="true" aria-label="Inscrições abertas do Apex Guardian">
+    <button id="guardianTrailerCloseTopBtn" class="guardian-trailer-close-top guardian-popup-x" type="button" aria-label="Fechar anúncio">✕</button>
+    <img id="guardianAnnouncementImage" class="guardian-announcement-image" src="apex_guardian_inscricoes_abertas.png" alt="Apex Guardian Autumn Dragon — Inscrições abertas">
+    <div id="guardianTrailerActions" class="guardian-trailer-actions guardian-popup-actions show">
+      <button id="guardianTrailerOpenBtn" class="guardian-popup-signup-btn" type="button">QUERO ME INSCREVER</button>
+      <button id="guardianTrailerCloseBtn" class="guardian-popup-later-btn" type="button">Agora não</button>
+    </div>
   </div>
+  <button id="guardianTrailerSoundBtn" class="guardian-trailer-sound" type="button" style="display:none!important;">Silenciar</button>
 </div>
 
 <aside class="drawer" id="drawer">
@@ -8850,6 +8870,108 @@ restoreSessionIfPossible();
 })();
 </script>
 
+
+<script id="apex-guardian-image-popup-js">
+/* ===== APEX GUARDIAN - ANÚNCIO EM IMAGEM + INSCRIÇÃO DIRETA ===== */
+(function(){
+  const POPUP_SEEN_PREFIX = "apex_guardian_image_popup_closed_v1_";
+
+  function payload(){
+    try {
+      if (typeof getGuardianUserPayload === "function") return getGuardianUserPayload();
+    } catch(e) {}
+    const user = window.currentUser || {};
+    const id = String(user.id || user.login6 || "").replace(/\D/g, "").slice(-6).padStart(6, "0");
+    return { idUsuario:id, id:id, nome:user.nome || user.name || "", usuario:user.arroba || user.usuario || "", temporada:"Autumn Dragon • Junho 2026" };
+  }
+
+  function seenKey(){
+    const p = payload();
+    return POPUP_SEEN_PREFIX + (p.idUsuario || "sem_id");
+  }
+
+  function modal(){ return document.getElementById("guardianTrailerModal"); }
+
+  function hardClose(){
+    const m = modal();
+    if (!m) return;
+    m.classList.remove("show","guardian-required","manual-mode","guardian-ended");
+    m.setAttribute("aria-hidden","true");
+    m.style.display = "none";
+    m.style.pointerEvents = "none";
+  }
+
+  function closeAndRemember(){
+    try { localStorage.setItem(seenKey(), "1"); } catch(e) {}
+    hardClose();
+  }
+
+  function openPopup(options){
+    const m = modal();
+    if (!m) return;
+    const manual = !!(options && options.manual);
+    m.classList.add("show");
+    m.classList.remove("guardian-required","guardian-ended");
+    m.classList.toggle("manual-mode", manual);
+    m.setAttribute("aria-hidden","false");
+    m.style.display = "flex";
+    m.style.pointerEvents = "auto";
+    const actions = document.getElementById("guardianTrailerActions");
+    if (actions) actions.classList.add("show");
+    const btn = document.getElementById("guardianTrailerOpenBtn");
+    if (btn) btn.textContent = "QUERO ME INSCREVER";
+  }
+
+  window.abrirGuardianTrailer = function(options){ openPopup(options || {}); };
+  window.fecharGuardianTrailer = function(){ closeAndRemember(); };
+  window.jaAssistiuGuardianTrailer = function(){
+    const p = payload();
+    if (window.appData && window.appData.guardian_inscrito === true) return true;
+    try { return localStorage.getItem(seenKey()) === "1"; } catch(e) { return false; }
+  };
+  window.marcarGuardianTrailerAssistido = async function(){ closeAndRemember(); return {ok:true}; };
+
+  async function signupFromPopup(ev){
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    const btn = document.getElementById("guardianTrailerOpenBtn");
+    const old = btn ? btn.textContent : "QUERO ME INSCREVER";
+    try {
+      if (btn) { btn.disabled = true; btn.textContent = "REGISTRANDO..."; }
+      if (typeof registrarGuardianInscricao === "function") {
+        await registrarGuardianInscricao();
+      } else if (typeof APPS_SCRIPT_URL !== "undefined") {
+        const p = payload();
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method:"POST", mode:"cors", headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body:JSON.stringify({action:"guardianInscrever", ...p})
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.ok === false) throw new Error(result.message || result.erro || "Não foi possível registrar a inscrição.");
+        if (window.appData) { window.appData.guardian_inscrito = true; window.appData.guardian_inscritos_total = Number(result.total || window.appData.guardian_inscritos_total || 0); }
+      }
+      try { localStorage.setItem(seenKey(), "1"); } catch(e) {}
+      hardClose();
+      if (typeof setView === "function") setView("guardians");
+      if (typeof carregarGuardianStatus === "function") carregarGuardianStatus();
+      setTimeout(function(){ const g = document.getElementById("apexGuardian"); if (g) g.scrollIntoView({behavior:"smooth", block:"start"}); }, 120);
+    } catch(error) {
+      alert(error && error.message ? error.message : "Não foi possível registrar sua inscrição agora.");
+      if (btn) { btn.disabled = false; btn.textContent = old; }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    const openBtn = document.getElementById("guardianTrailerOpenBtn");
+    const closeBtn = document.getElementById("guardianTrailerCloseBtn");
+    const closeTop = document.getElementById("guardianTrailerCloseTopBtn");
+    const img = document.getElementById("guardianAnnouncementImage");
+    if (openBtn) openBtn.onclick = signupFromPopup;
+    if (img) img.onclick = function(){ if (openBtn) openBtn.click(); };
+    if (closeBtn) closeBtn.onclick = closeAndRemember;
+    if (closeTop) closeTop.onclick = closeAndRemember;
+  });
+})();
+</script>
 </body>
 </html>
 <style>
