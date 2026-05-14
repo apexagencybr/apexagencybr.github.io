@@ -3109,6 +3109,84 @@ body.birthday-locked{overflow:hidden;}
   }
 }
 
+
+/* ===== APEX GUARDIAN — SUCESSO DA INSCRIÇÃO ===== */
+#guardianSuccessModal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:1000001!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:22px!important;
+  background:rgba(0,0,0,.70)!important;
+  backdrop-filter:blur(8px)!important;
+}
+#guardianSuccessModal.show{display:flex!important;}
+.guardian-success-box{
+  width:min(92vw,430px)!important;
+  border-radius:28px!important;
+  padding:30px 24px!important;
+  text-align:center!important;
+  background:linear-gradient(180deg,rgba(18,22,28,.98),rgba(8,10,16,.98))!important;
+  border:1px solid rgba(127,226,160,.35)!important;
+  box-shadow:0 30px 100px rgba(0,0,0,.70),0 0 55px rgba(127,226,160,.18)!important;
+  animation:guardianSuccessIn .32s ease both!important;
+}
+.guardian-success-check{
+  width:92px!important;
+  height:92px!important;
+  margin:0 auto 18px!important;
+  border-radius:999px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:48px!important;
+  background:rgba(127,226,160,.15)!important;
+  border:1px solid rgba(127,226,160,.38)!important;
+  box-shadow:0 0 36px rgba(127,226,160,.26)!important;
+  animation:guardianCheckPop .55s cubic-bezier(.2,1.5,.3,1) both!important;
+}
+.guardian-success-title{
+  margin:0 0 8px!important;
+  color:#fff!important;
+  font-size:24px!important;
+  line-height:1.1!important;
+  font-weight:950!important;
+}
+.guardian-success-text{
+  margin:0!important;
+  color:rgba(255,255,255,.72)!important;
+  font-size:15px!important;
+  line-height:1.45!important;
+}
+.guardian-success-ok{
+  margin-top:22px!important;
+  width:100%!important;
+  min-height:52px!important;
+  border:0!important;
+  border-radius:999px!important;
+  font-weight:950!important;
+  letter-spacing:.5px!important;
+  color:#092012!important;
+  background:linear-gradient(180deg,#9cffbd,#42d877)!important;
+  box-shadow:0 14px 35px rgba(66,216,119,.22)!important;
+  cursor:pointer!important;
+}
+#guardianTrailerOpenBtn.guardian-already-signed,
+#guardianSignupBtn.guardian-already-signed{
+  background:linear-gradient(180deg,#9cffbd,#42d877)!important;
+  color:#092012!important;
+  cursor:default!important;
+  opacity:1!important;
+}
+@keyframes guardianSuccessIn{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes guardianCheckPop{0%{transform:scale(.35);opacity:0}65%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
+@media(max-width:720px){
+  .guardian-success-box{padding:26px 20px!important;border-radius:24px!important;}
+  .guardian-success-title{font-size:22px!important;}
+}
+
 </style>
 
 <style id="apex-fechamento-compacto-mobile-v399">
@@ -3204,6 +3282,15 @@ body.birthday-locked{overflow:hidden;}
   </div>
   <video id="guardianTrailerVideo" class="guardian-trailer-video guardian-video-disabled" playsinline muted preload="none" style="display:none!important"></video>
   <button id="guardianTrailerSoundBtn" class="guardian-trailer-sound" type="button" style="display:none!important">Silenciar</button>
+</div>
+
+<div id="guardianSuccessModal" aria-hidden="true">
+  <div class="guardian-success-box" role="dialog" aria-label="Inscrição realizada com sucesso">
+    <div class="guardian-success-check">✅</div>
+    <h2 class="guardian-success-title" id="guardianSuccessTitle">Inscrição realizada!</h2>
+    <p class="guardian-success-text" id="guardianSuccessText">Sua inscrição foi realizada com sucesso.</p>
+    <button id="guardianSuccessOkBtn" class="guardian-success-ok" type="button">FECHAR</button>
+  </div>
 </div>
 
 <aside class="drawer" id="drawer">
@@ -4574,7 +4661,15 @@ function renderGuardianUI(extraStatus) {
 
   if (btn) {
     btn.disabled = !open || already;
-    btn.textContent = already ? "Você já está inscrito" : (open ? "Quero participar" : "Inscrições em breve");
+    btn.textContent = already ? "Já inscrito" : (open ? "Quero participar" : "Inscrições em breve");
+    btn.classList.toggle("guardian-already-signed", already);
+  }
+
+  const popupBtn = document.getElementById("guardianTrailerOpenBtn");
+  if (popupBtn) {
+    popupBtn.disabled = already;
+    popupBtn.textContent = already ? "JÁ INSCRITO" : "QUERO ME INSCREVER";
+    popupBtn.classList.toggle("guardian-already-signed", already);
   }
 
   if (status) status.textContent = extraStatus || (already ? "Sua inscrição já foi registrada." : "");
@@ -4601,16 +4696,49 @@ async function carregarGuardianStatus() {
   renderGuardianUI();
 }
 
+function mostrarGuardianSucesso(titulo, texto) {
+  const modal = document.getElementById("guardianSuccessModal");
+  const title = document.getElementById("guardianSuccessTitle");
+  const desc = document.getElementById("guardianSuccessText");
+  if (title) title.textContent = titulo || "Inscrição realizada!";
+  if (desc) desc.textContent = texto || "Sua inscrição foi realizada com sucesso.";
+  if (modal) {
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+  }
+}
+
+function fecharGuardianSucesso() {
+  const modal = document.getElementById("guardianSuccessModal");
+  if (modal) {
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+  }
+}
+
 async function registrarGuardianInscricao() {
-  if (!currentUser) return;
+  if (!currentUser) return false;
+
+  if (appData?.guardian_inscrito === true) {
+    renderGuardianUI("Você já está inscrito.");
+    mostrarGuardianSucesso("Já inscrito", "Sua inscrição no Apex Guardian já está registrada.");
+    return true;
+  }
+
   if (!isGuardianOpen()) {
     renderGuardianUI("As inscrições abrem em 14/05 à meia-noite.");
-    return;
+    return false;
   }
+
   const btn = document.getElementById("guardianSignupBtn");
+  const popupBtn = document.getElementById("guardianTrailerOpenBtn");
   const oldText = btn ? btn.textContent : "Quero participar";
+  const oldPopupText = popupBtn ? popupBtn.textContent : "QUERO ME INSCREVER";
+
   try {
     if (btn) { btn.disabled = true; btn.textContent = "Registrando..."; }
+    if (popupBtn) { popupBtn.disabled = true; popupBtn.textContent = "REGISTRANDO..."; }
+
     const payload = getGuardianUserPayload();
     const response = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
@@ -4618,14 +4746,22 @@ async function registrarGuardianInscricao() {
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ action: "guardianInscrever", ...payload })
     });
+
     const result = await response.json().catch(() => ({}));
     if (!response.ok || result.ok === false) throw new Error(result.message || result.erro || "Não foi possível registrar a inscrição.");
+
     appData.guardian_inscritos_total = Number(result.total || appData.guardian_inscritos_total || 0);
     appData.guardian_inscrito = true;
-    renderGuardianUI(result.duplicado ? "Você já estava inscrito." : "Inscrição confirmada. Que comece a caçada.");
+
+    const msg = result.duplicado ? "Sua inscrição no Apex Guardian já estava registrada." : "Sua inscrição foi realizada com sucesso!";
+    renderGuardianUI(result.duplicado ? "Você já estava inscrito." : "Inscrição confirmada com sucesso.");
+    mostrarGuardianSucesso(result.duplicado ? "Já inscrito" : "Inscrição realizada!", msg);
+    return true;
   } catch (error) {
     renderGuardianUI(error?.message || "Erro ao registrar inscrição.");
     if (btn) { btn.disabled = false; btn.textContent = oldText; }
+    if (popupBtn) { popupBtn.disabled = false; popupBtn.textContent = oldPopupText; }
+    return false;
   }
 }
 
@@ -9011,19 +9147,16 @@ restoreSessionIfPossible();
   window.fecharGuardianTrailer = function(){ hideGuardianImagePopup(); };
   window.hardCloseTrailer = function(){ hideGuardianImagePopup(); };
   window.abrirApexGuardianDoTrailer = async function(){
-    const btn = document.getElementById('guardianTrailerOpenBtn');
-    const old = btn ? btn.textContent : '';
     try{
-      if(btn){ btn.disabled=true; btn.textContent='REGISTRANDO...'; }
-      if(typeof registrarGuardianInscricao === 'function') await registrarGuardianInscricao();
-      hideGuardianImagePopup();
-      if(typeof showView === 'function') showView('guardians');
-      if(typeof closePanels === 'function') closePanels();
+      const ok = (typeof registrarGuardianInscricao === 'function') ? await registrarGuardianInscricao() : false;
+      if(ok){
+        hideGuardianImagePopup();
+        if(typeof showView === 'function') showView('guardians');
+        if(typeof closePanels === 'function') closePanels();
+      }
     }catch(e){
       console.error('Erro na inscrição Guardian pelo popup:', e);
       if(typeof showView === 'function') showView('guardians');
-    }finally{
-      if(btn){ btn.disabled=false; btn.textContent=old || 'QUERO ME INSCREVER'; }
     }
   };
   document.addEventListener('DOMContentLoaded', function(){
@@ -9036,6 +9169,10 @@ restoreSessionIfPossible();
     if(closeBtn) closeBtn.onclick = function(ev){ ev.preventDefault(); hideGuardianImagePopup(); };
     if(closeTop) closeTop.onclick = function(ev){ ev.preventDefault(); hideGuardianImagePopup(); };
     if(m) m.addEventListener('click', function(ev){ if(ev.target === m) hideGuardianImagePopup(); });
+    const successModal = document.getElementById('guardianSuccessModal');
+    const successOk = document.getElementById('guardianSuccessOkBtn');
+    if(successOk) successOk.onclick = function(ev){ ev.preventDefault(); fecharGuardianSucesso(); };
+    if(successModal) successModal.addEventListener('click', function(ev){ if(ev.target === successModal) fecharGuardianSucesso(); });
   });
 })();
 </script>
