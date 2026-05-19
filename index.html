@@ -3819,7 +3819,6 @@ A equipe de integração entrará em contato com você em breve, assim que essa 
           <div id="guardianStatusBadge" class="guardian-countdown guardian-closed">As inscrições começam em <span id="guardianCountdown">--d --h --m --s</span></div>
           <div class="guardian-action-row">
             <button id="guardianAudioBtn" class="btn btn-secondary" type="button">🔊 Ativar experiência</button>
-            <button id="guardianReplayTrailerBtn" class="btn btn-secondary guardian-replay-btn" type="button">▶️ Assistir clipe de novo</button>
             <button id="guardianSignupBtn" class="btn" type="button" disabled>Quero participar</button>
             <span id="guardianSignupStatus" class="guardian-status-text"></span>
           </div>
@@ -9699,5 +9698,33 @@ restoreSessionIfPossible();
   setTimeout(bind, 1000);
   setTimeout(bind, 2500);
   window.apexOpenGuardianVideoReplay = openReplay;
+})();
+</script>
+
+
+<style id="apex-guardian-remove-replay-option">
+  #guardianReplayTrailerBtn,
+  .guardian-replay-btn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+</style>
+<script id="apex-guardian-remove-replay-option-js">
+(function(){
+  function removeGuardianReplayOption(){
+    var btn = document.getElementById('guardianReplayTrailerBtn');
+    if(btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    document.querySelectorAll('.guardian-replay-btn').forEach(function(el){
+      if(el && el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', removeGuardianReplayOption);
+  } else {
+    removeGuardianReplayOption();
+  }
+  setTimeout(removeGuardianReplayOption, 300);
+  setTimeout(removeGuardianReplayOption, 1200);
 })();
 </script>
