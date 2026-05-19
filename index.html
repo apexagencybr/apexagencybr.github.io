@@ -9072,6 +9072,143 @@ restoreSessionIfPossible();
 })();
 </script>
 
+
+
+<style>
+/* ===== FIX APEX GUARDIAN — botão "Assistir clipe de novo" abre o vídeo, não o banner ===== */
+#guardianTrailerModal.guardian-video-mode{
+  display:block!important;
+  align-items:initial!important;
+  justify-content:initial!important;
+  background:#000!important;
+}
+#guardianTrailerModal.guardian-video-mode::before{display:none!important;content:none!important;}
+#guardianTrailerModal.guardian-video-mode .guardian-image-popup-card,
+#guardianTrailerModal.guardian-video-mode .guardian-popup-image,
+#guardianTrailerModal.guardian-video-mode .guardian-image-actions{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+#guardianTrailerModal.guardian-video-mode .guardian-trailer-video{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  background:#000!important;
+}
+#guardianTrailerModal.guardian-video-mode .guardian-trailer-sound,
+#guardianTrailerModal.guardian-video-mode .guardian-trailer-close-top{
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+</style>
+<script>
+/* ===== FIX APEX GUARDIAN — replay do trailer em vídeo ===== */
+(function(){
+  const TRAILER_URL = "https://res.cloudinary.com/dcf47fhfr/video/upload/0505-c%C3%B3pia-c%C3%B3pia_vn7puz.mp4";
+
+  function qs(id){ return document.getElementById(id); }
+
+  function closeVideoReplay(){
+    const modal = qs('guardianTrailerModal');
+    const video = qs('guardianTrailerVideo');
+    if(video){
+      try{ video.pause(); }catch(e){}
+      try{ video.currentTime = 0; }catch(e){}
+    }
+    if(modal){
+      modal.classList.remove('show','manual-mode','guardian-required','guardian-ended','guardian-video-mode');
+      modal.setAttribute('aria-hidden','true');
+      modal.style.display = '';
+      modal.style.pointerEvents = '';
+    }
+    document.body.style.overflow = '';
+  }
+
+  function openVideoReplay(ev){
+    if(ev){ ev.preventDefault(); ev.stopPropagation(); if(ev.stopImmediatePropagation) ev.stopImmediatePropagation(); }
+
+    const modal = qs('guardianTrailerModal');
+    const video = qs('guardianTrailerVideo');
+    const actions = qs('guardianTrailerActions');
+    const closeTop = qs('guardianTrailerCloseTopBtn');
+    const soundBtn = qs('guardianTrailerSoundBtn');
+    if(!modal || !video) return false;
+
+    if(actions) actions.classList.remove('show','guardian-image-actions');
+
+    modal.classList.remove('guardian-image-modal','guardian-required','guardian-ended');
+    modal.classList.add('show','manual-mode','guardian-video-mode');
+    modal.setAttribute('aria-hidden','false');
+    modal.style.display = 'block';
+    modal.style.pointerEvents = 'auto';
+    document.body.style.overflow = 'hidden';
+
+    if(closeTop){
+      closeTop.style.display = 'inline-flex';
+      closeTop.onclick = function(e){ e.preventDefault(); e.stopPropagation(); closeVideoReplay(); return false; };
+    }
+
+    if(soundBtn){
+      soundBtn.style.display = 'inline-flex';
+      soundBtn.textContent = 'Silenciar';
+      soundBtn.onclick = function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        video.muted = !video.muted;
+        soundBtn.textContent = video.muted ? 'Ativar som' : 'Silenciar';
+        video.play().catch(function(){});
+        return false;
+      };
+    }
+
+    try{ video.pause(); }catch(e){}
+    video.innerHTML = '<source src="' + TRAILER_URL + '" type="video/mp4">';
+    video.setAttribute('src', TRAILER_URL);
+    video.style.display = 'block';
+    video.playsInline = true;
+    video.controls = false;
+    video.loop = false;
+    video.muted = false;
+    video.defaultMuted = false;
+    video.volume = 1;
+    try{ video.load(); video.currentTime = 0; }catch(e){}
+
+    video.onended = closeVideoReplay;
+    const playPromise = video.play();
+    if(playPromise && typeof playPromise.catch === 'function'){
+      playPromise.catch(function(){
+        video.muted = true;
+        if(soundBtn) soundBtn.textContent = 'Ativar som';
+        video.play().catch(function(){});
+      });
+    }
+    return false;
+  }
+
+  function bindReplay(){
+    const btn = qs('guardianReplayTrailerBtn');
+    if(!btn) return;
+    btn.onclick = openVideoReplay;
+    btn.addEventListener('click', openVideoReplay, true);
+  }
+
+  document.addEventListener('DOMContentLoaded', bindReplay);
+  setTimeout(bindReplay, 300);
+  setTimeout(bindReplay, 1200);
+  window.apexOpenGuardianVideoReplay = openVideoReplay;
+})();
+</script>
+
 </body>
 </html>
 <style>
