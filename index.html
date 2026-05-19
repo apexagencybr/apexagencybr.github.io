@@ -9371,3 +9371,163 @@ restoreSessionIfPossible();
 })();
 </script>
 
+
+
+<style>
+/* ===== PATCH FINAL — Guardian replay usa APEX_FINAL e fica centralizado ===== */
+#guardianTrailerModal.guardian-replay-centered{
+  position:fixed!important;
+  inset:0!important;
+  z-index:999999!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:18px!important;
+  background:rgba(0,0,0,.88)!important;
+  overflow:hidden!important;
+}
+#guardianTrailerModal.guardian-replay-centered::before{display:none!important;content:none!important;}
+#guardianTrailerModal.guardian-replay-centered .guardian-image-popup-card,
+#guardianTrailerModal.guardian-replay-centered .guardian-popup-image,
+#guardianTrailerModal.guardian-replay-centered .guardian-image-actions,
+#guardianTrailerModal.guardian-replay-centered #guardianTrailerActions{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+#guardianTrailerModal.guardian-replay-centered .guardian-trailer-video{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:relative!important;
+  inset:auto!important;
+  width:min(94vw,980px)!important;
+  height:auto!important;
+  max-height:84vh!important;
+  aspect-ratio:16/9!important;
+  object-fit:contain!important;
+  border-radius:28px!important;
+  background:#000!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.68)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+}
+#guardianTrailerModal.guardian-replay-centered .guardian-trailer-close-top{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:fixed!important;
+  top:18px!important;
+  right:18px!important;
+  left:auto!important;
+  z-index:1000000!important;
+}
+#guardianTrailerModal.guardian-replay-centered .guardian-trailer-sound{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:fixed!important;
+  top:18px!important;
+  right:84px!important;
+  left:auto!important;
+  z-index:1000000!important;
+}
+@media(max-width:720px){
+  #guardianTrailerModal.guardian-replay-centered{padding:12px!important;}
+  #guardianTrailerModal.guardian-replay-centered .guardian-trailer-video{width:96vw!important;border-radius:20px!important;max-height:78vh!important;}
+  #guardianTrailerModal.guardian-replay-centered .guardian-trailer-close-top{top:10px!important;right:10px!important;}
+  #guardianTrailerModal.guardian-replay-centered .guardian-trailer-sound{top:10px!important;right:64px!important;}
+}
+</style>
+<script>
+/* ===== PATCH FINAL — botão Assistir clipe de novo: vídeo APEX_FINAL centralizado ===== */
+(function(){
+  const FINAL_GUARDIAN_REPLAY_URL = 'https://res.cloudinary.com/dcf47fhfr/video/upload/v1778200904/APEX_FINAL_me3d0r.mov';
+  function el(id){ return document.getElementById(id); }
+  function stopReplay(){
+    const m = el('guardianTrailerModal');
+    const v = el('guardianTrailerVideo');
+    if(v){
+      try{ v.pause(); }catch(e){}
+      try{ v.removeAttribute('src'); v.innerHTML=''; v.load && v.load(); }catch(e){}
+      v.onended = null;
+    }
+    if(m){
+      m.classList.remove('show','manual-mode','guardian-required','guardian-ended','guardian-video-mode','guardian-replay-centered');
+      m.setAttribute('aria-hidden','true');
+      m.style.display='';
+      m.style.pointerEvents='';
+    }
+    document.body.style.overflow='';
+  }
+  function openReplay(ev){
+    if(ev){ ev.preventDefault(); ev.stopPropagation(); if(ev.stopImmediatePropagation) ev.stopImmediatePropagation(); }
+    const m = el('guardianTrailerModal');
+    const v = el('guardianTrailerVideo');
+    const a = el('guardianTrailerActions');
+    const x = el('guardianTrailerCloseTopBtn');
+    const s = el('guardianTrailerSoundBtn');
+    if(!m || !v) return false;
+
+    if(a) a.classList.remove('show','guardian-image-actions');
+    m.classList.remove('guardian-image-modal','guardian-required','guardian-ended');
+    m.classList.add('show','manual-mode','guardian-video-mode','guardian-replay-centered');
+    m.setAttribute('aria-hidden','false');
+    m.style.display='grid';
+    m.style.pointerEvents='auto';
+    document.body.style.overflow='hidden';
+
+    if(x){
+      x.style.display='flex';
+      x.onclick=function(e){ if(e){e.preventDefault();e.stopPropagation();} stopReplay(); return false; };
+    }
+    if(s){
+      s.style.display='flex';
+      s.textContent='Silenciar';
+      s.onclick=function(e){
+        if(e){e.preventDefault();e.stopPropagation();}
+        v.muted = !v.muted;
+        s.textContent = v.muted ? 'Ativar som' : 'Silenciar';
+        v.play().catch(function(){});
+        return false;
+      };
+    }
+
+    try{ v.pause(); }catch(e){}
+    v.innerHTML = '<source src="'+ FINAL_GUARDIAN_REPLAY_URL +'" type="video/quicktime">';
+    v.src = FINAL_GUARDIAN_REPLAY_URL;
+    v.setAttribute('src', FINAL_GUARDIAN_REPLAY_URL);
+    v.style.display='block';
+    v.controls=false;
+    v.loop=false;
+    v.playsInline=true;
+    v.muted=false;
+    v.defaultMuted=false;
+    v.volume=1;
+    try{ v.load(); v.currentTime=0; }catch(e){}
+    v.onended = stopReplay;
+    const play = v.play();
+    if(play && typeof play.catch === 'function'){
+      play.catch(function(){
+        v.muted=true;
+        if(s) s.textContent='Ativar som';
+        v.play().catch(function(){});
+      });
+    }
+    return false;
+  }
+  function bind(){
+    const btn = el('guardianReplayTrailerBtn');
+    if(!btn) return;
+    btn.onclick = openReplay;
+    btn.addEventListener('click', openReplay, true);
+  }
+  document.addEventListener('DOMContentLoaded', bind);
+  setTimeout(bind, 250);
+  setTimeout(bind, 1000);
+  setTimeout(bind, 2500);
+  window.apexOpenGuardianVideoReplay = openReplay;
+})();
+</script>
