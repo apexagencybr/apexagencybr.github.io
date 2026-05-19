@@ -4285,7 +4285,7 @@ async function enviarIndicacao() {
 
 
   const payload = {
-    action: "novaIndicacao",
+    action: "registrarIndicacao",
     idUsuarioIndicou: String(currentUser.id || currentUser.login6 || ""),
     nomeUsuarioIndicou: String(currentUser.arroba || currentUser.display || ""),
     usuarioTikTokIndicacao: usuarioTikTok,
