@@ -9384,6 +9384,146 @@ restoreSessionIfPossible();
 })();
 </script>
 
+
+
+<script id="apex-guardian-banner-planilha-fix-final">
+(function(){
+  /*
+    Correção final Apex Guardian:
+    - A coluna H da aba Guardian_Inscricoes agora é BANNER.
+    - Quando o banner aparece para o usuário logado, o site registra "assistido" na coluna H.
+    - Ao acessar novamente, o banner não abre se a planilha já tiver H = assistido/sim/ok/true/1/visto.
+  */
+  function el(id){ return document.getElementById(id); }
+
+  function getId(){
+    try {
+      if (typeof getGuardianUserPayload === 'function') {
+        var p = getGuardianUserPayload() || {};
+        return String(p.idUsuario || p.id || '').replace(/\D/g,'').slice(-6).padStart(6,'0');
+      }
+    } catch(e) {}
+    try {
+      if (window.currentUser) return String(window.currentUser.id || window.currentUser.login6 || '').replace(/\D/g,'').slice(-6).padStart(6,'0');
+    } catch(e) {}
+    return '';
+  }
+
+  function key(){ return 'apex_guardian_banner_visto_' + (getId() || 'sem_id'); }
+
+  function jaViuBanner(){
+    try {
+      if (window.appData && (window.appData.guardian_trailer_assistido === true || window.appData.guardian_banner_assistido === true)) return true;
+      if (localStorage.getItem(key()) === '1') return true;
+    } catch(e) {}
+    return false;
+  }
+
+  async function registrarBannerVisto(){
+    try { localStorage.setItem(key(), '1'); } catch(e) {}
+    try {
+      if (window.appData) {
+        window.appData.guardian_trailer_assistido = true;
+        window.appData.guardian_banner_assistido = true;
+      }
+    } catch(e) {}
+
+    try {
+      var payload = (typeof getGuardianUserPayload === 'function') ? getGuardianUserPayload() : {};
+      if (!payload || !payload.idUsuario) payload = { idUsuario: getId() };
+      if (!payload.idUsuario || payload.idUsuario === '000000') return;
+
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(Object.assign({ action: 'guardianTrailerAssistido' }, payload))
+      });
+    } catch(err) {
+      console.error('Erro ao registrar BANNER visto na planilha:', err);
+    }
+  }
+
+  function stopVideo(){
+    var v = el('guardianTrailerVideo');
+    if (!v) return;
+    try { v.pause(); v.removeAttribute('src'); v.innerHTML = ''; if (v.load) v.load(); } catch(e) {}
+  }
+
+  function showBanner(options){
+    options = options || {};
+    if (!options.manual && jaViuBanner()) return false;
+
+    var m = el('guardianTrailerModal');
+    if (!m) return false;
+    stopVideo();
+
+    m.classList.add('guardian-image-modal','show');
+    m.classList.remove('guardian-ended','guardian-required','manual-mode');
+    m.setAttribute('aria-hidden','false');
+
+    var actions = el('guardianTrailerActions');
+    if (actions) actions.classList.add('show','guardian-image-actions');
+
+    var sound = el('guardianTrailerSoundBtn');
+    if (sound) sound.style.display = 'none';
+
+    document.body.style.overflow = 'hidden';
+
+    if (!options.manual) registrarBannerVisto();
+    return true;
+  }
+
+  function hideBanner(){
+    var m = el('guardianTrailerModal');
+    stopVideo();
+    if (m) {
+      m.classList.remove('show','guardian-required','manual-mode');
+      m.setAttribute('aria-hidden','true');
+    }
+    document.body.style.overflow = '';
+  }
+
+  window.jaAssistiuGuardianTrailer = jaViuBanner;
+  window.marcarGuardianTrailerAssistido = registrarBannerVisto;
+  window.abrirGuardianTrailer = showBanner;
+  window.fecharGuardianTrailer = hideBanner;
+  window.hardCloseTrailer = hideBanner;
+
+  function bind(){
+    var closeTop = el('guardianTrailerCloseTopBtn');
+    var closeBottom = el('guardianTrailerCloseBtn');
+    var openBtn = el('guardianTrailerOpenBtn');
+
+    if (closeTop) closeTop.onclick = function(ev){ if(ev){ev.preventDefault();ev.stopPropagation();} hideBanner(); return false; };
+    if (closeBottom) closeBottom.onclick = function(ev){ if(ev){ev.preventDefault();ev.stopPropagation();} hideBanner(); return false; };
+    if (openBtn) openBtn.onclick = async function(ev){
+      if(ev){ev.preventDefault();ev.stopPropagation();}
+      try { await registrarBannerVisto(); } catch(e) {}
+      try {
+        if (typeof registrarGuardianInscricao === 'function') {
+          var ok = await registrarGuardianInscricao();
+          if (ok) hideBanner();
+        } else {
+          hideBanner();
+          if (typeof setView === 'function') setView('guardians');
+        }
+      } catch(e) {
+        console.error('Erro no botão do banner Guardian:', e);
+        hideBanner();
+        if (typeof setView === 'function') setView('guardians');
+      }
+      return false;
+    };
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+  setTimeout(bind, 300);
+  setTimeout(bind, 1200);
+})();
+</script>
+
 </body>
 </html>
 <style>
