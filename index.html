@@ -9874,3 +9874,215 @@ restoreSessionIfPossible();
   setTimeout(removeGuardianReplayOption, 1200);
 })();
 </script>
+
+
+<script id="apex-guardian-banner-coluna-h-definitivo-v4">
+(function(){
+  /*
+    DEFINITIVO:
+    - Se o usuário já está inscrito: não abre banner e marca BANNER = assistido.
+    - Se BANNER (coluna H) já está assistido/sim/ok/true/1/visto/banner: não abre.
+    - Se o banner abriu uma vez: marca BANNER = assistido.
+    - Se clicar em "Agora não": marca BANNER = assistido e fecha.
+    - Se clicar no X / fechar o banner: marca BANNER = assistido e fecha.
+    - Se clicar fora do banner: marca BANNER = assistido e fecha.
+    - Se clicar em "Já inscrito / Quero me inscrever": marca BANNER = assistido, registra inscrição quando necessário e fecha.
+  */
+  var APEX_GUARDIAN_BANNER_VALUES = ['assistido','sim','ok','1','true','visto','banner'];
+
+  function el(id){ return document.getElementById(id); }
+  function payload(){
+    try { if (typeof getGuardianUserPayload === 'function') return getGuardianUserPayload() || {}; } catch(e) {}
+    try {
+      var u = window.currentUser || {};
+      return {
+        idUsuario: String(u.id || u.login6 || u.id_usuario || '').replace(/\D+/g,'').slice(-6).padStart(6,'0'),
+        nome: String(u.nome || u.display || u.arroba || u.usuario || '').replace(/^@+/,''),
+        usuario: String(u.arroba || u.usuario || u.display || u.nome || '').replace(/^@+/,''),
+        temporada: (typeof GUARDIAN_TEMPORADA !== 'undefined' ? GUARDIAN_TEMPORADA : 'Autumn Dragon • Junho 2026')
+      };
+    } catch(e) { return {}; }
+  }
+  function id(){
+    var p = payload();
+    return String(p.idUsuario || p.id || '').replace(/\D+/g,'').slice(-6).padStart(6,'0');
+  }
+  function key(){ return 'apex_guardian_banner_H_visto_' + (id() || 'sem_id'); }
+  function isTrue(v){
+    if (v === true) return true;
+    return APEX_GUARDIAN_BANNER_VALUES.indexOf(String(v || '').trim().toLowerCase()) >= 0;
+  }
+  function localSeen(){
+    try { return localStorage.getItem(key()) === '1'; } catch(e) { return false; }
+  }
+  function setLocalSeen(){
+    try { localStorage.setItem(key(), '1'); } catch(e) {}
+    try {
+      if (window.appData) {
+        window.appData.guardian_trailer_assistido = true;
+        window.appData.guardian_banner_assistido = true;
+      }
+    } catch(e) {}
+  }
+  function alreadySigned(){
+    try { if (window.appData && window.appData.guardian_inscrito === true) return true; } catch(e) {}
+    var b = el('guardianTrailerOpenBtn');
+    if (b && b.classList.contains('guardian-already-signed')) return true;
+    if (b && /já\s*inscrito/i.test(b.textContent || '')) return true;
+    return false;
+  }
+  function alreadySeenByState(){
+    try {
+      if (window.appData) {
+        if (window.appData.guardian_trailer_assistido === true) return true;
+        if (window.appData.guardian_banner_assistido === true) return true;
+        if (isTrue(window.appData.banner)) return true;
+        if (isTrue(window.appData.BANNER)) return true;
+      }
+    } catch(e) {}
+    return localSeen();
+  }
+  async function fetchStatus(){
+    var p = payload();
+    var userId = String(p.idUsuario || '').replace(/\D+/g,'').slice(-6).padStart(6,'0');
+    if (!userId || userId === '000000' || typeof APPS_SCRIPT_URL === 'undefined') return {ok:false};
+    try {
+      var r = await fetch(APPS_SCRIPT_URL + '?action=guardianStatus&idUsuario=' + encodeURIComponent(userId) + '&id=' + encodeURIComponent(userId) + '&t=' + Date.now(), {
+        method: 'GET', mode: 'cors', cache: 'no-store'
+      });
+      var j = await r.json().catch(function(){ return {}; });
+      if (j && j.ok !== false) {
+        window.appData = window.appData || {};
+        window.appData.guardian_inscrito = j.inscrito === true;
+        window.appData.guardian_trailer_assistido = j.trailer_assistido === true || j.guardian_trailer_assistido === true || j.banner_assistido === true || j.guardian_banner_assistido === true;
+        window.appData.guardian_banner_assistido = window.appData.guardian_trailer_assistido;
+        if (window.appData.guardian_trailer_assistido) setLocalSeen();
+      }
+      return j || {};
+    } catch(e) { return {ok:false}; }
+  }
+  async function markSeen(){
+    setLocalSeen();
+    var p = payload();
+    var userId = String(p.idUsuario || '').replace(/\D+/g,'').slice(-6).padStart(6,'0');
+    if (!userId || userId === '000000' || typeof APPS_SCRIPT_URL === 'undefined') return false;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(Object.assign({ action: 'guardianTrailerAssistido', banner: 'assistido' }, p, { idUsuario: userId }))
+      });
+      return true;
+    } catch(e) {
+      console.error('Erro ao marcar BANNER Guardian como assistido:', e);
+      return false;
+    }
+  }
+  function hardStopVideo(){
+    var v = el('guardianTrailerVideo');
+    if (!v) return;
+    try { v.pause(); v.removeAttribute('src'); v.innerHTML = ''; if (v.load) v.load(); } catch(e) {}
+  }
+  function hide(){
+    var m = el('guardianTrailerModal');
+    hardStopVideo();
+    if (m) {
+      m.classList.remove('show','guardian-required','manual-mode','guardian-ended','guardian-video-mode','guardian-replay-centered');
+      m.setAttribute('aria-hidden','true');
+    }
+    document.body.style.overflow = '';
+    return false;
+  }
+  async function show(options){
+    options = options || {};
+    if (!options.manual) {
+      if (alreadySeenByState()) return false;
+      var st = await fetchStatus();
+      if (st && (st.inscrito === true || st.trailer_assistido === true || st.guardian_trailer_assistido === true || st.banner_assistido === true || st.guardian_banner_assistido === true)) {
+        await markSeen();
+        hide();
+        try { if (typeof renderGuardianUI === 'function') renderGuardianUI(); } catch(e) {}
+        return false;
+      }
+      if (alreadySigned()) {
+        await markSeen();
+        hide();
+        return false;
+      }
+    }
+
+    var m = el('guardianTrailerModal');
+    if (!m) return false;
+    hardStopVideo();
+    m.classList.add('guardian-image-modal','show');
+    m.classList.remove('guardian-ended','guardian-required','manual-mode','guardian-video-mode','guardian-replay-centered');
+    m.setAttribute('aria-hidden','false');
+    var a = el('guardianTrailerActions');
+    if (a) a.classList.add('show','guardian-image-actions');
+    var sound = el('guardianTrailerSoundBtn');
+    if (sound) sound.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+
+    if (!options.manual) await markSeen();
+    return true;
+  }
+  async function clickNo(ev){
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    await markSeen();
+    hide();
+    return false;
+  }
+  async function clickSignup(ev){
+    if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+    await markSeen();
+    try {
+      if (alreadySigned()) {
+        hide();
+        try { if (typeof renderGuardianUI === 'function') renderGuardianUI('Você já está inscrito.'); } catch(e) {}
+        return false;
+      }
+      if (typeof registrarGuardianInscricao === 'function') await registrarGuardianInscricao();
+      await markSeen();
+    } catch(e) { console.error('Erro no botão do banner Guardian:', e); }
+    hide();
+    return false;
+  }
+  function bind(){
+    var closeTop = el('guardianTrailerCloseTopBtn');
+    var closeBottom = el('guardianTrailerCloseBtn');
+    var openBtn = el('guardianTrailerOpenBtn');
+    if (closeTop) closeTop.onclick = clickNo;
+    if (closeBottom) closeBottom.onclick = clickNo;
+    if (openBtn) openBtn.onclick = clickSignup;
+    if (!document.__apexGuardianCloseXMarksSeen) {
+      document.__apexGuardianCloseXMarksSeen = true;
+      document.addEventListener('click', function(ev){
+        var t = ev.target;
+        if (!t || !t.closest) return;
+        if (t.closest('#guardianTrailerCloseTopBtn') || t.closest('#guardianTrailerCloseBtn')) {
+          clickNo(ev);
+        }
+      }, true);
+    }
+    var m = el('guardianTrailerModal');
+    if (m && !m.__apexGuardianFinalBound) {
+      m.__apexGuardianFinalBound = true;
+      m.addEventListener('click', function(ev){ if (ev.target === m) clickNo(ev); }, true);
+    }
+  }
+  window.jaAssistiuGuardianTrailer = function(){ return alreadySeenByState() || alreadySigned(); };
+  window.marcarGuardianTrailerAssistido = markSeen;
+  window.abrirGuardianTrailer = show;
+  window.fecharGuardianTrailer = clickNo;
+  window.hardCloseTrailer = clickNo;
+  window.fecharGuardianTrailerSemMarcar = hide;
+  window.abrirApexGuardianDoTrailer = clickSignup;
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+  setTimeout(bind, 150);
+  setTimeout(bind, 600);
+  setTimeout(bind, 1400);
+  setTimeout(function(){ if (alreadySigned()) markSeen(); }, 1800);
+})();
+</script>
