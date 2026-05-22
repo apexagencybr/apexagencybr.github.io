@@ -6142,33 +6142,39 @@ restoreSessionIfPossible();
     const raw = String(value || "").trim();
     if (!raw) return null;
     let m = raw.match(/(\d{4})-(\d{2})-(\d{2})/);
-    if (m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
-    m = raw.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-    if (m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
-    const d = new Date(raw);
-    return Number.isNaN(d.getTime()) ? null : d;
+    if (m) return { y:Number(m[1]), m:Number(m[2]), d:Number(m[3]) };
+    m = raw.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return { y:Number(m[3]), m:Number(m[2]), d:Number(m[1]) };
+    return null;
   }
   function formatPeriodoHuman(value){
     const raw = String(value || "").trim();
     if (!raw) return "--/-- a --/--";
 
-    function two(n){ return String(n).padStart(2, "0"); }
+    // CORREÇÃO IMPORTANTE:
+    // Não usar new Date() aqui. O período da Base_Dados_Atual vem como texto
+    // "2026-05-01 ~ 2026-05-20" e precisa ser exibido exatamente pela data da base,
+    // sem timezone/localDate e sem cair na data atual do navegador.
+    const meses = [
+      "janeiro","fevereiro","março","abril","maio","junho",
+      "julho","agosto","setembro","outubro","novembro","dezembro"
+    ];
+
+    function two(n){ return String(Number(n)).padStart(2, "0"); }
     function formatRange(start, end){
       if (!start || !end) return raw;
-      const sd = two(start.getDate());
-      const ed = two(end.getDate());
-      const sm = monthNamePt(start.getMonth());
-      const em = monthNamePt(end.getMonth());
-      if (start.getTime() === end.getTime()) return `${sd} de ${em}`;
-      if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) return `${sd} a ${ed} de ${em}`;
+      const sd = two(start.d);
+      const ed = two(end.d);
+      const sm = meses[start.m - 1] || "";
+      const em = meses[end.m - 1] || "";
+      if (start.y === end.y && start.m === end.m && start.d === end.d) return `${ed} de ${em}`;
+      if (start.y === end.y && start.m === end.m) return `${sd} a ${ed} de ${em}`;
       return `${sd} de ${sm} a ${ed} de ${em}`;
     }
 
-    const completeMatches = raw.match(/\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}/g);
+    const completeMatches = raw.match(/\d{4}-\d{2}-\d{2}|\d{1,2}\/\d{1,2}\/\d{4}/g);
     if (completeMatches && completeMatches.length >= 2){
-      const start = parseDateLoose(completeMatches[0]);
-      const end = parseDateLoose(completeMatches[1]);
-      if (start && end) return formatRange(start, end);
+      return formatRange(parseDateLoose(completeMatches[0]), parseDateLoose(completeMatches[1]));
     }
 
     const shortMatches = raw.match(/\b\d{1,2}\/\d{1,2}\b/g);
