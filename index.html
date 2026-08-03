@@ -5916,7 +5916,9 @@ restoreSessionIfPossible();
 
     const input = getLoginInput();
     const raw = input ? input.value : "";
-    const login = typeof normalizeLogin === "function" ? normalizeLogin(raw) : String(raw || "").replace(/\D+/g, "").slice(0, 6);
+    const login = typeof normalizeLogin === "function"
+      ? normalizeLogin(raw)
+      : String(raw || "").replace(/\D+/g, "").slice(-6);
 
     if (input) input.value = login;
 
@@ -5929,37 +5931,41 @@ restoreSessionIfPossible();
     setBusyState(true);
 
     try {
-      if (typeof loadRemoteData === "function") {
-        await loadRemoteData();
-      }
-      const found = findUser(login);
+      const result = await loginRemote(login);
+      const found = result && (result.user || result.criador);
+
       if (!found) {
-        if (typeof accessStatus !== "undefined" && accessStatus) {
-          accessStatus.textContent = "Acesso por ID • 6 últimos dígitos";
-        }
-        if (typeof showError === "function") {
-          showError("ID não encontrado. Confira os 6 últimos dígitos e tente novamente.");
-        }
-        return false;
+        throw new Error("ID não encontrado. Confira os 6 últimos dígitos e tente novamente.");
       }
 
-      if (typeof currentUser !== "undefined") {
-        currentUser = found;
-      }
-      if (typeof fillUser === "function") {
-        fillUser(found);
-      }
+      appData.periodo = (result.data && result.data.periodo) || appData.periodo || "";
+      appData.criadores = [found];
+      window.appData = appData;
+
+      currentUser = found;
+      fillUser(found);
+      saveSession(login);
+      registrarAcessoUsuario(found);
+
       if (typeof accessStatus !== "undefined" && accessStatus) {
         accessStatus.textContent = `Conectado • @${found.arroba || found.usuario || found.display || found.nome || "criador"}`;
       }
+
+      setTimeout(function() {
+        carregarComplementosEmSegundoPlano(login);
+      }, 250);
+
       return true;
     } catch (error) {
-      console.error(error);
+      console.error("Falha no login rápido:", error);
       if (typeof accessStatus !== "undefined" && accessStatus) {
         accessStatus.textContent = "Acesso por ID • 6 últimos dígitos";
       }
       if (typeof showError === "function") {
-        showError(error && error.message ? error.message : "Erro ao carregar os dados.");
+        const mensagem = error && error.name === "AbortError"
+          ? "O servidor demorou para responder. Tente novamente."
+          : (error && error.message ? error.message : "Não foi possível entrar.");
+        showError(mensagem);
       }
       return false;
     } finally {
